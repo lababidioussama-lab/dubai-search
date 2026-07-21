@@ -1,0 +1,2030 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, viewport-fit=cover"><meta name="theme-color" content="#050505"><title>DB Search</title><link rel="manifest" href="manifest.webmanifest"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="DB Search"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" type="image/png" href="icon-192.png"><script>if(window.navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches){document.documentElement.classList.add('standalone');}if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script><style>:root{--bg:#050505;--surface:rgba(22,22,22,0.75);--surface-2:rgba(31,31,31,0.85);--text:#fff;--text-muted:#a0a0a0;--accent:#ef2b2b;--accent-soft:rgba(239,43,43,0.12);--accent-border:rgba(239,43,43,0.45);--accent-glow:rgba(239,43,43,0.8);--danger:#ff4d4d;--success:#4ade80;--whatsapp:#25d366;--border:rgba(255,255,255,0.07);--input-bg:rgba(0,0,0,0.6);}body.light{--bg:#f3f3f3;--surface:rgba(255,255,255,0.8);--surface-2:rgba(245,245,245,0.9);--text:#111;--text-muted:#666;--accent:#cc1111;--accent-soft:rgba(204,17,17,0.08);--accent-border:rgba(204,17,17,0.4);--accent-glow:rgba(204,17,17,0.6);--danger:#cc2222;--success:#228844;--border:rgba(0,0,0,0.08);--input-bg:rgba(255,255,255,0.8);}*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}html,body{overflow-x:hidden;min-height:100vh;background-color:var(--bg);}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:var(--text);padding:10px;font-size:14px;transition:background-color .4s ease,color .4s ease;position:relative;}#neuralCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:2;pointer-events:none;opacity:.75;}.login-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:transparent;z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;}.login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:30px 20px;max-width:360px;text-align:center;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.4);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}.container{position:relative;z-index:3;max-width:1100px;margin:0 auto;padding-bottom:30px;}@keyframes pulseGlow{0%,100%{box-shadow:0 0 8px rgba(239,43,43,.2);}50%{box-shadow:0 0 20px var(--accent-border);}}@keyframes spin{to{transform:rotate(360deg);}}.tab-content{display:none;}.tab-content.active{display:block;}.header{text-align:center;margin:15px 0 20px;backdrop-filter:blur(8px);padding:10px;border-radius:12px;}.header h1{font-size:1.9rem;font-weight:900;letter-spacing:-.03em;margin-bottom:4px;}.header h1 span{color:var(--accent);text-shadow:0 0 10px var(--accent-glow);}.header p{color:var(--text-muted);font-size:.85rem;}.ai-badge{display:inline-block;padding:6px 14px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-border);border-radius:20px;font-size:.72rem;font-weight:800;margin-top:10px;letter-spacing:.05em;text-transform:uppercase;animation:pulseGlow 3s infinite alternate;}.top-buttons{display:flex;justify-content:flex-end;gap:8px;margin-bottom:15px;flex-wrap:wrap;}.top-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:600;font-size:.8rem;backdrop-filter:blur(10px);transition:all .2s;}.top-btn.theme-toggle{background:var(--accent);color:#fff;border:none;}.top-btn.admin-btn{background:#8b5cf6;color:#fff;border:none;}.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:15px;}.stat-card{background:var(--surface);border:1px solid var(--border);padding:8px 4px;border-radius:8px;text-align:center;backdrop-filter:blur(10px);}.stat-value{font-size:.95rem;color:var(--accent);font-weight:800;}.stat-label{color:var(--text-muted);font-size:.58rem;text-transform:uppercase;margin-top:2px;font-weight:700;}.work-grid{display:grid;grid-template-columns:1fr;gap:15px;align-items:start;}@media(min-width:900px){.work-grid{grid-template-columns:1.5fr 1fr;}}.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:var(--surface);padding:4px;border-radius:10px;border:1px solid var(--border);margin-bottom:15px;backdrop-filter:blur(10px);}.tab-btn{background:transparent;border:none;color:var(--text-muted);cursor:pointer;font-weight:700;font-size:.8rem;padding:10px 2px;border-radius:7px;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .25s;}.tab-btn.active{background:var(--accent);color:#fff;box-shadow:0 4px 12px var(--accent-soft);}.search-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:15px;backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,.2);}.filter-box{background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.35);border-radius:14px;padding:16px;backdrop-filter:blur(16px);}body.light .filter-box{background:rgba(139,92,246,0.06);}.filter-box h3{font-size:.95rem;margin-bottom:12px;color:#a78bfa;}.label{color:var(--text-muted);font-size:.7rem;display:block;margin-bottom:6px;font-weight:700;text-transform:uppercase;}input,select{width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text);padding:12px;border-radius:8px;font-size:16px;font-family:inherit;margin-bottom:12px;transition:all .2s;}input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}.size-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}.btn{width:100%;background:var(--accent);color:#fff;border:none;padding:14px;border-radius:8px;cursor:pointer;font-weight:700;font-size:.95rem;transition:all .2s;display:flex;align-items:center;justify-content:center;}.btn:active{transform:scale(.98);filter:brightness(.9);}.btn-secondary{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text);padding:10px;font-size:.85rem;margin-top:6px;}.result-card{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:15px;margin-bottom:12px;backdrop-filter:blur(10px);}.result-title{font-size:1.1rem;font-weight:800;margin-bottom:8px;}.badge{display:inline-block;padding:4px 8px;border-radius:4px;font-size:.65rem;font-weight:700;text-transform:uppercase;margin:0 4px 6px 0;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-border);}.info-block{background:rgba(0,0,0,.2);padding:10px;border-radius:8px;margin:10px 0;border-left:3px solid var(--accent);font-size:.85rem;}body.light .info-block{background:rgba(0,0,0,.02);}.email-copy{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--input-bg);padding:8px 10px;border-radius:6px;margin:6px 0;font-family:monospace;font-size:.8rem;border:1px solid var(--border);overflow:hidden;}.copy-btn{background:var(--accent);color:#fff;padding:5px 9px;border:none;border-radius:4px;cursor:pointer;font-weight:600;font-size:.68rem;flex-shrink:0;}.contact-row{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;align-items:center;}.phone-num{font-family:monospace;font-size:.82rem;margin-right:auto;}.btn-call{background:#3b82f6;color:#fff;padding:6px 10px;border-radius:6px;text-decoration:none;font-weight:600;font-size:.75rem;}.btn-wa{background:var(--whatsapp);color:#fff;padding:6px 10px;border-radius:6px;text-decoration:none;font-weight:600;font-size:.75rem;}.loading{text-align:center;padding:20px;color:var(--accent);font-weight:600;}.spinner{display:inline-block;width:28px;height:28px;border:2px solid var(--accent-soft);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:6px;}.no-results{padding:14px;border-radius:8px;text-align:center;font-weight:600;background:var(--surface);color:var(--text-muted);margin:15px 0;}.error-msg{background:rgba(239,43,43,.1);color:var(--danger);border-left:4px solid var(--danger);padding:12px;border-radius:6px;margin:10px 0;}.results-summary{color:var(--text-muted);font-size:.85rem;margin:15px 0 10px;padding:10px;background:var(--surface);border-radius:8px;}.login-box h1{font-size:1.9rem;margin-bottom:4px;font-weight:900;}.login-box h1 span{color:var(--accent);}.main-app{display:none;}.main-app.visible{display:block;}.admin-app{display:none;}.admin-app.visible{display:block;}.admin-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;}.admin-section h2{font-size:1.3rem;margin-bottom:15px;color:var(--accent);}.code-item{background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}.code-status{display:inline-block;padding:4px 8px;border-radius:4px;font-size:.7rem;font-weight:700;text-transform:uppercase;}.code-status.active{background:#10b981;color:#fff;}.code-status.disabled{background:#ef4444;color:#fff;}.code-status.expired{background:#6b7280;color:#fff;}.footer{text-align:center;padding:20px 0;color:var(--text-muted);font-size:.75rem;margin-top:15px;}.search-wrap{position:relative;}.suggestions{position:absolute;top:100%;left:0;right:0;background:var(--surface-2);border:1px solid var(--accent-border);border-radius:8px;margin-top:-8px;z-index:50;max-height:260px;overflow-y:auto;box-shadow:0 10px 30px rgba(0,0,0,.5);display:none;}.suggestions.show{display:block;}.sugg-item{padding:10px 12px;cursor:pointer;font-size:.85rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:8px;}.sugg-item:hover{background:var(--accent-soft);color:var(--accent);}.sugg-item small{color:var(--text-muted);}.filter-toggle{width:100%;background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.4);padding:12px;border-radius:10px;cursor:pointer;font-weight:700;font-size:.9rem;margin-bottom:15px;}.filter-toggle:active{transform:scale(.99);}.filter-box{display:none;margin-bottom:15px;}.filter-box.show{display:block;}.community-bar{background:var(--surface);border:1px solid rgba(139,92,246,.35);border-radius:12px;padding:14px;margin-bottom:15px;}.cb-title{font-size:.78rem;color:var(--text-muted);margin-bottom:8px;font-weight:700;}.chip-row{display:flex;flex-wrap:wrap;gap:8px;}.chip{background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.4);border-radius:20px;padding:7px 12px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s;}.chip:hover{background:var(--accent);color:#fff;border-color:var(--accent);}.chip b{font-weight:800;}.dld-tag{display:inline-block;padding:4px 9px;border-radius:5px;font-size:.68rem;font-weight:700;margin:0 5px 5px 0;}.dld-tag.sale{background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-border);}.dld-tag.price{background:rgba(59,130,246,.14);color:#3b82f6;border:1px solid rgba(59,130,246,.4);}.dld-tag.size{background:rgba(255,255,255,.06);color:var(--text-muted);border:1px solid var(--border);}body.light .dld-tag.size{background:rgba(0,0,0,.04);}.dld-agent{font-size:.8rem;color:var(--text-muted);margin:6px 0;}.dld-permit{display:inline-block;background:rgba(74,222,128,.12);color:var(--success);border:1px solid rgba(74,222,128,.4);border-radius:6px;padding:6px 10px;font-size:.72rem;font-weight:800;margin:6px 0 10px;}
+.ai-chat{max-height:55vh;overflow-y:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:10px;}
+.ai-msg{padding:11px 13px;border-radius:12px;font-size:.9rem;line-height:1.5;max-width:92%;white-space:pre-wrap;word-wrap:break-word;}
+.ai-msg.user{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:3px;}
+.ai-msg.ai{align-self:flex-start;background:var(--surface-2);border:1px solid var(--border);border-bottom-left-radius:3px;}
+.ai-hint{color:var(--text-muted);font-size:.78rem;text-align:center;padding:14px;}@media (max-width:768px){.tabs{grid-template-columns:1fr;}}</style><style>
+/* ---- Native app feel (esp. when installed to home screen) ---- */
+html{-webkit-text-size-adjust:100%;}
+html,body{overscroll-behavior-x:none;}
+body{
+  -webkit-overflow-scrolling:touch;
+  padding-left:calc(10px + env(safe-area-inset-left));
+  padding-right:calc(10px + env(safe-area-inset-right));
+  padding-bottom:calc(10px + env(safe-area-inset-bottom));
+}
+/* text stays copyable everywhere (search results, AI answers, phones, emails);
+   only buttons & nav chrome aren't selectable, so they feel like app buttons */
+button,.btn,.btn-secondary,.top-btn,.tab-btn,.chip,.filter-toggle,.copy-btn,.code-status,.spinner{
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+}
+/* when launched from the home-screen icon: sit below the notch, hide the web scrollbar */
+html.standalone body{padding-top:calc(12px + env(safe-area-inset-top));}
+html.standalone ::-webkit-scrollbar{width:0;height:0;}
+/* remove blue tap flashes on buttons/links for a native touch */
+button,a,.chip,.tab-btn,.top-btn,.btn{-webkit-tap-highlight-color:transparent;}
+</style><style>
+/* ===== STUDIO finish — professional refinement of the layout.
+   Keeps the red accent + matrix background; refines the ground, the top bar,
+   the stat strip, panels, buttons and typography. Build by Oussama. ===== */
+:root{--r:16px;--bg:#0a0708;}                 /* warm near-black (dark mode only; light mode unchanged) */
+body{-webkit-font-smoothing:antialiased;}
+.container{max-width:1080px;padding:0 6px calc(46px + env(safe-area-inset-bottom));}
+
+/* ---- App bar (main view): app icon + name on the left, actions on the right ---- */
+.appbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  padding:14px 2px 16px;margin:8px 0 20px;border-bottom:1px solid var(--border);}
+.brand{display:flex;align-items:center;gap:12px;min-width:0;text-align:left;}
+.brandtxt{text-align:left;}
+.brandmark{width:44px;height:44px;border-radius:12px;background:radial-gradient(120% 120% at 30% 25%,#151517,#0a0a0c);
+  display:grid;place-items:center;box-shadow:0 0 0 1px var(--border),0 6px 18px rgba(0,0,0,.5);flex-shrink:0;}
+.brandmark svg{filter:drop-shadow(0 0 6px rgba(239,43,43,.55));}
+.brandtxt h1{font-size:1.4rem;font-weight:800;letter-spacing:-.02em;line-height:1;}
+.brandtxt h1 span{color:var(--accent);text-shadow:0 0 12px var(--accent-glow);}
+.brandsub{font-size:.66rem;color:var(--text-muted);margin-top:6px;letter-spacing:.02em;font-weight:600;}
+.brandsub b{color:var(--accent);font-weight:800;}
+.appbar .top-buttons{margin:0;justify-content:flex-end;flex:1;min-width:180px;}
+
+/* ---- Sub-view headers (campaign / email / admin) — tidy ---- */
+.header{margin:8px 0 16px;padding:12px;}
+.header h1{font-size:1.5rem;line-height:1.1;}
+.header p{font-size:.8rem;margin-top:5px;}
+.ai-badge{margin-top:10px;}
+
+/* ---- Toolbar buttons ---- */
+.top-buttons{gap:8px;margin-bottom:18px;align-items:center;flex-wrap:wrap;}
+.top-btn{padding:9px 14px;border-radius:11px;font-size:.76rem;font-weight:700;line-height:1;box-shadow:0 2px 10px rgba(0,0,0,.2);}
+
+/* ---- Stat strip: one connected card with hairline dividers + tabular figures ---- */
+.stats-grid{gap:1px;margin-bottom:22px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;backdrop-filter:blur(10px);}
+.stat-card{border:none;border-radius:0;background:var(--surface);padding:16px 10px;min-height:72px;display:flex;flex-direction:column;justify-content:center;backdrop-filter:none;}
+.stat-value{font-size:1.2rem;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.01em;}
+.stat-label{font-size:.6rem;letter-spacing:.08em;margin-top:7px;}
+
+/* ---- Consistent panels ---- */
+.search-box,.community-bar,.filter-box,.admin-section{border-radius:var(--r);margin-bottom:18px;box-shadow:0 8px 26px rgba(0,0,0,.28);}
+.search-box{padding:20px;}
+.community-bar{padding:16px 18px;}
+.admin-section{padding:24px;}
+.admin-section h2{font-size:1.15rem;letter-spacing:.01em;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+
+/* ---- Tabs ---- */
+.tabs{gap:6px;padding:5px;border-radius:14px;margin-bottom:18px;}
+.tab-btn{padding:12px 4px;font-size:.82rem;border-radius:10px;}
+
+/* ---- Inputs / buttons / cards rhythm ---- */
+input,select,textarea{border-radius:10px;padding:13px 14px;}
+.btn{border-radius:12px;padding:14px;font-weight:800;background:linear-gradient(180deg,#ff5a4d,var(--accent));box-shadow:0 6px 18px var(--accent-soft),0 0 0 1px rgba(255,255,255,.08) inset;}
+.btn:hover{filter:brightness(1.06);}
+.btn-secondary{border-radius:10px;}
+.result-card{border-radius:14px;padding:16px 18px;margin-bottom:14px;}
+.results-summary{border-radius:12px;padding:12px 15px;margin:16px 0 12px;}
+.code-item{border-radius:12px;padding:14px;}
+.label{letter-spacing:.05em;margin-bottom:8px;}
+.footer{padding:26px 0;}
+
+@media(min-width:900px){
+  .container{padding-left:12px;padding-right:12px;}
+  .brandtxt h1{font-size:1.55rem;}
+  .stat-value{font-size:1.4rem;}
+  .work-grid{gap:18px;}
+}
+@media(max-width:520px){
+  .appbar{justify-content:center;}
+  .appbar .top-buttons{justify-content:center;flex-basis:100%;}
+}
+
+/* ---- Main view: 2-column dashboard body (the part from the preview) ---- */
+.dash-grid{display:grid;grid-template-columns:1fr;gap:18px;align-items:start;margin-bottom:16px;}
+@media(min-width:900px){.dash-grid{grid-template-columns:1.7fr 1fr;}}
+.main-col{display:flex;flex-direction:column;min-width:0;}
+.side-col{display:flex;flex-direction:column;gap:16px;}
+/* each search box reads as a titled panel */
+.tab-content .search-box>.label:first-child{display:block;margin:-2px 0 14px;padding-bottom:12px;border-bottom:1px solid var(--border);font-size:.82rem;letter-spacing:.02em;color:var(--text);text-transform:none;font-weight:800;}
+/* sidebar panels */
+.side-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:0 8px 26px rgba(0,0,0,.28);backdrop-filter:blur(10px);}
+.side-head{font-size:.82rem;font-weight:800;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.qa{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 13px;border:1px solid var(--border);border-radius:11px;margin-bottom:9px;background:var(--input-bg);font-size:.84rem;font-weight:600;cursor:pointer;transition:.15s;}
+.qa:last-child{margin-bottom:0;}
+.qa:hover{border-color:var(--accent-border);}
+.qa .ar{color:var(--text-muted);}
+.areachips{display:flex;flex-wrap:wrap;gap:8px;}
+.areachip{background:rgba(139,92,246,.14);color:#a78bfa;border:1px solid rgba(139,92,246,.38);border-radius:16px;padding:7px 12px;font-size:.75rem;font-weight:700;cursor:pointer;transition:.15s;}
+.areachip:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+/* ---- Phone: 2×2 stat grid so big numbers don't overflow the screen ---- */
+@media(max-width:600px){
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .stat-card{padding:14px 8px;min-height:60px;}
+  .stat-value{font-size:1.15rem;}
+  .brandtxt h1{font-size:1.3rem;}
+  .appbar{flex-direction:column;align-items:stretch;gap:12px;}
+  .appbar .top-buttons{width:100%;min-width:0;justify-content:flex-start;flex-wrap:wrap;}
+  .top-btn{font-size:.72rem;padding:8px 11px;}
+}
+</style>
+<style>
+/* ===== Accessibility & interaction polish pass =====
+   Visible keyboard focus, real hover/press feedback on every clickable
+   control, 44px minimum touch targets, and reduced-motion support —
+   layered on top of the existing tokens, no color/brand changes. ===== */
+
+/* Keyboard focus: visible on every interactive element, invisible for mouse/touch users */
+button:focus-visible,.btn:focus-visible,.btn-secondary:focus-visible,.top-btn:focus-visible,
+.tab-btn:focus-visible,.chip:focus-visible,.areachip:focus-visible,.navbtn:focus-visible,
+.navmini:focus-visible,.qa:focus-visible,.filter-toggle:focus-visible,.copy-btn:focus-visible,
+input:focus-visible,select:focus-visible,a:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px;border-radius:8px;
+}
+:focus:not(:focus-visible){outline:none;}
+
+/* Hover feedback on controls that had none */
+.top-btn:hover{filter:brightness(1.08);border-color:var(--accent-border);}
+.top-btn:active{transform:scale(.97);}
+.tab-btn:not(.active):hover{color:var(--text);background:var(--accent-soft);}
+.chip:active,.areachip:active{transform:scale(.96);}
+.qa{cursor:pointer;}
+.qa:active{transform:scale(.98);background:var(--accent-soft);}
+.code-item,.result-card{transition:box-shadow .2s ease,transform .2s ease;}
+.copy-btn:hover,.btn-call:hover,.btn-wa:hover{filter:brightness(1.1);}
+.copy-btn:active,.btn-call:active,.btn-wa:active{transform:scale(.95);}
+
+/* Minimum 44x44 touch target on compact controls (mobile bottom nav, tab bar) */
+.navbtn{min-height:44px;}
+.tab-btn{min-height:44px;}
+.top-btn{min-height:38px;}
+@media(max-width:600px){.top-btn{min-height:40px;}}
+
+/* Respect reduced-motion preference */
+@media(prefers-reduced-motion:reduce){
+  .ai-badge{animation:none;}
+  .spinner{animation:spin 1.4s linear infinite;}
+  *{scroll-behavior:auto!important;}
+}
+</style></head><body>
+<canvas id="neuralCanvas"></canvas>
+
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAQmElEQVR4nO2dfUxV9R/H3zzcC0nXeAyugEzaVNyKMEGTlaUOlDDUrZs9iLqyLJWcrbFq2oMO15qtlknkw9BSyiliQrCUagk6TW1WLMkUCrnx4OUZUZ7O7w8HP+499+Gcc5/OOd/Pa+OPe+453+/nwvv1/X7PA+ADmaHRaDhv10C4j4GBAR9v1zAWrxZDYScA70rh8Y4p9IQ9PC2Dxzqj4BNi8JQIbu+Egk84g7tFcFvjFHzClbhLBJc3SsEn3ImrRfB1ZWMUfsLduDpjLrGJgk94A1fMBk7PABR+wlu4IntOCUDhJ7yNsxmULACFn5ALzmRRkgAUfkJuSM2kaAEo/IRckZJNUQJQ+Am5IzajggWg8BNKQUxWBQlA4SeUhtDMOhSAwk8oFSHZdemjEAShNOwKQKM/oXQcZdimABR+Qi3YyzItgQimsSoAjf6E2rCVaZoBCKbhCUCjP6FWrGWbZgCCacwEoNGfUDuWGacZgGCaUQFo9CdYYWzWaQYgmIYEIJjGF6DlD8EeI5mnGYBgGhKAYBoSgGAaEoBgGh86ASZYhmYAgmlIAIJpSACCafy9XYCSaZk8WfC+9/71lxsrIaRCJ8ECERN2oZAU3ocEsIM7Qm8LksE7kABW8GTwLSERPAsJMAZvBt8SEsEzkACQV/AtIRHcC/OXQeUcfkD+9SkdpgVQSriUUqcSYXIJpORA0ZLItTA3Ayg5/IDy65cbTM0Arg6PmNHYm30TtmFGAFcF0BXBk1MtrMOEAM4Gzp1Bk3NtLKB6AZwJmCfDpZQ61QZzJ8FC8XSoKMTeQdUzgJRRVQ5BVGrdSkS1M4CSQySlDro8Kg1VCqDk8I9AEngGVQogFrmFfwS51qUmVCeA2FFQ7iETWx/NAuJQnQBikHv4R1BKnUpEVQLQ6HcH+j4IR1UCiEFpo6rS6lUKqhGAhT9R4s2H79SKagQgCCkwJ4BSR/8RlF6/3FCFADTdW4e+L45RhQAEIRWmBFDL8kEtn0MOMCUAQVhCAhBMo3gBhJ7oqW3ZIPTz0ImwfRQvAEE4AwlAMA0JQDANCUAwDQlAMA0JQDANCUAwDQlAMA0JQDANCUAwjeIFYPWRAFYfAXE1iheAIJyBBCCYhikB1LIMUsvnkANMCUAQlqhCADrRsw59XxyjCgHEoPTlg9LrlxvMCUAQY1GNACz82UAW/vyjp1GNAGJRmgRKq1cpqEoAGvXuQN8H4ahKALEoZVRVSp1KRHUCqO1fCqntXz7JDdUJIAW5SiDXutSEKgVQw78YVcO/elUCqhQAULYEFH7P4aPRaDhvF+FOpIbaG4FyVkCSQDyqnQGcxdOzgSv6k8sMpiRUPwMA8h5Z3RFamgmEw4QAgOuC5opweWKkJgmEwYwAgOuDJ/fnj0gCxzAlAMDeOpkksA9zJ8GsBYI14cXC3AwwFpbCwZr4QmFuBhiLUkKhlBNvJcK0AID8JRipjyRwD0wvgSyRU0BsBd4VNcpdek9CAljBmyIICSdJ4DpIADt4UgRv/B4DSUACCEaOjyyQBM5DAjiBHP5KA0ngHCSACiAJpMP8ZVA1QJdIpUMCqASSQBokgIogCcRDAqgMkkAcJIAKIQmEQwKoFJJAGCSAiiEJHEMCqBxnJVD7/QESgAGkhljt4QdIAGYQG2YWwg+QAEwhNNSshB8gAZjDUbhZCj9AAjCJrZCzFn6ABGAWy7CzGH6ABGAaV/7CvVKh3wcgmIZmAIJpSACCaUgAgmlIAIJpSACCaUgAgmlIAIJpSACCaUgAgmlIAMJjnD9/Hv39/aNfFRUV3i4J/u5svKCgAKtWreJtHxgYQH9/P7q6utDa2oq6ujpcvHgRR44cwV8Onkux1eYIt2/fRnd3NxoaGnDp0iUcP34cpaWl4Djnn/gICwvDihUrkJaWhmnTpiEkJAQcx6G9vR2dnZ0wGo2oqanBH3/8gVOnTuHvv/92uk/CvbhVAFtoNBpoNBoEBQVBr9fjgQceQFZWFt59911UVlZi48aNuHz5sqS2AwICEBAQgPDwcCQlJWHlypU4e/Ysli5ditbWVsk1Z2RkYM+ePQgLC+O9p9frodfrMXXqVMydOxcAkJ+fj9dee01yf4RnkNUSyMfHB/Pnz8eZM2dgMBhc1u7MmTOxc+dOycdPnz4dhw4dshp+Qtl4XIBFixZBq9XinnvuwdSpU7F69Wr8/vvvZvsEBQWhsLAQ8+bNE9WmVqtFZGQkNmzYwFvyZGZmIiQkRFLN7733HrRa7ejr3t5erF+/HvHx8dDpdNDr9Zg7dy4++OAD/Pfff5L6ILyD12aAvr4+XLt2Dfv27UNKSgp27dpl9r6/vz8KCwsRFBQkqt329nbs3LkTp0+fNtvu5+eH2NhY0XVqtVo8/vjjZtu2bduGgoICXL9+Hbdv34bJZEJVVRU2bdqE++67D6+++iqam5tF90V4HlksgYaGhpCTk4OzZ8+abY+MjMTLL7/ssn7a2tpEHxMREWE2+gPAv//+a3P/wcFB7N69G3l5eXbb1el0WLt2LY4dO4b6+np0dnaio6MDf/75J3bt2oXZs2fbPXbBggXIy8tDZWUl6uvr0dXVhZs3b6KlpQUXL17Enj17sHDhQrs12LoqM2nSJBQUFODq1avo6+tDeXk579jAwEAsX74cRUVFqK2thclkQldXFy5fvozS0lKsXr1a8JIxLS0Nhw8fRkNDA3p7e9HQ0ICioiIkJiYKOt4pNBoN566vvXv3cpZkZmba3H/JkiW8/c+dOyeqzfDwcG7dunXc8PCw3XaEfkVHR/P6O3v2LBcTEyP5+/LUU09xJpOJ164l+/fv5+6++27e8QcPHnR47AgnTpzgQkJCrNZx6dIls30rKyu5WbNmcTdu3OBtH3tcRkYG19jY6LDv4uJiu/1VVVVxBw4csHl8X18fl56e7rZ8ajQazitXgWzx448/YnBwEP7+/y/roYceQlBQEHp7e20ed/z4cbvt1tfXIzs7W1JNLS0tMBqNmDBhwui2lJQUXLlyBZWVlaiursavv/6KCxcuoKOjw2F7BoMBX375JXx8fBzuu3z5cowfPx4Gg0HyZdz58+djx44dWLlypcN9dTodioqKeCP32FqffPJJfPPNN/Dz85NUz1hSU1ORmppq8/3AwEB88cUXmDJlCoaGhpzuzxqyWAKN0NvbyzuJ9PX1RWRkpOQ2e3p6sGHDBly9elVyG5999hlvW2BgIJ544gnk5eWhvLwcTU1NOHfuHHJzcxEaGmq1nYiICOTn55sFqqOjAy+++CL0ej3i4uKwbds2s2OysrJ48ra3t+PAgQMwGAyYPn06YmJiRi8pp6eno6qqymz/ZcuWITo62uHnTE5ORlxcHPLy8hAfH4/Q0FAsXLgQFy5cAHDnPsju3bt54T948CBSUlKg0+kQHR2N1NRUbN68GdevX3fYZ1tbGwwGA4KDgzFjxgzU1NSYvT9x4kS7y0GnkdMSSKPRcDU1NbxjUlJS7LYphO3bt0v+HAEBAdxXX30luK/29nZu8eLFvHbefvtt3r5PP/00b78jR46Y7VNbWyuq3mnTpvH6Wb58ucMlEMdx3NatW222++abb/L2LygoEFyXtf6ys7PN9snMzOTts379erdlVFYzAHBnGrbE0dJi7GXQsLAwZGRk8O7Cbty4ERkZGZJqGh4exqpVq7BkyRL8/PPPDpcjwcHB+Prrr5GQkGC2/bHHHjN73dbWhpKSEt7x3333ndnryZMnIy4uzmxbcnIytm/fjurqajQ2NqK7u3v0ZNZyFAVgtoSzxcDAAD755BOb74/c5BuB4zhs3brVYbu26OjowKFDh8y2Wbt7HhwcLLkPR8jqHCAoKIj3gxoeHkZLS4vgNrq7u3Hy5EmsWLEC1dXVZu+tWbOGFy4xlJWVoaysDBEREXjkkUcwc+ZMzJo1C8nJyWbnLcCdO9KvvPIKcnJyRrdZLkNCQ0Nx69YtQX0nJCTgn3/+gY+PDz799FO89NJLomoXcjm5trbW7mBjWX9TUxOamppE1TGWuro63tq+r6+Pt5+vr/vGaVnNAPPmzeOtL8+fP2/3BNgW1o67//77napvhNbWVhQXFyM3Nxdz5sxBbGws9u7dy9vvwQcfNHst5MTXFiPnFStWrBAdfqGYTCa77ztTvzXa29t524aHh13ahyNkI4Cfnx9yc3N524uLiyW3afkDc9dUajKZsG7dOt7opdFozF43NjZK7mNkhnn22WfNtvf39yMnJwcTJ07EXXfdBa1Wi/j4eEl9OLrSYnlSGxUVhaioKEl9yQVZCODv748dO3YgOTnZbHtLSwsKCgoktTljxgyMGzeO154UKioqkJaWZncEHDduHC/wRqPR7PVPP/1k9tpkMiEkJGT0/MXe1/79+wEAMTExZm2cP38en3/+OZqamkYD7OgGmFR++OEHs9c+Pj5466233NKXp/CaAIGBgZg0adLo05ovvPCC2ftDQ0NYuXKl6OWPTqfDvHnzsG/fPt57lj9AoaSmpqK0tBS1tbXYsmUL0tPTodfrodVqERwcjEcffRQlJSW884CTJ0+avS4sLER3d/fo67CwMJw8eRKLFi1CZGQkNBoNQkJCMHnyZMyZMwdvvPEGjh07ZvZZLCVOSkrC4sWLMW7cOERFRWHt2rX48MMPJX1ORxQWFvLOEdasWYM9e/YgMTFx9CLE9OnTsXnzZnz88cduqcPlePIyqBB6enq45557zqVt3rx5k5syZYqkz3Hr1i3R/dXV1XHjx4/ntZWdnc27S+2IsrKy0eNff/110bVwHMe9//77Di9LWt7xtfZlMBi4wcFBQX06uhNsrb/Y2FheO++8845b8gnIZAk0lsrKSjz88MO8y2PO0NzcjKysLFy7dk3S8T09PaL2r6mpwYIFC6xe0SgqKsKyZctw48YNSbXk5+fj+++/t/n+0NAQNm3aJKltIRw9ehRLly5VzVOvXrkMOjQ0hP7+fnR2dqK1tRX19fW4ePEiDh8+jNraWqfa5jgON2/eRGtrK2pqalBRUYGioiJ0dXVJbjMuLg6zZ8/G7NmzkZSUhPj4eEyYMAE6nQ5+fn7o6emB0WjEb7/9hpKSEhw7dgyDg4M22zt69ChOnDiBZ555BgsWLEBiYiLCw8Oh0WjQ1tYGk8kEo9GIX375BadPn8aZM2dGjx0YGEBWVhbWrFmD559/HgkJCfD19UVzczNOnTqFjz76CE1NTdiyZYvkz+uI8vJyTJ06FQaDARkZGUhKSkJERAT8/f1hNBpx5coVfPvtt05dwPAUPsCdJZC3CyEITzMwMOAjuyUQQXgSX+COCd4uhCA8yUjmaQYgmIYEIJhmVABaBhGsMDbrNAMQTGMmAM0ChNqxzDjNAATT8ASgWYBQK9ayTTMAwTRWBaBZgFAbtjJNMwDBNDYFoFmAUAv2smx3BiAJCKXjKMO0BCKYxqEANAsQSkVIdgXNACQBoTSEZlbwEogkIJSCmKyKOgcgCQi5Izajok+CSQJCrkjJpqSrQCQBITekZlLyZVCSgJALzmTRqfsAJAHhbZzNoNM3wkgCwlu4InsuDS/9gS3CE7hy0HXpoxA0GxDuxtUZc1tgaTYgXIm7Ble3j9gkAuEM7l5VeGzJQiIQYvDUctrja3YSgbCHp88jvXrSSjIQgHcvnsjuqg1JoW7kdqXwf/Mvk6XBCgbPAAAAAElFTkSuQmCC" alt="DB Search" style="width:66px;height:66px;border-radius:17px;margin-bottom:14px;box-shadow:0 8px 24px rgba(0,0,0,.5),0 0 0 1px var(--border);">
+    <h1><span>DB</span> Search</h1>
+    <div style="color:var(--text-muted);font-size:.8rem;margin-bottom:20px;">AI System Core · Build by Oussama · <b style="color:var(--accent);">v6</b></div>
+    <div style="position:relative;">
+      <input type="password" id="loginCode" placeholder="Enter Access Code" autocomplete="off" autocorrect="off" autocapitalize="none" style="padding-right:70px;">
+      <button type="button" id="toggleCode" style="position:absolute;right:8px;top:9px;width:auto;background:transparent;border:none;color:var(--accent);font-weight:700;font-size:.78rem;cursor:pointer;padding:4px 8px;">👁 Show</button>
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;margin-top:14px;cursor:pointer;user-select:none;font-size:.82rem;color:var(--text-muted);font-weight:600;">
+      <input type="checkbox" id="rememberMe" style="width:auto;margin:0;">
+      Remember me on this device
+    </label>
+    <button class="btn" id="loginSubmitBtn" style="margin-top:12px;">🔓 Enter System</button>
+    <div id="loginErr" style="color:var(--danger);margin-top:12px;display:none;font-weight:700;font-size:.82rem;">❌ Access Denied</div>
+  </div>
+</div>
+
+<!-- ===== Option A unified navigation: top bar (web) / bottom tab bar + More (mobile) ===== -->
+<style>
+:root{--nav-h:62px;}
+.navshell{display:none;}
+.navshell.on{display:block;position:fixed;left:0;right:0;bottom:0;z-index:900;}
+.navbar{display:grid;grid-template-columns:repeat(4,1fr);align-items:center;gap:2px;
+  background:var(--surface-2);border-top:1px solid var(--border);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  padding:7px 6px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -8px 24px rgba(0,0,0,.32);}
+.nav-brand,.nav-right{display:none;}
+.navbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  background:transparent;border:none;color:var(--text-muted);cursor:pointer;
+  font-size:.6rem;font-weight:800;letter-spacing:.02em;padding:4px 2px;border-radius:10px;transition:.15s;}
+.navbtn .ni-ic{font-size:19px;line-height:1;}
+.navbtn.active{color:var(--accent);}
+.navbtn.active .ni-ic{filter:drop-shadow(0 0 7px var(--accent-border));}
+.navbtn.sec{display:none;}            /* secondary items live in More on mobile */
+.navbtn.nav-more{display:flex;}
+.more-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:940;}
+.more-backdrop.on{display:block;}
+.more-sheet{display:none;position:fixed;left:0;right:0;bottom:0;z-index:950;
+  background:var(--surface-2);border:1px solid var(--border);border-bottom:0;border-radius:18px 18px 0 0;
+  padding:12px 12px calc(14px + env(safe-area-inset-bottom));box-shadow:0 -18px 40px rgba(0,0,0,.5);
+  transform:translateY(100%);transition:transform .22s ease;}
+.more-sheet.on{display:block;transform:translateY(0);}
+.more-handle{width:38px;height:4px;border-radius:3px;background:var(--border);margin:2px auto 12px;}
+.more-ttl{font-size:.62rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.09em;font-weight:800;margin:0 4px 8px;}
+.more-row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+  background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);
+  font-size:.9rem;font-weight:600;padding:14px 6px;cursor:pointer;}
+.more-row:last-child{border-bottom:0;}
+.more-row span{font-size:18px;width:22px;text-align:center;}
+.more-row em{margin-left:auto;font-style:normal;font-size:.56rem;font-weight:800;letter-spacing:.06em;
+  text-transform:uppercase;color:#a78bfa;}
+.more-row.sec{display:none;}
+.more-row.sec.show{display:flex;}
+/* content clearance for the fixed bottom bar */
+body.has-nav{padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 8px);}
+body.has-nav #mainApp .appbar .top-buttons{display:none;}   /* nav replaces the old scattered buttons */
+
+/* ---- WEB: turn the bar into a sticky TOP navigation ---- */
+@media(min-width:860px){
+  .navshell.on{position:sticky;top:0;bottom:auto;z-index:900;margin-bottom:14px;}
+  .navbar{display:flex;align-items:center;gap:6px;grid-template-columns:none;
+    border-top:0;border-bottom:1px solid var(--border);border-radius:0 0 16px 16px;
+    padding:10px 14px;box-shadow:0 8px 26px rgba(0,0,0,.28);max-width:1080px;margin:0 auto;}
+  .nav-brand{display:flex;align-items:center;gap:9px;min-width:0;flex-shrink:0;}
+  .nav-logo{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:15px;
+    background:radial-gradient(120% 120% at 30% 25%,#26120f,#0a0a0c);}
+  .nav-title{font-size:.98rem;font-weight:850;letter-spacing:-.01em;white-space:nowrap;}
+  .nav-title i{color:var(--accent);font-style:normal;}
+  .nav-items{display:flex;flex:1;flex-wrap:wrap;gap:5px;margin-left:6px;}
+  .navbtn{flex-direction:row;gap:6px;font-size:.78rem;padding:9px 12px;border:1px solid transparent;border-radius:10px;}
+  .navbtn .ni-ic{font-size:15px;}
+  .navbtn:hover{color:var(--text);border-color:var(--border);}
+  .navbtn.active{background:var(--accent);color:#fff;box-shadow:0 4px 12px var(--accent-soft);}
+  .navbtn.active .ni-ic{filter:none;}
+  .navbtn.sec.show{display:flex;}          /* permitted secondary items show inline on web */
+  .navbtn.nav-more{display:none;}
+  .nav-right{display:flex;gap:6px;flex-shrink:0;}
+  .navmini{background:var(--surface);border:1px solid var(--border);color:var(--text);
+    width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:15px;}
+  .navmini:hover{border-color:var(--accent-border);}
+  .more-sheet,.more-backdrop{display:none!important;}
+  body.has-nav{padding-bottom:0;}
+}
+</style>
+<nav id="navShell" class="navshell" aria-label="Sections">
+  <div class="navbar">
+    <div class="nav-brand"><span class="nav-logo">🔎</span><span class="nav-title">DB <i>Search</i></span></div>
+    <div class="nav-items">
+      <button class="navbtn" data-sec="mainApp"><span class="ni-ic">🔍</span><span class="ni-lb">Search</span></button>
+      <button class="navbtn" data-sec="crmApp"><span class="ni-ic">🗂️</span><span class="ni-lb">Leads</span></button>
+      <button class="navbtn" data-sec="campaignApp"><span class="ni-ic">📢</span><span class="ni-lb">Campaign</span></button>
+      <button class="navbtn sec nav-cluster" data-sec="clusterApp"><span class="ni-ic">🏙️</span><span class="ni-lb">Cluster</span></button>
+      <button class="navbtn sec nav-adm" data-sec="emailApp"><span class="ni-ic">📧</span><span class="ni-lb">Email</span></button>
+      <button class="navbtn sec nav-adm" data-sec="adminApp"><span class="ni-ic">⚙️</span><span class="ni-lb">Admin</span></button>
+      <button class="navbtn nav-more" data-sec="__more"><span class="ni-ic">☰</span><span class="ni-lb">More</span></button>
+    </div>
+    <div class="nav-right"><button class="navmini" id="navTheme" title="Theme">☀️</button><button class="navmini" id="navExit" title="Exit">🚪</button></div>
+  </div>
+</nav>
+<div class="more-backdrop" id="moreBackdrop"></div>
+<div class="more-sheet" id="moreSheet" role="menu" aria-label="More sections">
+  <div class="more-handle"></div>
+  <div class="more-ttl">More sections</div>
+  <button class="more-row sec nav-cluster" data-sec="clusterApp"><span>🏙️</span> My Cluster</button>
+  <button class="more-row sec nav-adm" data-sec="emailApp"><span>📧</span> Email marketing <em>Admin</em></button>
+  <button class="more-row sec nav-adm" data-sec="adminApp"><span>⚙️</span> Admin — team &amp; codes <em>Admin</em></button>
+  <button class="more-row" id="moreTheme"><span>🌗</span> Light / Dark</button>
+  <button class="more-row" id="moreExit"><span>🚪</span> Exit</button>
+</div>
+<script>
+(function(){
+  var SECTIONS=['mainApp','crmApp','filterApp','clusterApp','campaignApp','emailApp','adminApp'];
+  function hideAll(){SECTIONS.forEach(function(s){var el=document.getElementById(s);if(el)el.classList.remove('visible');});}
+  function closeMore(){var s=document.getElementById('moreSheet'),b=document.getElementById('moreBackdrop');if(s)s.classList.remove('on');if(b)b.classList.remove('on');}
+  function openMore(){var s=document.getElementById('moreSheet'),b=document.getElementById('moreBackdrop');if(s)s.classList.add('on');if(b)b.classList.add('on');}
+  function setActive(id){document.querySelectorAll('#navShell .navbtn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-sec')===id);});}
+  window.showSection=function(id){
+    closeMore();
+    if(id==='__more'){openMore();return;}
+    hideAll();
+    if(id==='mainApp'){var m=document.getElementById('mainApp');if(m)m.classList.add('visible');}
+    else if(id==='crmApp'&&window.goToCrm){window.goToCrm();}
+    else if(id==='campaignApp'&&window.goToCampaign){window.goToCampaign();}
+    else if(id==='emailApp'&&window.goToEmail){window.goToEmail();}
+    else if(id==='adminApp'&&window.goToAdmin){window.goToAdmin();}
+    else if(id==='clusterApp'&&window.goToCluster){window.goToCluster();}
+    else if(id==='filterApp'&&window.goToFilter){window.goToFilter();}
+    else{var t=document.getElementById(id);if(t)t.classList.add('visible');}
+    // if a permission gate bounced us back to main, reflect that
+    var shown=SECTIONS.filter(function(s){var el=document.getElementById(s);return el&&el.classList.contains('visible');});
+    setActive(shown[0]||'mainApp');
+    window.scrollTo(0,0);
+  };
+  // Called by enterApp once the user is authenticated
+  window.__navEnter=function(){
+    var sh=document.getElementById('navShell');if(sh)sh.classList.add('on');
+    document.body.classList.add('has-nav');
+    var admin=!!window.isAdminFlag, cluster=!!window.myClusterFlag;
+    document.querySelectorAll('#navShell .nav-adm, #moreSheet .nav-adm').forEach(function(b){b.classList.toggle('show',admin);b.style.display='';});
+    document.querySelectorAll('#navShell .nav-cluster, #moreSheet .nav-cluster').forEach(function(b){b.classList.toggle('show',cluster);b.style.display='';});
+    setActive('mainApp');
+  };
+  document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('#navShell .navbtn').forEach(function(b){b.addEventListener('click',function(){window.showSection(b.getAttribute('data-sec'));});});
+    document.querySelectorAll('#moreSheet .more-row[data-sec]').forEach(function(b){b.addEventListener('click',function(){window.showSection(b.getAttribute('data-sec'));});});
+    var bd=document.getElementById('moreBackdrop');if(bd)bd.addEventListener('click',closeMore);
+    function toggleTheme(){document.body.classList.toggle('light');var lt=document.body.classList.contains('light');var t=document.getElementById('navTheme');if(t)t.textContent=lt?'🌙':'☀️';}
+    var nt=document.getElementById('navTheme');if(nt)nt.addEventListener('click',toggleTheme);
+    var mt=document.getElementById('moreTheme');if(mt)mt.addEventListener('click',function(){toggleTheme();closeMore();});
+    var nx=document.getElementById('navExit');if(nx)nx.addEventListener('click',function(){if(window.handleLogout)handleLogout();});
+    var mx=document.getElementById('moreExit');if(mx)mx.addEventListener('click',function(){if(window.handleLogout)handleLogout();});
+  });
+})();
+</script>
+
+<div class="main-app" id="mainApp">
+<div class="container">
+  <div class="appbar">
+    <div class="brand">
+      <div class="brandmark" role="img" aria-label="DB Search"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#ef2b2b" stroke-width="2.6" stroke-linecap="round"><circle cx="10" cy="10" r="6.2"></circle><line x1="14.8" y1="14.8" x2="20.6" y2="20.6"></line></svg></div>
+      <div class="brandtxt">
+        <h1><span>DB</span> Search</h1>
+        <div class="brandsub">Property Intelligence · <b>Build by Oussama</b></div>
+        <div class="brandsub" id="greetLine" style="margin-top:5px;color:var(--accent);font-weight:800;font-size:.74rem;text-align:left;"></div>
+      </div>
+    </div>
+    <div class="top-buttons">
+      <button class="top-btn theme-toggle" id="themeToggleBtn">☀️ Light</button>
+      <button class="top-btn" id="campaignBtn" style="background:#25d366;color:#fff;border:none;display:none;">📢 Campaigns</button>
+      <button class="top-btn" id="crmBtn" style="background:#8b5cf6;color:#fff;border:none;">🗂️ Leads &amp; Inventory</button>
+      <button class="top-btn" id="emailBtn" style="background:#ea4335;color:#fff;border:none;display:none;">📧 Emails</button>
+      <button class="top-btn" id="clusterBtn" style="background:#0aa33c;color:#fff;border:none;display:none;">🏙️ My Cluster</button>
+      <button class="top-btn admin-btn" id="adminBtn" style="display:none;">⚙️ Admin</button>
+      <button class="top-btn" id="logoutBtn">🚪 Exit</button>
+    </div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-value" id="statOwners">…</div><div class="stat-label">Owners</div></div>
+    <div class="stat-card"><div class="stat-value" id="statProps">…</div><div class="stat-label">Properties</div></div>
+    <div class="stat-card"><div class="stat-value" id="statProjects">…</div><div class="stat-label">Projects</div></div>
+    <div class="stat-card"><div class="stat-value" id="statPhones">…</div><div class="stat-label">Phones</div></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="smart">🤖 <span>Smart</span></button>
+    <button class="tab-btn" data-tab="name">🔍 <span>Search</span></button>
+    <button class="tab-btn" data-tab="phone">📱 <span>Phone</span></button>
+  </div>
+  <div class="dash-grid">
+  <div class="main-col">
+  <div id="tab-smart" class="tab-content active">
+    <div class="search-box">
+      <label class="label">🤖 Ask Claude — your AI assistant</label>
+      <div class="ai-chat" id="aiChat"><div class="ai-hint">👋 Hi! Ask me anything about your database — e.g. <i>"Who owns villa DL-J439 in Damac Lagoons and what did they pay?"</i>, <i>"List owners in Ghalia tower JVC"</i> or <i>"How many owners are in Damac Hills 2?"</i></div></div>
+      <input type="text" id="aiInput" placeholder="Ask anything about your owners & properties…" autocomplete="off">
+      <button class="btn" id="aiSendBtn">✨ Ask Claude</button>
+    </div>
+  </div>
+  <div id="tab-name" class="tab-content">
+    <div class="search-box">
+      <label class="label">🔍 Search Everything — name • building • unit • villa / plot code • community</label>
+      <div class="search-wrap">
+        <input type="text" id="nameInput" placeholder="e.g. Ghalia, DL-J439, portofino 661, Binghatti Corner, owner name…" autocomplete="off">
+        <div class="suggestions" id="suggName"></div>
+      </div>
+      <button class="btn" id="nameSearchBtn">🔍 Search</button>
+      <button class="btn btn-secondary" id="clearNameBtn">Clear</button>
+    </div>
+  </div>
+  <div id="tab-phone" class="tab-content">
+    <div class="search-box">
+      <label class="label">📱 Telecom Identifier</label>
+      <input type="tel" id="phoneInput" inputmode="numeric" placeholder="e.g., 971501234567">
+      <button class="btn" id="phoneSearchBtn">🔍 Scan Phone Record</button>
+      <button class="btn btn-secondary" id="clearPhoneBtn">Clear</button>
+    </div>
+  </div>
+
+  <button class="filter-toggle" id="openFilterBtn" style="background:rgba(139,92,246,.18);color:#a78bfa;border:1px solid rgba(139,92,246,.45);">🔎 Filter by Area / Community →</button>
+
+  <div id="resultsContainer"></div>
+  </div><!-- /main-col -->
+  <aside class="side-col">
+    <div class="side-panel">
+      <div class="side-head">⚡ Quick actions</div>
+      <div class="qa" onclick="document.querySelector('.tab-btn[data-tab=&quot;smart&quot;]').click()"><span>🤖 Ask Claude (AI)</span><span class="ar">›</span></div>
+      <div class="qa" onclick="document.getElementById('openFilterBtn').click()"><span>🔍 Search by community</span><span class="ar">›</span></div>
+      <div class="qa" onclick="document.querySelector('.tab-btn[data-tab=&quot;phone&quot;]').click()"><span>📱 Find by phone</span><span class="ar">›</span></div>
+      <div class="qa" onclick="document.getElementById('campaignBtn').click()"><span>📢 Build a campaign</span><span class="ar">›</span></div>
+      <div class="qa" onclick="document.getElementById('emailBtn').click()"><span>📧 Email drip</span><span class="ar">›</span></div>
+    </div>
+    <div class="side-panel">
+      <div class="side-head">📍 Top areas</div>
+      <div class="areachips">
+        <span class="areachip" onclick="areaJump('Damac Hills')">Damac Hills</span>
+        <span class="areachip" onclick="areaJump('Jumeirah Village Circle')">JVC</span>
+        <span class="areachip" onclick="areaJump('Business Bay')">Business Bay</span>
+        <span class="areachip" onclick="areaJump('Dubai Marina')">Marina</span>
+        <span class="areachip" onclick="areaJump('Palm Jumeirah')">Palm</span>
+      </div>
+      <button onclick="document.getElementById('openFilterBtn').click()" style="width:100%;margin-top:13px;background:var(--input-bg);border:1px solid var(--border);color:var(--text);padding:11px;border-radius:11px;font-weight:700;cursor:pointer;">Browse all areas →</button>
+    </div>
+  </aside>
+  </div><!-- /dash-grid -->
+  <script>function areaJump(a){var t=document.querySelector('.tab-btn[data-tab="name"]');if(t)t.click();var i=document.getElementById('nameInput');if(i)i.value=a;var b=document.getElementById('nameSearchBtn');if(b)b.click();}</script>
+</div>
+<div class="footer">DB Search Workspace<br><span style="color:var(--accent);font-weight:700;">Engine Architect: Oussama</span><br><span style="opacity:.6;font-size:.65rem;">Build v4.0 — Live Remote Supabase</span></div>
+</div>
+
+<!-- LEADS & INVENTORY (CRM) — shared with the whole team -->
+<div class="admin-app" id="crmApp">
+<div class="container">
+  <div class="header"><h1>🗂️ <span>Leads</span> &amp; Inventory</h1><p>Share hot client requirements &amp; your available units with the whole team</p></div>
+  <div class="top-buttons">
+    <button class="top-btn" id="crmBackBtn">← Back to Search</button>
+    <button class="top-btn" id="logoutBtnC">🚪 Exit</button>
+  </div>
+  <div class="tabs" style="grid-template-columns:1fr 1fr;">
+    <button class="tab-btn active" data-crm="leads">🔥 Hot Leads</button>
+    <button class="tab-btn" data-crm="inv">🏠 Inventory</button>
+  </div>
+
+  <div id="crmLeads">
+    <div class="search-box">
+      <label class="label">➕ Post a hot lead — what your client is looking for</label>
+      <div class="size-row"><select id="ldIntent"><option value="">Buy / Rent / Sell…</option><option>Buy</option><option>Rent</option><option>Sell</option></select><input id="ldProject" placeholder="Project / community"></div>
+      <div class="size-row"><input id="ldLocation" placeholder="Preferred area/location"><input id="ldBedrooms" placeholder="Bedrooms (e.g. 2BR)"></div>
+      <div class="size-row"><input id="ldBudget" placeholder="Budget (e.g. 2.5M)"><input id="ldCheques" placeholder="Cheques (if rental)"></div>
+      <div class="size-row"><input id="ldMove" placeholder="Move-in / handover date"><input id="ldFinance" placeholder="Cash / pre-approved / mortgage"></div>
+      <textarea id="ldNotes" rows="2" placeholder="Notes (optional)" style="width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text);padding:12px;border-radius:8px;font-size:16px;margin-bottom:10px;"></textarea>
+      <button class="btn" id="ldAddBtn">➕ Post lead</button>
+    </div>
+    <div id="ldList"></div>
+  </div>
+
+  <div id="crmInv" style="display:none;">
+    <div class="search-box">
+      <label class="label">➕ Add a unit you have — for sale or rent</label>
+      <div class="size-row"><select id="ivPurpose"><option value="">For sale / For rent…</option><option>For sale</option><option>For rent</option></select><input id="ivProject" placeholder="Project / community"></div>
+      <div class="size-row"><input id="ivUnit" placeholder="Unit number (optional)"><input id="ivBedrooms" placeholder="Bedrooms"></div>
+      <div class="size-row"><input id="ivPrice" placeholder="Price / rent"><input id="ivSize" placeholder="Size sqft (optional)"></div>
+      <input id="ivType" placeholder="Type — villa / apartment / townhouse (optional)">
+      <textarea id="ivDetails" rows="2" placeholder="Details — view, floor, vacant, etc. (optional)" style="width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text);padding:12px;border-radius:8px;font-size:16px;margin-bottom:10px;"></textarea>
+      <button class="btn" id="ivAddBtn">➕ Add unit</button>
+    </div>
+    <div id="ivList"></div>
+  </div>
+</div>
+</div>
+<script>
+(function(){
+  function cesc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function v(id){var e=document.getElementById(id);return e?e.value.trim():'';}
+  function clr(ids){ids.forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});}
+  function when(t){try{var d=new Date(t);return d.toLocaleDateString(undefined,{month:'short',day:'numeric'})+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}catch(e){return '';}}
+  // Leads/Inventory now go through the SAME single gateway as everything else
+  // (window.api → db-api), instead of a separate '/crm' function that was never
+  // deployed and made every lead_add/inv_add come back as "unknown_action".
+  // db-api dispatches purely on the `action` string, so lead_add/lead_list/lead_del
+  // and inv_add/inv_list/inv_del just need to travel through api(action, params)
+  // like 'ai', 'search', 'community', etc. already do.
+  async function crmApi(p){
+    if(typeof api!=='function') return {error:'gateway unavailable'};
+    var action=p.action; var rest={}; Object.keys(p).forEach(function(k){ if(k!=='action') rest[k]=p[k]; });
+    // One automatic retry so a transient network blip doesn't dead-end a post.
+    var lastErr='';
+    for(var attempt=0; attempt<2; attempt++){
+      try{ return await api(action,rest); }
+      catch(e){
+        lastErr=(e&&e.message)||'network';
+        if(attempt===0) await new Promise(function(r){setTimeout(r,600);});
+      }
+    }
+    return {error:lastErr};
+  }
+  function friendlyErr(err){
+    var e=String(err||'').toLowerCase();
+    if(!e||e==='network'||e.indexOf('failed to fetch')>=0||e.indexOf('load failed')>=0)
+      return 'Check your internet connection and try again.';
+    if(e.indexOf('unauthor')>=0||e.indexOf('expired')>=0||e.indexOf('disabled')>=0)
+      return 'Your session may have expired — please log in again.';
+    if(e.indexOf('required')>=0) return 'Please fill in at least the highlighted fields.';
+    return err;
+  }
+  window.goToCrm=function(){document.getElementById('mainApp').classList.remove('visible');document.getElementById('crmApp').classList.add('visible');loadLeads();loadInv();};
+  function crmBack(){document.getElementById('crmApp').classList.remove('visible');document.getElementById('mainApp').classList.add('visible');}
+
+  function delLink(cls,id,can){return can?(' · <a href="#" class="'+cls+'" data-id="'+id+'" style="color:var(--danger);text-decoration:none;">🗑 delete</a>'):'';}
+  function wireDel(sel,action,reload){document.querySelectorAll(sel).forEach(function(a){a.addEventListener('click',async function(e){e.preventDefault();if(!confirm('Delete this?'))return;await crmApi({action:action,id:a.dataset.id});reload();});});}
+
+  function ldCard(l,me,admin){var can=admin||l.created_by===me;var head=[l.intent,l.project||l.location,l.bedrooms,l.budget].filter(Boolean).join(' · ');var ex=[l.cheques?('🧾 '+l.cheques+' cheques'):'',l.move_date?('📅 '+l.move_date):'',l.financing].filter(Boolean).join(' · ');return '<div class="result-card"><div class="result-title" style="font-size:1rem;">🔥 '+cesc(head||'Lead')+'</div>'+(l.location&&l.project?('<div style="color:var(--text-muted);font-size:.8rem;">📍 '+cesc(l.location)+'</div>'):'')+(ex?'<div style="color:var(--text-muted);font-size:.82rem;margin:3px 0;">'+cesc(ex)+'</div>':'')+(l.notes?'<div class="info-block">'+cesc(l.notes)+'</div>':'')+'<div style="color:var(--text-muted);font-size:.72rem;margin-top:6px;">by '+cesc(l.agent_name||'agent')+' · '+when(l.created_at)+delLink('ld-del',l.id,can)+'</div></div>';}
+  async function loadLeads(){var box=document.getElementById('ldList');if(!box)return;box.innerHTML='<div class="loading"><div class="spinner"></div></div>';var r=await crmApi({action:'lead_list'});var rows=(r&&r.data)||[];if(!rows.length){box.innerHTML='<div class="no-results">No hot leads yet — post the first one above.</div>';return;}box.innerHTML=rows.map(function(l){return ldCard(l,r.me,r.admin);}).join('');wireDel('.ld-del','lead_del',loadLeads);}
+  async function addLead(){var lead={intent:v('ldIntent'),project:v('ldProject'),location:v('ldLocation'),bedrooms:v('ldBedrooms'),budget:v('ldBudget'),cheques:v('ldCheques'),move_date:v('ldMove'),financing:v('ldFinance'),notes:v('ldNotes')};if(!lead.project&&!lead.location&&!lead.bedrooms){alert('Add at least a project/area or bedrooms');return;}var b=document.getElementById('ldAddBtn');b.textContent='Posting…';var r=await crmApi({action:'lead_add',lead:lead});b.textContent='➕ Post lead';if(r&&r.ok){clr(['ldIntent','ldProject','ldLocation','ldBedrooms','ldBudget','ldCheques','ldMove','ldFinance','ldNotes']);loadLeads();}else alert('Could not post the lead. '+friendlyErr(r&&r.error));}
+
+  function ivCard(i,me,admin){var can=admin||i.created_by===me;var head=[i.purpose,i.project||i.community,i.bedrooms,i.unit_number?('Unit '+i.unit_number):''].filter(Boolean).join(' · ');var ex=[i.price,i.size?(i.size+' sqft'):'',i.property_type].filter(Boolean).join(' · ');return '<div class="result-card"><div class="result-title" style="font-size:1rem;">🏠 '+cesc(head||'Unit')+'</div>'+(ex?'<div style="color:var(--accent);font-weight:700;font-size:.85rem;margin:3px 0;">'+cesc(ex)+'</div>':'')+(i.details?'<div class="info-block">'+cesc(i.details)+'</div>':'')+'<div style="color:var(--text-muted);font-size:.72rem;margin-top:6px;">by '+cesc(i.agent_name||'agent')+' · '+when(i.created_at)+delLink('iv-del',i.id,can)+'</div></div>';}
+  async function loadInv(){var box=document.getElementById('ivList');if(!box)return;box.innerHTML='<div class="loading"><div class="spinner"></div></div>';var r=await crmApi({action:'inv_list'});var rows=(r&&r.data)||[];if(!rows.length){box.innerHTML='<div class="no-results">No inventory yet — add your first unit above.</div>';return;}box.innerHTML=rows.map(function(i){return ivCard(i,r.me,r.admin);}).join('');wireDel('.iv-del','inv_del',loadInv);}
+  async function addInv(){var item={purpose:v('ivPurpose'),project:v('ivProject'),unit_number:v('ivUnit'),bedrooms:v('ivBedrooms'),price:v('ivPrice'),size:v('ivSize'),property_type:v('ivType'),details:v('ivDetails')};if(!item.project&&!item.unit_number){alert('Add at least a project or unit number');return;}var b=document.getElementById('ivAddBtn');b.textContent='Adding…';var r=await crmApi({action:'inv_add',item:item});b.textContent='➕ Add unit';if(r&&r.ok){clr(['ivPurpose','ivProject','ivUnit','ivBedrooms','ivPrice','ivSize','ivType','ivDetails']);loadInv();}else alert('Could not add the unit. '+friendlyErr(r&&r.error));}
+
+  document.addEventListener('DOMContentLoaded',function(){
+    var cb=document.getElementById('crmBtn');if(cb)cb.addEventListener('click',window.goToCrm);
+    var bk=document.getElementById('crmBackBtn');if(bk)bk.addEventListener('click',crmBack);
+    var lo=document.getElementById('logoutBtnC');if(lo)lo.addEventListener('click',function(){if(typeof handleLogout==='function')handleLogout();});
+    var la=document.getElementById('ldAddBtn');if(la)la.addEventListener('click',addLead);
+    var ia=document.getElementById('ivAddBtn');if(ia)ia.addEventListener('click',addInv);
+    document.querySelectorAll('#crmApp .tab-btn').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#crmApp .tab-btn').forEach(function(x){x.classList.remove('active');});b.classList.add('active');var t=b.getAttribute('data-crm');document.getElementById('crmLeads').style.display=t==='leads'?'block':'none';document.getElementById('crmInv').style.display=t==='inv'?'block':'none';});});
+  });
+})();
+</script>
+
+<!-- FILTER PAGE (separate) -->
+<div class="admin-app" id="filterApp">
+<div class="container">
+  <div class="header">
+    <h1><span>🔎 Filter</span> by Area</h1>
+    <p>Pick a community to see exactly what we have there</p>
+  </div>
+  <div class="top-buttons">
+    <button class="top-btn theme-toggle" id="themeToggleBtn3">☀️ Light</button>
+    <button class="top-btn" id="filterBackBtn">← Back to Search</button>
+    <button class="top-btn" id="logoutBtn3">🚪 Exit</button>
+  </div>
+  <div class="search-box">
+    <label class="label">🏙️ Area / Community — start typing</label>
+    <div class="search-wrap">
+      <input type="text" id="areaInput" placeholder="e.g., Damac Hills, Marina, JVC…" autocomplete="off">
+      <div class="suggestions" id="areaSugg"></div>
+    </div>
+    <label class="label">Size SQM (optional)</label>
+    <div class="size-row">
+      <input type="number" id="sizeMin" placeholder="Min">
+      <input type="number" id="sizeMax" placeholder="Max">
+    </div>
+    <label class="label">Unit / Plot contains (optional)</label>
+    <input type="text" id="unitFilter" placeholder="e.g., V-7, 501, BL661">
+    <div id="areaPicked" style="color:var(--text-muted);font-size:.8rem;margin-bottom:10px;"></div>
+    <button class="btn" id="applyFiltersBtn">🔎 Show Records</button>
+  </div>
+  <div id="filterResults"></div>
+</div>
+</div>
+
+<!-- PER-USER CLUSTER COMMAND CENTER -->
+<div class="admin-app" id="clusterApp">
+<div class="container">
+  <div class="header">
+    <h1><span>🏙️ My</span> Cluster</h1>
+    <p id="clusterSub">Your community — own it</p>
+  </div>
+  <div class="top-buttons">
+    <button class="top-btn theme-toggle" id="themeToggleBtn6">☀️ Light</button>
+    <button class="top-btn" id="clusterBackBtn">← Back to Search</button>
+    <button class="top-btn" id="clusterRefreshBtn" style="background:#0aa33c;color:#fff;border:none;">↻ Refresh</button>
+    <button class="top-btn" id="logoutBtn6">🚪 Exit</button>
+  </div>
+  <div id="clusterBody"></div>
+</div>
+</div>
+
+<!-- BULK WHATSAPP + AI CAMPAIGNS -->
+<div class="admin-app" id="campaignApp">
+<div class="container">
+  <div class="header">
+    <h1><span>📢 Bulk</span> WhatsApp</h1>
+    <p>Find owners • let AI write it • send on WhatsApp</p>
+  </div>
+  <div class="top-buttons">
+    <button class="top-btn theme-toggle" id="themeToggleBtn4">☀️ Light</button>
+    <button class="top-btn" id="campaignBackBtn">← Back to Search</button>
+    <button class="top-btn" id="logoutBtn4">🚪 Exit</button>
+  </div>
+
+  <div class="search-box">
+    <label class="label">① Find recipients — name • building • community • unit</label>
+    <input type="text" id="campSearch" placeholder="e.g. Ghalia, Damac Lagoons, Binghatti Corner…" autocomplete="off">
+    <div class="contact-row" style="gap:8px;">
+      <button class="btn" id="campSearchBtn" style="width:auto;flex:1;">🔍 Find contacts</button>
+      <button class="btn btn-secondary" id="campAiPickBtn" style="width:auto;flex:1;margin-top:0;">🤖 AI pick</button>
+    </div>
+    <label class="label" style="margin-top:8px;">…or type phone number(s) — comma or new line</label>
+    <textarea id="campManualNums" rows="2" style="width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text);padding:12px;border-radius:8px;font-size:16px;font-family:inherit;margin-bottom:8px;" placeholder="971501234567, 0559876543…"></textarea>
+    <button class="btn btn-secondary" id="campAddNumsBtn" style="margin-top:0;">➕ Add number(s) to list</button>
+    <div id="campRecipients"></div>
+  </div>
+
+  <div class="search-box">
+    <label class="label">② Message — use {name} {community} {building} {unit} • variations {Hi|Hello|Hey} = each contact gets a different message</label>
+    <div class="chip-row" id="campTplRow" style="margin-bottom:10px;"></div>
+    <textarea id="campMsg" rows="4" style="width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text);padding:12px;border-radius:8px;font-size:16px;font-family:inherit;margin-bottom:12px;" placeholder="Hi {name}, we have a buyer interested in your unit at {community}. Are you open to an offer?"></textarea>
+    <input type="text" id="campAiPrompt" placeholder="Tell AI what to write… (e.g. friendly offer to buy)">
+    <div class="contact-row" style="gap:8px;">
+      <button class="btn" id="campAiWriteBtn" style="width:auto;flex:1;">✨ AI write</button>
+      <select id="campLang" style="width:auto;flex:1;margin-bottom:0;">
+        <option value="">No translation</option>
+        <option value="Arabic">Arabic</option>
+        <option value="Russian">Russian</option>
+        <option value="Chinese">Chinese</option>
+        <option value="French">French</option>
+        <option value="Hindi">Hindi</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="search-box" style="display:none;">
+    <label class="label">③ Sending controls</label>
+    <div class="contact-row" style="gap:8px;align-items:flex-end;">
+      <div style="flex:1;">
+        <label class="label" style="font-size:.72rem;">How many to send</label>
+        <input type="number" id="campWhapiLimit" min="1" placeholder="all selected" style="margin-bottom:0;">
+      </div>
+      <div style="flex:1;">
+        <label class="label" style="font-size:.72rem;">Wait: min sec</label>
+        <input type="number" id="campWhapiDelay" min="2" value="60" style="margin-bottom:0;">
+      </div>
+      <div style="flex:1;">
+        <label class="label" style="font-size:.72rem;">to max sec</label>
+        <input type="number" id="campWhapiDelayMax" min="2" value="1000" style="margin-bottom:0;">
+      </div>
+    </div>
+    <div class="ai-hint" style="margin-top:8px;">Each message waits a <b>random</b> gap between min and max seconds. Leave "how many" blank to send everyone selected. ⚠️ Rate-control only — this does NOT prevent WhatsApp bans. Burner numbers only.</div>
+  </div>
+
+  <!-- ✅ RECOMMENDED: manual guided send — WhatsApp sees a human, so no ban -->
+  <div class="ai-hint" style="margin-bottom:8px;color:var(--whatsapp);border:1px solid var(--whatsapp);padding:10px;border-radius:8px;">✅ <b>Safest way — no ban risk.</b> Opens each chat with your message ready; you tap send like a normal person, and it remembers who you messaged so you never repeat. Do 15–30/day.</div>
+  <button class="btn" id="campBuildBtn" style="background:var(--whatsapp);">📤 Manual send — one tap per contact (safe)</button>
+  <div id="campQueue"></div>
+
+  <!-- ⚠️ risky bot auto-send + Twilio removed — manual guided send only -->
+  <div style="display:none;">
+    <div class="ai-hint" style="margin:16px 0 6px;color:#f59e0b;border:1px solid #f59e0b;padding:10px;border-radius:8px;">⚠️ <b>Auto-send is a bot</b> — WhatsApp detects it and can restrict/ban the number, even at low volume. Only use it on a <b>spare number you don't mind losing</b>, never your personal one.</div>
+    <button class="btn" id="campWhapiBtn" style="background:#334155;">🤖 Auto-send (bot — ban risk)</button>
+    <div class="contact-row" style="gap:8px;">
+      <button class="btn btn-secondary" id="campWhapiPauseBtn" style="width:auto;flex:1;display:none;">⏸️ Pause</button>
+      <button class="btn btn-secondary" id="campWhapiStopBtn" style="width:auto;flex:1;display:none;">⏹️ Stop</button>
+    </div>
+    <div id="campWhapiStatus" style="margin-bottom:10px;"></div>
+  </div>
+</div>
+</div>
+
+<div class="admin-app" id="emailApp">
+<div class="container">
+  <div class="header">
+    <h1><span>📧 Email</span> Marketing</h1>
+    <p>Bulk email your database • auto-sends 500/day until everyone is reached</p>
+  </div>
+  <div class="top-buttons">
+    <button class="top-btn theme-toggle" id="themeToggleBtn5">☀️ Light</button>
+    <button class="top-btn" id="emailBackBtn">← Back to Search</button>
+    <button class="top-btn" id="logoutBtn5">🚪 Exit</button>
+  </div>
+
+  <div class="search-box" id="emailSetupNote" style="display:none;border-color:#ea4335;">
+    <label class="label" style="color:#ea4335;">⚠️ One-time setup needed</label>
+    <div class="ai-hint" id="emailSetupText">Connect your sending account before this can send. See the setup steps.</div>
+  </div>
+
+  <div class="search-box">
+    <label class="label">📊 Progress</label>
+    <div class="stats-grid" style="margin-bottom:0;">
+      <div class="stat-card"><div class="stat-value" id="emTotal">…</div><div class="stat-label">Total emails</div></div>
+      <div class="stat-card"><div class="stat-value" id="emSent" style="color:var(--whatsapp);">…</div><div class="stat-label">Sent</div></div>
+      <div class="stat-card"><div class="stat-value" id="emPending">…</div><div class="stat-label">Remaining</div></div>
+      <div class="stat-card"><div class="stat-value" id="emFailed" style="color:#ef4444;">…</div><div class="stat-label">Failed</div></div>
+    </div>
+    <div id="emTodayBar" class="ai-hint" style="margin-top:10px;">Today: … / … sent</div>
+    <div id="emState" class="ai-hint" style="margin-top:4px;"></div>
+  </div>
+
+  <div class="search-box">
+    <label class="label">① Sender name (shown to recipients)</label>
+    <input type="text" id="emFromName" placeholder="e.g. Oussama — Fäm Properties">
+
+    <label class="label" style="margin-top:10px;">② Subject — you can use {name}</label>
+    <input type="text" id="emSubject" placeholder="e.g. {name}, an off-plan opportunity in Dubai">
+
+    <label class="label" style="margin-top:10px;">③ Message — HTML allowed • use {name} for the owner's name</label>
+    <textarea id="emBody" rows="8" style="width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text);padding:12px;border-radius:8px;font-size:15px;font-family:inherit;margin-bottom:12px;" placeholder="Hi {name},&#10;&#10;I wanted to share a new off-plan project in Dubai with strong ROI…&#10;&#10;Best regards,&#10;Oussama — Fäm Properties"></textarea>
+
+    <label class="label">④ Attachment (optional — brochure / PDF / image)</label>
+    <input type="file" id="emFile" style="width:100%;margin-bottom:6px;color:var(--text);">
+    <div id="emFileInfo" class="ai-hint" style="margin-bottom:8px;"></div>
+
+    <div class="contact-row" style="gap:8px;align-items:flex-end;">
+      <div style="flex:1;">
+        <label class="label" style="font-size:.72rem;">Emails per day (Gmail max 500)</label>
+        <input type="number" id="emDaily" min="1" max="2000" value="500" style="margin-bottom:0;">
+      </div>
+    </div>
+  </div>
+
+  <button class="btn" id="emSaveBtn" style="background:#ea4335;">💾 Save &amp; Start auto-sending</button>
+  <div class="contact-row" style="gap:8px;">
+    <button class="btn btn-secondary" id="emSendNowBtn" style="width:auto;flex:1;">▶️ Send a batch now</button>
+    <button class="btn btn-secondary" id="emPauseBtn" style="width:auto;flex:1;">⏸️ Pause</button>
+  </div>
+  <div class="contact-row" style="gap:8px;">
+    <button class="btn btn-secondary" id="emTestBtn" style="width:auto;flex:1;">✉️ Send test to me</button>
+    <button class="btn btn-secondary" id="emRequeueBtn" style="width:auto;flex:1;">🔁 Retry failed</button>
+    <button class="btn btn-secondary" id="emRefreshBtn" style="width:auto;flex:1;">🔄 Refresh</button>
+  </div>
+  <button class="btn btn-secondary" id="emResetBtn" style="color:var(--danger);border-color:var(--danger);">🗑️ Reset Campaign</button>
+  <div id="emStatus" style="margin:10px 0;"></div>
+  <div class="ai-hint" style="margin-bottom:12px;">Once started, it keeps sending automatically every day (even with the site closed) — 500/day until all {total} people are emailed. Then it stops on its own.</div>
+
+  <div class="search-box">
+    <label class="label">📋 Recent activity</label>
+    <div id="emReport"><div class="ai-hint">No sends yet.</div></div>
+  </div>
+</div>
+</div>
+
+<div class="admin-app" id="adminApp">
+<div class="container">
+  <div class="header">
+    <h1><span>⚙️ Admin</span> Dashboard</h1>
+    <p>Manage Access Codes • Codes auto-expire after 30 days</p>
+  </div>
+  <div class="top-buttons">
+    <button class="top-btn theme-toggle" id="themeToggleBtn2">☀️ Light</button>
+    <button class="top-btn" id="backBtn">← Back to Search</button>
+    <button class="top-btn" id="logoutBtn2">🚪 Exit</button>
+  </div>
+  <div class="admin-section">
+    <h2>🔐 Generate Access Code</h2>
+    <input type="text" id="codeName" placeholder="Code name (e.g., Agent John)">
+    <button class="btn" id="generateBtn">✨ Generate Code (valid 30 days)</button>
+    <div id="codeResult"></div>
+  </div>
+  <div class="admin-section">
+    <h2>🧑‍💼 Agents — online 🟢 / offline 🔴</h2>
+    <div id="presenceList"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+  </div>
+  <div class="admin-section">
+    <h2>📋 Access Codes — rename ✏️ · disable 🚫 · delete 🗑</h2>
+    <div id="codesList"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+  </div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://glsbjxncslcfaskigshw.supabase.co";
+// Key obfuscated (reversed + base64). Real protection = Supabase RLS policies (already enabled).
+const _k="MFFsVjlUQjZJZG5OSkRGejhIYXFLeG5LYmRyY25WMmRiYWhIMDJsZTZKTS4wSE55Y1ROell6TjVBak02SUNjNFZtSXNRak0za1ROd0lETzNFak9pUVhZcEpDTGk0MmJ1Rm1JNklTWnM5bWNpd2lJM2gyY25sMmF6Rm1aangyY2o1R2VxSjJjc2RtSTZJaVpsSm5Jc0lTWnpGbVloQlhkekppT2lNM2NwSnllLjlKQ1ZYcGtJNklDYzVSbklzSWlOMUl6VUlKaU9pY0diaEp5ZQ==";
+const SUPABASE_KEY=atob(_k).split("").reverse().join("");
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+// All data flows through ONE secured gateway (the db-api edge function).
+// The function validates the access code server-side and is the only thing with
+// database access — the tables themselves are private (no public read).
+const API_URL=SUPABASE_URL+'/functions/v1/db-api';
+
+// ---- lightweight request cache + in-flight dedupe for idempotent reads ----
+const CACHEABLE_ACTIONS=new Set(['stats','communities','community','search','search_full','phone']);
+const REQUEST_CACHE_TTL_MS=60000;
+const _reqCache=new Map(), _inflight=new Map();
+async function _apiFetch(action,params){
+  const res=await fetch(API_URL,{
+    method:'POST',
+    headers:{'content-type':'application/json'},
+    body:JSON.stringify(Object.assign({action,code:currentCode||''},params||{}))
+  });
+  if(!res.ok){ let j={}; try{j=await res.json();}catch(_){}
+    throw new Error(j.reason||j.error||('HTTP '+res.status)); }
+  return res.json();
+}
+async function api(action,params){
+  const cacheable=CACHEABLE_ACTIONS.has(action);
+  const key=cacheable?action+'|'+JSON.stringify(params||{})+'|'+(currentCode||''):null;
+  if(key){
+    const hit=_reqCache.get(key);
+    if(hit && (Date.now()-hit.t)<REQUEST_CACHE_TTL_MS) return hit.data;
+    const pending=_inflight.get(key); if(pending) return pending;
+  }
+  const exec=_apiFetch(action,params);
+  if(key) _inflight.set(key,exec);
+  try{ const data=await exec; if(key) _reqCache.set(key,{t:Date.now(),data}); return data; }
+  finally{ if(key) _inflight.delete(key); }
+}
+
+let isAdmin=false;
+let currentCode=null;
+let myCluster=null;
+let codeWatcher=null;
+
+// ---------- AUTH (codes stored in Supabase = work on every device) ----------
+async function validateCode(code){
+  try{
+    const res=await fetch(API_URL,{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({action:'login',code})});
+    const v=await res.json();
+    return v||{ok:false};
+  }catch(e){ return {ok:false}; }
+}
+
+async function handleLogin(){
+  const code=document.getElementById('loginCode').value.trim();
+  const btn=document.getElementById('loginSubmitBtn');
+  btn.textContent='Checking…';
+  const res=await validateCode(code);
+  btn.textContent='🔓 Enter System';
+  if(!res.ok){
+    const err=document.getElementById('loginErr');
+    err.textContent = res.reason==='expired' ? '⌛ Code expired' : res.reason==='disabled' ? '🚫 Code disabled' : '❌ Access Denied';
+    err.style.display='block';
+    setTimeout(()=>err.style.display='none',2800);
+    return;
+  }
+  isAdmin=res.admin;
+  currentCode=code;
+  window.currentName=res.name||(isAdmin?'Administrator':'');
+  myCluster=res.assigned_cluster||null;
+  if(isAdmin && !myCluster) myCluster='PORTOFINO';   // admin's own cluster = Portofino
+  var remember=!!document.getElementById('rememberMe').checked;
+  var _auth=JSON.stringify({code,admin:isAdmin,cluster:myCluster,name:window.currentName});
+  sessionStorage.setItem('dbAuth',_auth);   // current tab always keeps the session while it's open
+  if(remember) localStorage.setItem('dbAuth',_auth);   // "remember me" checked -> survive closing the tab/browser
+  else localStorage.removeItem('dbAuth');              // unchecked -> never persist beyond this tab
+  enterApp(true);
+}
+
+function enterApp(fresh){
+  document.getElementById('loginOverlay').style.display='none';
+  document.getElementById('mainApp').classList.add('visible');
+  var cbtn=document.getElementById('campaignBtn'); if(cbtn) cbtn.style.display='block';   // campaigns visible to everyone
+  if(isAdmin){ document.getElementById('adminBtn').style.display='block'; document.getElementById('emailBtn').style.display='block'; }
+  if(myCluster){ const cb=document.getElementById('clusterBtn'); if(cb) cb.style.display='block'; const cs=document.getElementById('clusterSub'); if(cs) cs.textContent=myCluster; }
+  window.isAdminFlag=!!isAdmin; window.myClusterFlag=!!myCluster;   // expose perms to the nav
+  window.currentCode=currentCode;   // CRM/Leads+Inventory read this — without it every add was rejected
+  if(window.__navEnter) window.__navEnter();
+  startHeartbeat();                 // online presence for the admin dashboard (name + status only)
+  updateGreeting(!!fresh);
+  if(!window.__greetTimer) window.__greetTimer=setInterval(function(){updateGreeting(false);},30000);
+  loadStats();
+  startCodeWatcher();
+}
+function updateGreeting(fresh){
+  var el=document.getElementById('greetLine'); if(!el) return;
+  var now=new Date(), h=now.getHours();
+  var g = h<12 ? 'Good morning' : (h<17 ? 'Good afternoon' : 'Good evening');
+  var nm=(window.currentName||'').toString().trim(); var first=nm?nm.split(' ')[0].toUpperCase():'';
+  var date=now.toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});
+  var time=now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  el.textContent = g + (first?(', '+first):'') + ' · ' + date + ' · ' + time;
+}
+function loginGreeting(){
+  var el=document.getElementById('loginGreet'); if(!el) return;
+  var now=new Date(), h=now.getHours();
+  var g = h<12 ? 'Good morning' : (h<17 ? 'Good afternoon' : 'Good evening');
+  var date=now.toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});
+  var time=now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  el.textContent = g + ' · ' + date + ' · ' + time;
+}
+function goToFilter(){ document.getElementById('mainApp').classList.remove('visible'); document.getElementById('filterApp').classList.add('visible'); }
+function filterToSearch(){ document.getElementById('filterApp').classList.remove('visible'); document.getElementById('mainApp').classList.add('visible'); }
+
+// Re-check the code every 30s; if an admin disabled/expired it, log the user out immediately.
+function startCodeWatcher(){
+  if(codeWatcher) clearInterval(codeWatcher);
+  if(isAdmin) return; // admin code never expires / can't be disabled
+  codeWatcher=setInterval(async()=>{
+    if(!currentCode) return;
+    const res=await validateCode(currentCode);
+    if(!res.ok){
+      clearInterval(codeWatcher);
+      alert(res.reason==='expired'?'⌛ Your access code has expired.':'🚫 Your access has been disabled by the admin.');
+      handleLogout();
+    }
+  }, 30000);
+}
+
+function handleLogout(){ if(codeWatcher) clearInterval(codeWatcher); sessionStorage.removeItem('dbAuth'); localStorage.removeItem('dbAuth'); location.reload(); }
+function goToAdmin(){ document.getElementById('mainApp').classList.remove('visible'); document.getElementById('adminApp').classList.add('visible'); loadCodesList(); loadPresence(); if(presenceTimer)clearInterval(presenceTimer); presenceTimer=setInterval(loadPresence,20000); }
+function goToSearch(){ document.getElementById('adminApp').classList.remove('visible'); document.getElementById('mainApp').classList.add('visible'); }
+
+// ---------- EMAIL MARKETING (admin only) ----------
+const EMAIL_URL=API_URL.replace(/\/db-api$/,'/email-drip');
+let emAttach=null; // {name,mime,b64}
+function goToEmail(){ if(!isAdmin){ alert('Email marketing is admin-only.'); return; } document.getElementById('mainApp').classList.remove('visible'); document.getElementById('emailApp').classList.add('visible'); loadEmailStatus(); }
+function emailToSearch(){ document.getElementById('emailApp').classList.remove('visible'); document.getElementById('mainApp').classList.add('visible'); }
+async function emApi(action,extra){
+  const r=await fetch(EMAIL_URL,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(Object.assign({action,code:currentCode||''},extra||{}))});
+  const j=await r.json().catch(()=>({})); if(!r.ok) throw new Error(j.detail||j.error||('HTTP '+r.status)); return j;
+}
+const emNum=n=>(n||0).toLocaleString();
+async function loadEmailStatus(){
+  const st=document.getElementById('emStatus');
+  try{
+    const d=await emApi('status');
+    document.getElementById('emTotal').textContent=emNum(d.total);
+    document.getElementById('emSent').textContent=emNum(d.sent);
+    document.getElementById('emPending').textContent=emNum(d.pending);
+    document.getElementById('emFailed').textContent=emNum(d.failed);
+    const lim=(d.campaign&&d.campaign.daily_limit)||500;
+    document.getElementById('emTodayBar').textContent=`Today: ${emNum(d.sent_today)} / ${emNum(lim)} sent`;
+    const active=d.campaign&&d.campaign.active;
+    document.getElementById('emState').innerHTML=active?('🟢 Auto-sending is <b>ON</b> — runs every 20 min, up to '+emNum(lim)+'/day until everyone is reached.'):'⏸️ Paused — press “Save &amp; Start” to begin.';
+    document.getElementById('emPauseBtn').textContent=active?'⏸️ Pause':'▶️ Resume';
+    if(d.campaign){
+      const S=document.getElementById('emSubject'),B=document.getElementById('emBody'),F=document.getElementById('emFromName');
+      if(!S.value) S.value=d.campaign.subject||'';
+      if(!B.value) B.value=d.campaign.body_html||'';
+      if(!F.value) F.value=d.campaign.from_name||'';
+      document.getElementById('emDaily').value=lim;
+      if(d.campaign.attachment_name&&!emAttach) document.getElementById('emFileInfo').textContent='📎 Saved attachment: '+d.campaign.attachment_name+' (upload a new file to replace it)';
+    }
+    const note=document.getElementById('emailSetupNote');
+    if(!d.configured){ note.style.display='block'; document.getElementById('emailSetupText').innerHTML='⚠️ <b>Not connected yet.</b> Add your Gmail secrets in Supabase (GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN, GMAIL_FROM). Nothing will send until then. Ask me for the step-by-step.'; }
+    else note.style.display='none';
+    const rep=document.getElementById('emReport');
+    rep.innerHTML=(d.recent&&d.recent.length)?d.recent.map(x=>`<div class="ai-hint" style="margin:2px 0;">${x.ok?'✅':'❌'} ${esc(x.email)} ${x.ok?'':'— '+esc(x.error||'')} <span style="opacity:.5;">${new Date(x.sent_at).toLocaleString()}</span></div>`).join(''):'<div class="ai-hint">No sends yet.</div>';
+    st.innerHTML='';
+  }catch(e){ st.innerHTML='<div class="ai-hint" style="color:#ef4444;">'+esc(e.message)+'</div>'; }
+}
+async function emReadFile(e){
+  const f=e.target.files[0], info=document.getElementById('emFileInfo');
+  if(!f){ emAttach=null; return; }
+  if(f.size>4*1024*1024){ info.textContent='⚠️ File too big (max ~4 MB). Use a smaller PDF, or put a download link in the message instead.'; emAttach=null; e.target.value=''; return; }
+  const b64=await new Promise((res,rej)=>{const rd=new FileReader();rd.onload=()=>res(String(rd.result).split(',')[1]);rd.onerror=rej;rd.readAsDataURL(f);});
+  emAttach={name:f.name,mime:f.type||'application/octet-stream',b64};
+  info.textContent='📎 '+f.name+' ('+Math.round(f.size/1024)+' KB) attached';
+}
+function emFormPayload(active){
+  const p={subject:document.getElementById('emSubject').value.trim(),body_html:document.getElementById('emBody').value.trim(),from_name:document.getElementById('emFromName').value.trim(),daily_limit:parseInt(document.getElementById('emDaily').value,10)||500};
+  if(active!==undefined) p.active=active;
+  if(emAttach){ p.attachment_b64=emAttach.b64; p.attachment_name=emAttach.name; p.attachment_mime=emAttach.mime; }
+  return p;
+}
+async function saveEmailCampaign(){
+  const st=document.getElementById('emStatus');
+  const p=emFormPayload(true);
+  if(!p.subject||!p.body_html){ st.innerHTML='<div class="ai-hint" style="color:#ef4444;">Add a subject and a message first.</div>'; return; }
+  st.innerHTML='<div class="ai-hint">Saving…</div>';
+  try{ await emApi('save',p); emAttach=null; st.innerHTML='<div class="ai-hint" style="color:var(--whatsapp);">✅ Saved. Auto-sending is ON — up to '+emNum(p.daily_limit)+'/day until everyone is reached.</div>'; loadEmailStatus(); }
+  catch(e){ st.innerHTML='<div class="ai-hint" style="color:#ef4444;">'+esc(e.message)+'</div>'; }
+}
+async function emSendNow(){
+  const st=document.getElementById('emStatus'); st.innerHTML='<div class="ai-hint">Sending a batch now…</div>';
+  try{ const d=await emApi('run');
+    if(d.skipped==='engine_not_configured') st.innerHTML='<div class="ai-hint" style="color:#ef4444;">Not connected yet — add your Gmail secrets first.</div>';
+    else if(d.skipped) st.innerHTML='<div class="ai-hint">Nothing to send. Save &amp; activate a message first.</div>';
+    else if(d.done_for_today) st.innerHTML='<div class="ai-hint">✅ Today’s limit already reached ('+emNum(d.sent_today)+'/'+emNum(d.daily_limit)+'). Resumes tomorrow automatically.</div>';
+    else if(d.finished) st.innerHTML='<div class="ai-hint" style="color:var(--whatsapp);">🎉 Everyone has been emailed!</div>';
+    else st.innerHTML='<div class="ai-hint" style="color:var(--whatsapp);">✅ Sent '+emNum(d.sent)+(d.failed?(' • '+emNum(d.failed)+' failed'):'')+' • today '+emNum(d.sent_today)+'/'+emNum(d.daily_limit)+'</div>';
+    loadEmailStatus();
+  }catch(e){ st.innerHTML='<div class="ai-hint" style="color:#ef4444;">'+esc(e.message)+'</div>'; }
+}
+async function emPauseResume(){
+  const st=document.getElementById('emStatus');
+  try{ const cur=await emApi('status'); const active=!!(cur.campaign&&cur.campaign.active); const d=await emApi(active?'pause':'resume'); st.innerHTML='<div class="ai-hint">'+(d.active?'▶️ Resumed — auto-sending ON.':'⏸️ Paused.')+'</div>'; loadEmailStatus(); }
+  catch(e){ st.innerHTML='<div class="ai-hint" style="color:#ef4444;">'+esc(e.message)+'</div>'; }
+}
+// Reset Campaign — clears the form and pushes an explicit "empty + inactive" payload to the
+// email gateway so the active queue is flushed back to its default (no subject/body, paused).
+async function emResetCampaign(){
+  if(!confirm('Reset the email campaign? This clears the subject, message and attachment, and stops auto-sending.')) return;
+  const st=document.getElementById('emStatus');
+  document.getElementById('emSubject').value='';
+  document.getElementById('emBody').value='';
+  document.getElementById('emFromName').value='';
+  document.getElementById('emDaily').value=500;
+  document.getElementById('emFileInfo').textContent='';
+  const f=document.getElementById('emFile'); if(f) f.value='';
+  emAttach=null;
+  st.innerHTML='<div class="ai-hint">Resetting…</div>';
+  try{
+    await emApi('save',{subject:'',body_html:'',from_name:'',daily_limit:500,active:false,attachment_b64:'',attachment_name:'',attachment_mime:''});
+    st.innerHTML='<div class="ai-hint" style="color:var(--whatsapp);">✅ Campaign reset — queue flushed back to default.</div>';
+  }catch(e){ st.innerHTML='<div class="ai-hint" style="color:#ef4444;">'+esc(e.message)+'</div>'; }
+  loadEmailStatus();
+}
+async function emTest(){
+  const to=(prompt('Send a test email to which address?','')||'').trim(); if(!to) return;
+  const st=document.getElementById('emStatus'); st.innerHTML='<div class="ai-hint">Sending test to '+esc(to)+'…</div>';
+  try{
+    const cur=await emApi('status'); const active=!!(cur.campaign&&cur.campaign.active);
+    await emApi('save',emFormPayload(active)); emAttach=null;      // save draft without changing on/off state
+    await emApi('test',{to});
+    st.innerHTML='<div class="ai-hint" style="color:var(--whatsapp);">✅ Test sent to '+esc(to)+'. Check inbox &amp; spam to see how it looks.</div>'; loadEmailStatus();
+  }catch(e){ st.innerHTML='<div class="ai-hint" style="color:#ef4444;">'+esc(e.message)+'</div>'; }
+}
+async function emRequeue(){
+  const st=document.getElementById('emStatus');
+  try{ await emApi('requeue_failed'); st.innerHTML='<div class="ai-hint">🔁 Failed emails moved back into the queue to retry.</div>'; loadEmailStatus(); }
+  catch(e){ st.innerHTML='<div class="ai-hint" style="color:#ef4444;">'+esc(e.message)+'</div>'; }
+}
+
+// ---------- STATS ----------
+async function loadStats(){
+  try{
+    const {data}=await api('stats');
+    if(data){
+      document.getElementById('statOwners').textContent=(data.owners||0).toLocaleString();
+      document.getElementById('statProps').textContent=(data.properties||0).toLocaleString();
+      document.getElementById('statProjects').textContent=(data.projects||0).toLocaleString();
+      document.getElementById('statPhones').textContent=(data.phones||0).toLocaleString();
+    }
+  }catch(e){}
+}
+
+let suggTimer=null;
+
+// ---------- HELPERS ----------
+function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+function waNum(d){d=String(d||'').replace(/\D/g,'');if(d.startsWith('00'))d=d.slice(2);if(d.startsWith('0')&&d.length===10)d='971'+d.slice(1);else if(d.length===9&&d.startsWith('5'))d='971'+d;return d;}
+function goodEmail(e){return e && e!=='0' && /@/.test(e);}
+// pull a value out of raw_data by fuzzy key match (source files use different headers)
+function fromRaw(rec, keys){
+  let p=rec.raw_data; if(typeof p==='string'){try{p=JSON.parse(p);}catch(e){return null;}}
+  if(!p||typeof p!=='object') return null;
+  const mk=Object.keys(p).find(k=>keys.some(s=>k.toLowerCase().includes(s)));
+  const v=mk?p[mk]:null;
+  return (v==null||String(v).trim()===''||String(v).toLowerCase()==='null')?null:v;
+}
+function first(){for(const v of arguments){if(v!=null&&String(v).trim()!==''&&String(v).toLowerCase()!=='null')return v;}return null;}
+function fmtNum(v){const n=parseFloat(String(v).replace(/[^0-9.]/g,''));return isNaN(n)?esc(v):n.toLocaleString();}
+function fmtDate(v){if(!v)return null;const d=String(v).split(' ')[0];return d;}
+// collect phones from phones table + raw_data mobile-ish columns
+function gatherPhones(rec){
+  const out=[],seen=new Set();
+  const add=r=>{const d=String(r||'').replace(/\D/g,'');if(d.length<7)return;const k=d.slice(-9);if(seen.has(k))return;seen.add(k);out.push(r);};
+  if(Array.isArray(rec.phones)) rec.phones.forEach(p=>add(p.phone_raw));
+  let p=rec.raw_data; if(typeof p==='string'){try{p=JSON.parse(p);}catch(e){p=null;}}
+  if(p&&typeof p==='object') Object.keys(p).forEach(k=>{if(/mobile|phone|contact|whats/i.test(k)&&!/no$|number$/i.test(k)) add(p[k]);});
+  return out;
+}
+
+// ===== Recently-sold units (Portofino, last 12 months) — flags stale owners in search =====
+const SOLD_UNITS={"BL720":["2026-07-02",2300000,null],"BL901":["2026-07-01",3750000,0.07],"BL269":["2026-06-25",3325000,0.23],"BL644":["2026-06-25",2600000,0.4],"BL577":["2026-06-24",3350000,0.22],"BL663":["2026-06-23",2000000,0.1],"BL786":["2026-06-22",2300000,0.24],"BL528":["2026-06-18",2650000,0.22],"BL870":["2026-06-18",2525000,0.33],"BL793":["2026-06-17",2500000,0.02],"BL744":["2026-06-17",2350000,0.34],"BL930":["2026-06-14",2850000,0.28],"BL900":["2026-06-12",2675000,0.47],"BL532":["2026-06-11",2500000,0.35],"BL616":["2026-06-11",2650000,0.43],"BL143":["2026-06-02",10500000,0.17],"BL675":["2026-06-01",2500000,0.25],"BL963":["2026-05-23",2500000,0.37],"BL974":["2026-05-15",3300000,0.22],"BL791":["2026-05-15",2930000,0.22],"BL325":["2026-05-08",2300000,0.47],"BL683":["2026-05-07",3800000,0.44],"BL658":["2026-05-01",2500000,0.59],"BL185":["2026-04-24",2630000,0.66],"BL186":["2026-04-23",3000000,0.02],"BL919":["2026-04-23",2960000,0.62],"BL280":["2026-04-17",2560000,0.63],"BL572":["2026-04-16",2950000,0.37],"BL947":["2026-04-13",3000000,0.62],"BL830":["2026-04-03",2800000,0.6],"BL370":["2026-03-28",2450000,0.56],"BL937":["2026-03-26",3050000,0.53],"BL120":["2026-03-16",10000000,0.13],"BL964":["2026-03-13",2900000,0.59],"BL414":["2026-03-10",2550000,0.12],"BL738":["2026-03-06",3600000,0.37],"BL197":["2026-03-03",2565000,0.28],"BL359":["2026-02-26",3850000,0.49],"BL858":["2026-02-26",2800000,0.6],"BL194":["2026-02-24",3650000,0.4],"BL330":["2026-02-23",2400000,0.3],"BL336":["2026-02-17",2490000,0.16],"BL812":["2026-02-17",3750000,0.46],"BL323":["2026-02-17",2000000,0.27],"BL569":["2026-02-12",3700000,0.35],"BL165":["2026-02-10",2900000,0.59],"BL499":["2026-02-06",2950000,0.35],"BL285":["2026-02-06",2400000,0.53],"BL480":["2026-02-05",2800000,0.24],"BL179":["2026-02-03",2600000,0.64],"BL854":["2026-01-30",2810000,0.54],"BL943":["2026-01-30",2908000,0.59],"BL550":["2026-01-29",2900000,0.56],"BL161":["2026-01-29",8000000,0.06],"BL467":["2026-01-21",873000,0.0],"BL787":["2026-01-19",3850000,0.24],"BL489":["2026-01-19",3850000,0.46],"BL537":["2026-01-10",3470000,0.19],"BL652":["2025-12-30",2300000,0.47],"BL837":["2025-12-23",2630000,0.51],"BL297":["2025-12-22",2425000,0.41],"BL458":["2025-12-18",2850000,0.52],"BL872":["2025-12-17",2620000,0.5],"BL715":["2025-12-16",3000000,0.11],"BL424":["2025-12-09",3500000,null],"BL697":["2025-12-09",2450000,0.34],"BL869":["2025-12-08",3480000,0.24],"BL131":["2025-12-06",8700000,-0.03],"BL834":["2025-12-03",3300000,0.28],"BL677":["2025-11-18",2200000,0.4],"BL472":["2025-11-11",2100000,null],"BL226":["2025-11-07",2370000,-0.14],"BL666":["2025-11-03",2337500,0.3],"BL464":["2025-10-23",2650000,0.49],"BL512":["2025-10-21",2700000,0.45],"BL159":["2025-10-20",7700000,0.05],"BL166":["2025-10-20",2700000,0.48],"BL264":["2025-10-15",2300000,0.15],"BL387":["2025-10-10",3350000,0.3],"BL326":["2025-10-10",3400000,0.36],"BL160":["2025-10-02",7308000,null],"BL394":["2025-10-02",3450000,0.19],"BL454":["2025-09-25",2700000,0.44],"BL756":["2025-09-25",2300000,0.47],"BL814":["2025-09-23",2500000,0.43],"BL801":["2025-09-23",2550000,0.46],"BL719":["2025-09-17",2250000,0.43],"BL897":["2025-09-16",2600000,0.13],"BL970":["2025-09-11",2550000,0.4],"BL972":["2025-09-10",2560000,0.4],"BL610":["2025-08-27",3280000,0.2],"BL866":["2025-08-26",2390000,0.14],"BL865":["2025-08-21",2430000,0.28],"BL838":["2025-08-15",2500000,0.23],"BL844":["2025-08-14",2475000,0.42],"BL290":["2025-08-12",2250000,0.23],"BL117":["2025-08-01",9750000,0.29],"BL824":["2025-07-31",2450000,0.4],"BL545":["2025-07-31",3300000,0.2],"BL473":["2025-07-30",3450000,0.34],"BL417":["2025-07-28",2950000,0.17],"BL641":["2025-07-28",2500000,0.35],"BL481":["2025-07-25",3480000,0.12],"BL934":["2025-07-24",3360000,0.17],"BL953":["2025-07-24",4025000,0.15],"BL366":["2025-07-22",3200000,0.24],"BL158":["2025-07-16",8100000,0.11],"BL371":["2025-07-14",2150000,0.37],"BL425":["2025-07-11",3150000,0.2],"BL209":["2025-07-11",2350000,0.48],"BL130":["2025-07-10",8400000,-0.06]};
+function blOf(o){
+  const cand=[o.unit,o.unit_clean,o.building,fromRaw(o,['villa number']),fromRaw(o,['property number']),fromRaw(o,['plot pre']),fromRaw(o,['unitnumber','unit number'])];
+  const rd=o.raw_data||{}; for(const k in rd){ const v=rd[k]; if(v) cand.push(v); }
+  for(const c of cand){ if(!c) continue; const m=/BL[\s-]?(\d{2,4})\b/i.exec(String(c)); if(m) return 'BL'+m[1]; }
+  return '';
+}
+// BL codes are reused across unrelated projects (e.g. a Portofino villa vs an
+// Azizi Riviera flat both coded BL297) — only treat a match as sold if the record
+// is actually a Portofino / Damac Lagoons property.
+function isLagoonsUnit(o){
+  const hay=[o.community_clean,o.project_name,o.building,fromRaw(o,['master project']),fromRaw(o,['project name']),fromRaw(o,['buildingnameen']),fromRaw(o,['areanameen','area'])].map(x=>String(x||'').toLowerCase()).join(' ');
+  return /portofino|lagoon/.test(hay);
+}
+function soldSearchBanner(o){
+  const u=blOf(o); const s=u&&SOLD_UNITS[u]; if(!s||!isLagoonsUnit(o)) return '';
+  const recRaw=first(fromRaw(o,['regis','transaction date','date']));
+  const recD=Date.parse(recRaw||''), soldD=Date.parse(s[0]);
+  const stale=isFinite(recD)&&isFinite(soldD)&&recD < soldD-86400000; // this record predates the sale
+  const g=(s[2]!=null)?(' ('+(s[2]>=0?'+':'')+Math.round(s[2]*100)+'%)'):'';
+  const pr=s[1]?(' for '+fmtM(s[1])+g):'';
+  const tail=stale?' — this person is likely <u>NOT the owner anymore</u>':' — unit recently transacted';
+  return `<div style="margin:6px 0;background:rgba(239,43,43,.16);border:1px solid var(--accent-border);border-radius:8px;padding:7px 10px;font-size:.82rem;color:#ff9b9b;font-weight:700;">🔴 UNIT ${esc(u)} SOLD ${monLabel(s[0])}${pr}${tail}</div>`;
+}
+function ownerCard(o){
+  // real name (raw_data is usually cleaner than full_name, which is often a project name)
+  const name=first(fromRaw(o,['nameen']),fromRaw(o,['owner name']),fromRaw(o,['owner']),o.full_name,'Unnamed');
+  // community = the CLEAN master-project field (project_name column is often misaligned)
+  const community=first(o.community_clean,fromRaw(o,['master project']),fromRaw(o,['project name']),fromRaw(o,['project']),fromRaw(o,['areanameen','area']),o.project_name,'—');
+  const building=first(fromRaw(o,['buildingnameen']),fromRaw(o,['building name']),fromRaw(o,['sub project']),o.building);
+  const unit=first(o.unit_clean,o.unit,fromRaw(o,['unitnumber','unit no','unit number','unit']));
+  // property/villa number (villas use "villa number"/"plot pre reg no"; flats use unit/property number)
+  const propNo=first(fromRaw(o,['villa number']),fromRaw(o,['plot pre']),fromRaw(o,['property number']),fromRaw(o,['plot number','plot no']));
+  const plot=first(propNo,fromRaw(o,['landnumber','land number']));
+  const size=first(fromRaw(o,['actual area','actual size','total area','built up','size','area owned','sqft']));
+  const price=first(fromRaw(o,['procedurevalue','transaction amount','price','amount','value']));
+  const date=fmtDate(first(fromRaw(o,['regis','transaction date','date'])));
+  const rooms=first(fromRaw(o,['rooms description','rooms','bedroom','beds']));
+  const ptype=first(fromRaw(o,['propertytypeen','property type','usage']));
+  const party=first(o.role,fromRaw(o,['procedurepartytype','party type']));
+  const proc=fromRaw(o,['procedurenameen','procedure']);
+  const email=first(goodEmail(o.email)?o.email:null,goodEmail(fromRaw(o,['email']))?fromRaw(o,['email']):null);
+  const nat=first(fromRaw(o,['countrynameen','nationality','country']));
+
+  // current vs old owner tag
+  let ownerTag='';
+  const pl=String(party||'').toLowerCase();
+  if(/buyer/.test(pl)) ownerTag='<span class="badge" style="background:rgba(74,222,128,.15);color:#4ade80;border-color:#4ade80;">🟢 CURRENT OWNER</span>';
+  else if(/seller/.test(pl)) ownerTag='<span class="badge" style="background:rgba(160,160,160,.15);color:#a0a0a0;border-color:#a0a0a0;">⚪ PREVIOUS OWNER</span>';
+
+  // badges: community + building + the property/unit number (so it's always visible)
+  let badges=`<span class="badge" style="background:rgba(139,92,246,.15);color:#a78bfa;border-color:rgba(139,92,246,.5);">🏙️ ${esc(community)}</span>`;
+  if(building && !/^\d+$/.test(String(building).trim())) badges+=`<span class="badge">🏢 ${esc(building)}</span>`;
+  const idNo=first(propNo,unit);
+  if(idNo) badges+=`<span class="badge" style="background:rgba(239,43,43,.15);">🔢 No: ${esc(idNo)}</span>`;
+  if(nat) badges+=`<span class="badge">🌍 ${esc(nat)}</span>`;
+
+  let info='<div class="info-block">';
+  if(unit||plot) info+=`• Unit / Plot: <b>${esc(unit||'—')}${plot?'  •  Plot '+esc(plot):''}</b><br>`;
+  if(size) info+=`• Size: <b>${fmtNum(size)} sqm</b><br>`;
+  if(rooms) info+=`• Bedrooms: <b>${esc(rooms)}</b><br>`;
+  if(ptype) info+=`• Type: <b>${esc(ptype)}</b><br>`;
+  if(price) info+=`• Purchase Price: <span style="color:var(--accent);font-weight:800;">AED ${fmtNum(price)}</span><br>`;
+  if(date) info+=`• Date: <b>${esc(date)}</b>${proc?'  ('+esc(proc)+')':''}<br>`;
+  if(!unit&&!plot&&!size&&!price&&!date) info+='<span style="color:var(--text-muted);">No property details on this record</span>';
+  info+='</div>';
+
+  const emailHtml=email?`<div class="email-copy"><span>${esc(email)}</span><button class="copy-btn" data-copy="${esc(email)}">📋 Copy</button></div>`:'';
+
+  const phones=gatherPhones(o);
+  const phoneHtml=phones.slice(0,6).map(r=>`<div class="contact-row"><span class="phone-num">${esc(r)}</span><a class="btn-call" href="tel:${esc(String(r).replace(/\s/g,''))}">📞 Call</a><a class="btn-wa" target="_blank" href="https://wa.me/${waNum(r)}">💬 WhatsApp</a></div>`).join('');
+
+  return `<div class="result-card"><div class="result-title">👤 ${esc(name)}</div>${ownerTag}${badges}${soldSearchBanner(o)}${info}${emailHtml}${phoneHtml||'<div style="color:var(--text-muted);font-size:.8rem;">No phones on file</div>'}</div>`;
+}
+function show(id,html){document.getElementById(id).innerHTML=html;}
+function loadingTo(id){show(id,'<div class="loading"><div class="spinner"></div>Searching…</div>');}
+function copyText(t){navigator.clipboard.writeText(t).then(()=>alert('✅ Copied'));}
+
+// ---------- SEARCHES ----------
+// Unified, space-insensitive search across name + community + building + unit + villa/plot code + every raw_data field.
+// Backed by the server-side smart_search RPC (trigram index, all fields, up to 1000 results).
+// _searchToken guards against stale responses: if the user fires a second search before the
+// first one's fetch resolves, the older response is silently dropped instead of overwriting
+// the newer results (fixes the race condition where a slow first query could flash back over
+// a faster, more recent one).
+let _searchToken=0;
+async function runUnifiedSearch(q){
+  if(q.length<2) return;
+  const myToken=++_searchToken;
+  loadingTo('resultsContainer');
+  try{
+    const res=await api('search_full',{q});           // data + community chips in one call
+    if(myToken!==_searchToken) return;                 // a newer search started — drop this stale response
+    const data=res.data||[];                            // phones already attached server-side
+    const summary=renderCommunityBar(res.communities||[]);
+    renderOwners(data,'resultsContainer',summary);
+    bindChips('resultsContainer');
+  }catch(e){ if(myToken===_searchToken) show('resultsContainer','<div class="error-msg">Error: '+esc(e.message)+'</div>'); }
+}
+async function nameSearch(){ runUnifiedSearch(document.getElementById('nameInput').value.trim()); }
+// ---------- NAME/SMART-SEARCH AUTOCOMPLETE (was previously dead UI — #suggName rendered but never wired) ----------
+function attachNameAutocomplete(){
+  const input=document.getElementById('nameInput'), box=document.getElementById('suggName');
+  if(!input||!box) return;
+  let nameSuggTimer=null;
+  input.addEventListener('input',()=>{
+    const q=input.value.trim();
+    clearTimeout(nameSuggTimer);
+    if(q.length<2){ box.classList.remove('show'); box.innerHTML=''; return; }
+    nameSuggTimer=setTimeout(async()=>{
+      try{
+        const {data}=await api('communities',{q});
+        if(!data||!data.length){ box.classList.remove('show'); return; }
+        box.innerHTML=data.slice(0,12).map(c=>`<div class="sugg-item" data-community="${esc(c.community)}">${esc(c.community)}<small>${(c.ct||0).toLocaleString()} records</small></div>`).join('');
+        box.classList.add('show');
+        box.querySelectorAll('.sugg-item').forEach(el=>el.addEventListener('click',()=>{
+          input.value=el.getAttribute('data-community');
+          box.classList.remove('show');
+          nameSearch();
+        }));
+      }catch(e){ box.classList.remove('show'); }
+    },220);
+  });
+  input.addEventListener('blur',()=>setTimeout(()=>box.classList.remove('show'),200));
+}
+
+// ---------- CLAUDE AI ASSISTANT (Smart tab) ----------
+let aiConvo=[];
+// Keep the payload sent to the AI small: drop empty turns, strip anything but role/content,
+// and only forward the most recent turns — a long chat session should not balloon token usage.
+function compactConvo(convo,maxTurns){
+  var MAX_CHARS=CLAUDE_CONTEXT_CHARS;   // Sonnet 5's 1M-token window — no need to clip aggressively
+  var clean=(convo||[]).filter(function(m){return m&&m.content&&String(m.content).trim();})
+    .map(function(m){var c=String(m.content).trim(); if(c.length>MAX_CHARS) c=c.slice(0,MAX_CHARS)+'…'; return {role:m.role,content:c};});
+  return maxTurns?clean.slice(-maxTurns):clean;
+}
+// ---------- AI FALLBACK CHAIN — Claude only (Claude Credit → Claude API) ----------
+// Gemini and Groq are gone entirely — every AI call now stays on the Claude platform.
+// A single 200k-token Gemini rate limit used to surface straight to the user as "AI is
+// busy right now". Instead, walk a two-hop Claude chain: db-api's 'ai' action accepts a
+// `provider` hint and routes to the matching backend; if the internal Claude Credit
+// allowance errors out or comes back rate-limited, silently retry the same compact
+// payload against the Claude API fallback route.
+const AI_PROVIDER_CHAIN=['claude-credit','claude_api_direct'];
+// Pinned model — every hop in the chain (internal Claude Credit allowance first,
+// direct Claude API second) must request this exact version. Never let a caller override it.
+const CLAUDE_MODEL='claude-sonnet-5';
+// Sonnet 5 ships a native 1M-token context window — keep enough turns/characters in
+// the wire payload to actually use it instead of clipping to a tiny rolling window.
+const CLAUDE_CONTEXT_TURNS=200;
+const CLAUDE_CONTEXT_CHARS=8000;
+
+// Pull a plain-text message out of whatever shape the backend forwarded — a bare
+// string, a JS Error, or an Anthropic-style error payload ({type,message} or the
+// full {error:{type,message}} envelope Claude's API returns).
+function _aiErrText(err){
+  if(!err) return '';
+  if(typeof err==='string') return err;
+  if(err.error&&typeof err.error==='object') return err.error.message||_aiErrText(err.error);
+  if(err.message) return err.message;
+  try{ return JSON.stringify(err); }catch(_){ return ''; }
+}
+// Anthropic's error taxonomy (see error.type on the Messages API) plus a plain-text
+// fallback for whatever the edge function passes through as a bare string.
+function _aiIsRetryable(err){
+  var type=(err&&err.type)||(err&&err.error&&err.error.type)||'';
+  if(type==='rate_limit_error'||type==='overloaded_error'||type==='api_error') return true;
+  var msg=_aiErrText(err).toLowerCase();
+  return msg.indexOf('rate limit')>-1||msg.indexOf('busy')>-1||msg.indexOf('429')>-1||msg.indexOf('529')>-1||
+    msg.indexOf('quota')>-1||msg.indexOf('overloaded')>-1||msg.indexOf('5xx')>-1;
+}
+async function aiCall(messages,extra){
+  const payload=compactConvo(messages,CLAUDE_CONTEXT_TURNS);   // compressed once, reused across every fallback attempt
+  let lastErr='Claude is unavailable right now — please try again shortly.';
+  for(let i=0;i<AI_PROVIDER_CHAIN.length;i++){
+    let data;
+    try{
+      // model is applied LAST so nothing in `extra` can ever swap it out from under us
+      data=await api('ai',Object.assign({messages:payload,provider:AI_PROVIDER_CHAIN[i]},extra||{},{model:CLAUDE_MODEL}));
+    }catch(e){ lastErr=_aiErrText(e)||lastErr; continue; }   // network/HTTP failure on this hop — try the next Claude route
+    if(!data){ lastErr='Empty response from Claude'; continue; }
+    if(data.error){
+      lastErr=_aiErrText(data.error)||lastErr;
+      if(_aiIsRetryable(data.error)||i===0) continue;   // rate-limited/overloaded, or still worth one fallback try from the primary
+      break;
+    }
+    if(data.stop_reason==='refusal'){ lastErr='Claude declined to answer that request.'; continue; }
+    if(!String(data.answer||data.text||'').trim()){ lastErr='Claude returned an empty response'; continue; }
+    return data;
+  }
+  throw new Error(lastErr);
+}
+function aiAppend(role,html){
+  const box=document.getElementById('aiChat');
+  if(box.querySelector('.ai-hint')) box.innerHTML='';
+  const div=document.createElement('div');
+  div.className='ai-msg '+role; div.innerHTML=html;
+  box.appendChild(div); box.scrollTop=box.scrollHeight;
+  return div;
+}
+function aiText(t){ return esc(t).replace(/\n/g,'<br>'); }
+async function aiAsk(){
+  const input=document.getElementById('aiInput'); const q=input.value.trim(); if(!q) return;
+  aiAppend('user',aiText(q)); input.value='';
+  aiConvo.push({role:'user',content:q});
+  const thinking=aiAppend('ai','<span class="spinner" style="width:16px;height:16px;margin:0;"></span> Thinking…');
+  try{
+    const data=await aiCall(aiConvo,{model:CLAUDE_MODEL});
+    const answer=(data&&data.answer)?data.answer:'(no answer)';
+    thinking.innerHTML=aiText(answer);
+    aiConvo.push({role:'assistant',content:answer});
+    if(aiConvo.length>CLAUDE_CONTEXT_TURNS) aiConvo=aiConvo.slice(-CLAUDE_CONTEXT_TURNS);   // bound memory too, not just the wire payload
+    document.getElementById('aiChat').scrollTop=999999;
+  }catch(e){ thinking.innerHTML='⚠️ '+esc(e.message||'Could not reach the AI'); }
+}
+async function phoneSearch(){
+  const raw=document.getElementById('phoneInput').value.trim().replace(/\D/g,''); if(raw.length<4) return;
+  loadingTo('resultsContainer');
+  try{
+    const core=raw.slice(-9);
+    const {data}=await api('phone',{core});   // returns unique owners with phones attached
+    renderOwners(data||[]);
+  }catch(e){ show('resultsContainer','<div class="error-msg">Error</div>'); }
+}
+function renderOwners(list, targetId, summaryHtml){
+  targetId=targetId||'resultsContainer';
+  if(!list||!list.length){ show(targetId,(summaryHtml||'')+'<div class="no-results">❌ No matching records</div>'); return; }
+  // Deduplicate by owner ID. Show ALL matches (no detail filtering — every record is valid).
+  const seen=new Set(), filtered=[];
+  for(const o of list){
+    if(!o||!o.id) continue;
+    if(seen.has(o.id)) continue;
+    seen.add(o.id);
+    filtered.push(o);
+  }
+  if(!filtered.length){ show(targetId,(summaryHtml||'')+'<div class="no-results">❌ No matching records</div>'); return; }
+  const frag=document.createDocumentFragment();
+  const wrap=document.createElement('div');
+  wrap.innerHTML=(summaryHtml||'')+`<div class="results-summary">Showing ${filtered.length} record${filtered.length===1?'':'s'}</div>`+filtered.map(ownerCard).join('');
+  while(wrap.firstChild) frag.appendChild(wrap.firstChild);
+  const tgt=document.getElementById(targetId); tgt.innerHTML=''; tgt.appendChild(frag);
+}
+// "what we found" — community breakdown chips (clickable)
+function renderCommunityBar(communities){
+  if(!communities||!communities.length) return '';
+  const chips=communities.slice(0,60).map(c=>`<span class="chip" data-community="${esc(c.community)}">🏙️ ${esc(c.community)} <b>${(c.ct||0).toLocaleString()}</b></span>`).join('');
+  return `<div class="community-bar"><div class="cb-title">📍 WHAT WE FOUND — tap a community for all its records:</div><div class="chip-row">${chips}</div></div>`;
+}
+function bindChips(targetId){
+  document.querySelectorAll('#'+targetId+' .chip').forEach(el=>el.addEventListener('click',()=>searchCommunity(el.getAttribute('data-community'),targetId)));
+}
+let _communityToken=0;
+async function searchCommunity(name,targetId){
+  targetId=targetId||'resultsContainer';
+  const myToken=++_communityToken;
+  loadingTo(targetId);
+  try{
+    const {data}=await api('community',{name});   // phones already attached server-side
+    if(myToken!==_communityToken) return;           // a newer community click started — drop this stale response
+    const filtered=applyClientFilters(data);
+    const summary=`<div class="community-bar"><div class="cb-title" style="color:#a78bfa;">🏙️ ${esc(name)}</div></div>`;
+    renderOwners(filtered,targetId,summary);
+  }catch(e){ if(myToken===_communityToken) show(targetId,'<div class="error-msg">Error: '+esc(e.message)+'</div>'); }
+}
+
+// ---------- FILTER PAGE ----------
+let pickedCommunity=null;
+function fv(id){const el=document.getElementById(id);return el?el.value:'';}
+function applyClientFilters(list){
+  const sizeMin=parseFloat(fv('sizeMin'))||null;
+  const sizeMax=parseFloat(fv('sizeMax'))||null;
+  const unit=(fv('unitFilter')||'').trim().toLowerCase();
+  return (list||[]).filter(o=>{
+    if(sizeMin||sizeMax){
+      const sz=parseFloat(String(first(fromRaw(o,['actual area','total area','built up','size','area owned'])||'')).replace(/[^0-9.]/g,''));
+      if(sizeMin&&(isNaN(sz)||sz<sizeMin))return false;
+      if(sizeMax&&(isNaN(sz)||sz>sizeMax))return false;
+    }
+    if(unit){
+      const u=String(first(o.unit_clean,o.unit,fromRaw(o,['unitnumber','unit number','villa number','plot pre reg no','plot number'])||'')).toLowerCase();
+      if(!u.includes(unit))return false;
+    }
+    return true;
+  });
+}
+async function applyFilters(){
+  if(!pickedCommunity){ alert('Type an area above and tap a suggestion first'); return; }
+  searchCommunity(pickedCommunity,'filterResults');
+}
+function attachAreaAutocomplete(){
+  const input=document.getElementById('areaInput'), box=document.getElementById('areaSugg');
+  input.addEventListener('input',()=>{
+    const q=input.value.trim(); pickedCommunity=null; document.getElementById('areaPicked').textContent='';
+    clearTimeout(suggTimer);
+    if(q.length<2){ box.classList.remove('show'); return; }
+    suggTimer=setTimeout(async()=>{
+      try{
+        const {data}=await api('communities',{q});
+        if(!data||!data.length){ box.classList.remove('show'); return; }
+        box.innerHTML=data.slice(0,12).map(c=>`<div class="sugg-item" data-community="${esc(c.community)}">${esc(c.community)}<small>${(c.ct||0).toLocaleString()} records</small></div>`).join('');
+        box.classList.add('show');
+        box.querySelectorAll('.sugg-item').forEach(el=>el.addEventListener('click',()=>{
+          pickedCommunity=el.getAttribute('data-community');
+          input.value=pickedCommunity; box.classList.remove('show');
+          document.getElementById('areaPicked').textContent='✓ Selected: '+pickedCommunity+' — now tap Show Records';
+        }));
+      }catch(e){ box.classList.remove('show'); }
+    },220);
+  });
+  input.addEventListener('blur',()=>setTimeout(()=>box.classList.remove('show'),200));
+}
+
+// ---------- ADMIN: codes in Supabase ----------
+async function generateCode(){
+  const name=document.getElementById('codeName').value.trim(); if(!name){alert('Enter code name');return;}
+  let r; try{ r=await api('admin_generate',{name}); }catch(e){ r={error:e.message}; }
+  if(!r||r.error){ document.getElementById('codeResult').innerHTML='<div class="error-msg">Error: '+esc((r&&r.error)||'failed')+'</div>'; return; }
+  const code=r.code;
+  document.getElementById('codeResult').innerHTML=`<div class="info-block"><strong>✅ Generated (valid 30 days)</strong><div class="email-copy"><span style="font-weight:700;">${code}</span><button class="copy-btn" data-copy="${esc(code)}">📋 Copy</button></div><small>Share with the user. Works on any device.</small></div>`;
+  document.getElementById('codeName').value='';
+  loadCodesList();
+}
+async function loadCodesList(){
+  let data; try{ const r=await api('admin_list'); data=r.data; }catch(e){ document.getElementById('codesList').innerHTML='<div class="error-msg">Error loading</div>'; return; }
+  if(!data||!data.length){ document.getElementById('codesList').innerHTML='<div class="no-results">No codes yet</div>'; return; }
+  const now=Date.now();
+  document.getElementById('codesList').innerHTML=data.map(c=>{
+    const expired=new Date(c.expires_at).getTime()<now;
+    const status=expired?'expired':(c.active?'active':'disabled');
+    const label=expired?'EXPIRED':(c.active?'ACTIVE':'DISABLED');
+    const days=Math.ceil((new Date(c.expires_at).getTime()-now)/(24*60*60*1000));
+    return `<div class="code-item"><div><strong>${esc(c.name||'')}</strong><br><code>${esc(c.code)}</code><br><small style="color:var(--text-muted);">${expired?'Expired':days+' days left'}</small></div><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;"><span class="code-status ${status}">${label}</span>${expired?'':`<button class="btn toggle-code" style="width:auto;padding:6px 10px;font-size:.72rem;" data-code="${esc(c.code)}" data-active="${c.active?'1':'0'}">${c.active?'🚫 Disable':'✅ Enable'}</button>`}<button class="btn rename-code" style="width:auto;padding:6px 10px;font-size:.72rem;background:#3b82f6;" data-code="${esc(c.code)}" data-name="${esc(c.name||'')}">✏️ Name</button><button class="btn delete-code" style="width:auto;padding:6px 10px;font-size:.72rem;background:var(--danger);" data-code="${esc(c.code)}">🗑 Delete</button></div></div>`;
+  }).join('');
+}
+async function toggleCode(code,active){
+  try{ const r=await api('admin_toggle',{target:code,active}); if(r&&r.error) throw new Error(r.error); }
+  catch(e){ alert('Error: '+e.message); return; }
+  loadCodesList();
+}
+async function deleteCode(code){
+  if(!confirm('Delete this code / agent account permanently?\n\n'+code+'\n\nThis cannot be undone.'))return;
+  try{ const r=await api('admin_delete',{target:code}); if(r&&r.error) throw new Error(r.error); }
+  catch(e){ alert('Error: '+e.message); return; }
+  loadCodesList(); loadPresence();
+}
+async function renameCode(code,current){
+  const name=prompt('Edit agent name:', current||''); if(name==null)return;
+  const nm=name.trim(); if(!nm){ alert('Name cannot be empty'); return; }
+  try{ const r=await api('admin_rename',{target:code,name:nm}); if(r&&r.error) throw new Error(r.error); }
+  catch(e){ alert('Error: '+e.message); return; }
+  loadCodesList(); loadPresence();
+}
+// ---------- Agent presence (online/offline) + location — admin only ----------
+var presenceTimer=null;   // var (not let): goToAdmin is defined earlier in the file and references it
+function relTime(ms){ const s=Math.floor(ms/1000); if(s<60)return s+'s ago'; const m=Math.floor(s/60); if(m<60)return m+'m ago'; const h=Math.floor(m/60); if(h<24)return h+'h ago'; return Math.floor(h/24)+'d ago'; }
+async function loadPresence(){
+  const box=document.getElementById('presenceList'); if(!box)return;
+  const adminVisible=document.getElementById('adminApp').classList.contains('visible');
+  if(!adminVisible){ if(presenceTimer){clearInterval(presenceTimer);presenceTimer=null;} return; }  // stop polling when admin page is closed
+  let data,now;
+  try{ const r=await api('admin_presence'); data=r.data; now=r.now?new Date(r.now).getTime():Date.now(); }
+  catch(e){ box.innerHTML='<div class="error-msg">Error loading presence</div>'; return; }
+  if(!data||!data.length){ box.innerHTML='<div class="no-results">No agent activity yet — agents show up here once they log in.</div>'; return; }
+  box.innerHTML=data.map(a=>{
+    const seen=a.last_seen?new Date(a.last_seen).getTime():0;
+    const online=seen&&(now-seen)<90000;   // online = pinged within 90s
+    const ago=seen?relTime(now-seen):'never';
+    return `<div class="code-item"><div><strong>${esc(a.name||'agent')}</strong>${a.is_admin?' <span style="color:#a78bfa;font-size:.68rem;font-weight:800;">ADMIN</span>':''}<br><small style="color:var(--text-muted);">last seen ${ago}</small></div><div><span class="code-status ${online?'active':'disabled'}">${online?'🟢 ONLINE':'🔴 OFFLINE'}</span></div></div>`;
+  }).join('');
+}
+// heartbeat — every signed-in agent tells the server it's online (name + active status only, no location)
+function sendHeartbeat(){ try{ api('heartbeat',{}); }catch(e){} }
+function startHeartbeat(){
+  if(window.__hbTimer)return;
+  sendHeartbeat();
+  window.__hbTimer=setInterval(sendHeartbeat,45000);
+}
+
+// ---------- BULK WHATSAPP CAMPAIGNS (click-to-send queue + AI) ----------
+let campRecipients=[];   // {id,name,phone,community,unit,building,on}
+function goToCampaign(){ document.getElementById('mainApp').classList.remove('visible'); document.getElementById('campaignApp').classList.add('visible'); if(window.campRenderTemplates)campRenderTemplates(); }
+function campToSearch(){ document.getElementById('campaignApp').classList.remove('visible'); document.getElementById('mainApp').classList.add('visible'); }
+function recOf(o){
+  const name=first(fromRaw(o,['nameen']),fromRaw(o,['owner name']),fromRaw(o,['owner']),o.full_name,'Owner');
+  const community=first(o.community_clean,fromRaw(o,['master project']),o.project_name,'');
+  const building=first(fromRaw(o,['buildingnameen']),fromRaw(o,['building name']),o.building,'');
+  const unit=first(o.unit_clean,o.unit,fromRaw(o,['unitnumber','unit number']),'');
+  const propNo=first(fromRaw(o,['unitnumber','unit number']),fromRaw(o,['villa number']),fromRaw(o,['property number']),fromRaw(o,['plot pre']),unit,'');
+  const ptype=first(fromRaw(o,['propertytypeen']),fromRaw(o,['property type']),'');
+  const size=first(fromRaw(o,['actual area']),fromRaw(o,['total area']),fromRaw(o,['built up']),fromRaw(o,['size']),'');
+  const price=first(fromRaw(o,['procedurevalue']),fromRaw(o,['transaction amount']),fromRaw(o,['transaction value']),fromRaw(o,['price']),'');
+  const phones=gatherPhones(o);
+  return {id:o.id,name:String(name),community:String(community||''),building:String(building||''),unit:String(unit||''),propNo:String(propNo||''),ptype:String(ptype||''),size:String(size||''),price:String(price||''),phone:phones[0]||'',nums:phones.slice(0,5),on:true};
+}
+// ---- property details line (shown beside each owner in campaign) ----
+function propLine(r){
+  const bits=[];
+  if(r.propNo) bits.push('🔑 '+esc(r.propNo));
+  if(r.building && r.building!==r.propNo) bits.push('🏢 '+esc(r.building));
+  if(r.ptype) bits.push(esc(r.ptype));
+  if(r.size) bits.push(esc(fmtNum(r.size))+' sqm');
+  if(r.price) bits.push('AED '+esc(fmtNum(r.price)));
+  return bits.join(' • ');
+}
+// ---- outreach memory: messaged / called (cross-device, via db-api) ----
+const outreachState={}; // phone_core -> {messaged, called}
+function pcore(p){return String(p||'').replace(/\D/g,'').slice(-9);}
+function recCores(r){return (((r&&r.nums&&r.nums.length)?r.nums:[r&&r.phone])||[]).map(pcore).filter(x=>x.length>=7);}
+function recStatus(r){let m=false,c=false;recCores(r).forEach(k=>{const s=outreachState[k];if(s){if(s.messaged)m=true;if(s.called)c=true;}});return {messaged:m,called:c};}
+async function loadOutreachStatus(list){
+  try{
+    const phones=[]; (list||[]).forEach(r=>recCores(r).forEach(k=>phones.push(k)));
+    if(!phones.length) return;
+    const d=await api('outreach_status',{phones});
+    (d.messaged||[]).forEach(k=>{(outreachState[k]=outreachState[k]||{}).messaged=true;});
+    (d.called||[]).forEach(k=>{(outreachState[k]=outreachState[k]||{}).called=true;});
+  }catch(_){}
+}
+function markMessaged(r){const nums=(r&&r.nums&&r.nums.length)?r.nums:[r&&r.phone];recCores(r).forEach(k=>{(outreachState[k]=outreachState[k]||{}).messaged=true;});try{api('sent_mark',{phones:nums});}catch(_){}}
+function markCalled(r){const nums=(r&&r.nums&&r.nums.length)?r.nums:[r&&r.phone];recCores(r).forEach(k=>{(outreachState[k]=outreachState[k]||{}).called=true;});try{api('called_mark',{phones:nums,owner_id:r&&r.id,name:r&&r.name});}catch(_){}}
+function statusBadges(r){const s=recStatus(r);let h='';const b='display:inline-block;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:999px;margin:0 4px 0 0;';if(s.messaged)h+=`<span style="${b}background:#12351f;color:#4ade80;">✓ Messaged</span>`;if(s.called)h+=`<span style="${b}background:#0e2a3a;color:#38bdf8;">✓ Called</span>`;return h;}
+function telHref(r){const n=waNum(r.phone);return 'tel:'+(n?('+'+n):(r.phone||''));}
+// Clean, readable phone display: always shows a leading + and normalises UAE local formats,
+// so real international numbers (e.g. +40 Romania) no longer look like broken data.
+function fmtPhone(p){
+  let d=String(p||'').replace(/[^\d+]/g,'');
+  if(d.startsWith('00')) d=d.slice(2);
+  d=d.replace(/\+/g,'');
+  if(!d) return String(p||'');
+  if(d.length===10 && d.startsWith('0')) d='971'+d.slice(1);
+  else if(d.length===9 && d.startsWith('5')) d='971'+d;
+  return '+'+d;
+}
+// ---- money / date helpers for the "recently sold" market intel ----
+function fmtM(n){ const v=parseFloat(n); if(!isFinite(v)||v<=0) return ''; return 'AED '+(v>=1e6?(v/1e6).toFixed(2).replace(/\.?0+$/,'')+'M':Math.round(v).toLocaleString()); }
+function monLabel(ds){ const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; const d=new Date(ds); return isNaN(d)?String(ds||''):(m[d.getMonth()]+' '+d.getFullYear()); }
+function soldBanner(r){
+  if(!r||!r.sold) return '';
+  const g=(r.soldGain!=null)?(' <b>('+(r.soldGain>=0?'+':'')+Math.round(r.soldGain*100)+'%)</b>'):'';
+  const pr=r.soldPrice?(' · '+fmtM(r.soldPrice)+g):'';
+  return `<div style="margin:4px 0 6px;background:rgba(239,43,43,.14);border:1px solid var(--accent-border);border-radius:8px;padding:6px 9px;font-size:.8rem;color:#ff9b9b;font-weight:700;">🔴 SOLD ${monLabel(r.sold)}${pr} — unit already transacted, likely not a fresh seller</div>`;
+}
+// ===== Per-user Cluster Command Center (owner-only, their assigned cluster) =====
+let clusterData=[], clusterFilter='all', clusterQuery='';
+function goToCluster(){ if(!myCluster){ alert('No cluster is assigned to your account.'); return; } document.getElementById('mainApp').classList.remove('visible'); document.getElementById('clusterApp').classList.add('visible'); if(!clusterData.length) loadCluster(); }
+function clusterToSearch(){ document.getElementById('clusterApp').classList.remove('visible'); document.getElementById('mainApp').classList.add('visible'); }
+async function loadCluster(){
+  const box=document.getElementById('clusterBody');
+  box.innerHTML='<div class="loading"><div class="spinner"></div>Loading '+esc(myCluster||'')+'…</div>';
+  try{
+    const d=await api('cluster',{cluster:myCluster});
+    if(d&&d.error){ box.innerHTML='<div class="error-msg">'+esc(d.error==='forbidden_cluster'?'This cluster is not assigned to your account.':d.error)+'</div>'; return; }
+    const seen=new Set(); clusterData=[];
+    (d.owners||[]).forEach(o=>{
+      // phone field may hold several numbers joined by " | " (all of the person's numbers)
+      const allNums=String(o.phone||'').split('|').map(s=>s.trim()).filter(Boolean);
+      const primary=allNums[0]||'';
+      const digits=primary.replace(/\D/g,''); const core=digits.slice(-9);
+      // dedupe by PERSON (phone) so repeat rows collapse; keep every no-phone owner (by id).
+      const key=core.length>=9?('p'+core):('i'+o.id); if(seen.has(key))return; seen.add(key);
+      clusterData.push({ id:o.id, name:o.full_name||'Owner', villa:o.villa_reg||'', phone:primary, nums:allNums,
+        nationality:o.nationality||'', price:o.price||'', year:o.purchase_year||'',
+        called:!!o.called, messaged:!!o.messaged, hasPhone:digits.length>=9,
+        sold:o.sold_date||'', soldPrice:(o.sold_price!=null?o.sold_price:null), soldGain:(o.sold_gain!=null?o.sold_gain:null) });
+    });
+    renderCluster();
+  }catch(e){ box.innerHTML='<div class="error-msg">'+esc(e.message||'error')+'</div>'; }
+}
+function renderCluster(){
+  const box=document.getElementById('clusterBody');
+  const reach=clusterData.filter(r=>r.hasPhone);
+  const total=clusterData.length, withPhone=reach.length;
+  const calledCount=reach.filter(r=>r.called).length;
+  const notC=reach.filter(r=>!r.called).length;   // still needs a CALL (even if already messaged)
+  const overseas=reach.filter(r=>r.nationality && r.nationality.toLowerCase()!=='united arab emirates').length;
+  const prices=clusterData.map(r=>parseFloat(String(r.price||'').replace(/[^0-9.]/g,''))).filter(n=>n>0);
+  const avg=prices.length?Math.round(prices.reduce((a,b)=>a+b,0)/prices.length):0;
+  const cov=withPhone?Math.round(calledCount/withPhone*100):0;
+  const soldCount=clusterData.filter(r=>r.sold).length;
+  // Recent-sales market intel (Portofino) — min/avg/max per bedroom, last 12 months.
+  const isPorto=/portofino/i.test(myCluster||'');
+  const mrow=(bed,lo,av,hi,g)=>`<tr><td style="padding:4px 8px;font-weight:700;">${bed}</td><td style="padding:4px 8px;color:#4ade80;">${lo}</td><td style="padding:4px 8px;">${av}</td><td style="padding:4px 8px;color:var(--accent);">${hi}</td><td style="padding:4px 8px;color:var(--text-muted);">${g}</td></tr>`;
+  const marketBlock = isPorto ? (
+    `<div style="margin-top:10px;background:rgba(0,0,0,.25);border-radius:8px;padding:8px 4px;overflow-x:auto;">`+
+    `<div style="font-weight:800;padding:2px 8px 6px;">📊 What villas actually sold for — last 12 months (111 deals)</div>`+
+    `<table style="width:100%;border-collapse:collapse;font-size:.8rem;min-width:340px;">`+
+    `<thead><tr style="color:var(--text-muted);text-align:left;font-size:.68rem;text-transform:uppercase;"><th style="padding:2px 8px;">Type</th><th style="padding:2px 8px;">Min</th><th style="padding:2px 8px;">Avg</th><th style="padding:2px 8px;">Max</th><th style="padding:2px 8px;">Avg gain</th></tr></thead><tbody>`+
+    mrow('3 Bed','2.00M','2.36M','2.63M','+37%')+
+    mrow('4 Bed','2.10M','2.68M','3.05M','+40%')+
+    mrow('5 Bed','2.95M','3.46M','4.03M','+26%')+
+    mrow('7 Bed','7.31M','8.72M','10.50M','+9%')+
+    `</tbody></table>`+
+    `<div style="color:var(--text-muted);font-size:.72rem;padding:6px 8px 2px;">Use these as instant comps: quote the range for their bed-count and the recent gain to open a valuation chat.</div>`+
+    `</div>` ) : '';
+  let list;
+  if(clusterFilter==='not') list=reach.filter(r=>!r.called);          // to-call = reachable, not yet called
+  else if(clusterFilter==='overseas') list=clusterData.filter(r=>r.nationality && r.nationality.toLowerCase()!=='united arab emirates');
+  else list=clusterData.slice();                                       // ALL owners (with or without phone)
+  // free-text search within the cluster: name, villa/reg, nationality, or any phone number
+  const qq=clusterQuery.trim().toLowerCase();
+  if(qq){
+    const qd=qq.replace(/\D/g,'');
+    list=list.filter(r=>{
+      const hay=(r.name+' '+r.villa+' '+r.nationality).toLowerCase();
+      if(hay.indexOf(qq)>=0) return true;
+      if(qd.length>=3 && (r.nums||[]).join('').replace(/\D/g,'').indexOf(qd)>=0) return true;
+      return false;
+    });
+  }
+  list.sort((a,b)=>{ const ap=a.hasPhone?0:1,bp=b.hasPhone?0:1; if(ap!==bp)return ap-bp; return (a.called?1:0)-(b.called?1:0); });
+  const stat=(v,l)=>`<div class="stat-card"><div class="stat-value">${v}</div><div class="stat-label">${l}</div></div>`;
+  const act=(f)=>clusterFilter===f?'background:var(--accent);color:#fff;border-color:var(--accent);':'';
+  const strat=`<details style="background:var(--surface);border:1px solid var(--accent-border);border-radius:12px;padding:12px 14px;margin:10px 0;">`+
+    `<summary style="cursor:pointer;font-weight:800;color:var(--accent);">📈 How to master this cluster — your playbook</summary>`+
+    `<div style="font-size:.85rem;line-height:1.55;margin-top:10px;">`+
+    `<p style="margin-bottom:7px;"><b>1. Own the inventory.</b> Know every villa here. Goal: track the current owner of as many of the ${total} as you can.</p>`+
+    `<p style="margin-bottom:7px;"><b>2. Know the numbers cold.</b> Avg price here is <b style="color:var(--accent)">AED ${avg.toLocaleString()}</b>. When an owner asks "what's mine worth?", quote real comps in 3 seconds.</p>`+
+    `<p style="margin-bottom:7px;"><b>3. Hunt sellers-in-waiting.</b> Prioritise 🌍 <b>overseas</b> owners and those who <b>bought 2+ years ago</b> — most likely to sell. Use the filters below.</p>`+
+    `<p style="margin-bottom:7px;"><b>4. Cover everything, follow up.</b> Call → tap ✓Called → follow up in 30/60/90 days. The money is in the 2nd and 3rd call.</p>`+
+    `<p style="margin-bottom:7px;"><b>5. Be the name.</b> Consistency makes you the default agent for this community.</p>`+
+    (soldCount?`<p style="margin-bottom:7px;"><b>6. Skip the just-sold.</b> <b style="color:var(--accent)">${soldCount}</b> owner${soldCount>1?'s':''} here are on units that <b>transacted in the last 12 months</b> — marked 🔴 SOLD. They likely just exited, so don't pitch them as fresh sellers; if anything, congratulate and ask what they're buying next.</p>`:'')+
+    `<p style="background:rgba(0,0,0,.25);border-left:3px solid var(--accent);padding:8px 10px;border-radius:6px;margin-top:8px;"><b>Opening line:</b> "Hi [name], this is [you] from Fäm Properties. I specialise in ${esc(myCluster||'')} — reaching out about your villa [reg]. I'm not selling anything, just checking if you'd ever consider renting or selling. Happy to share what similar units are achieving."</p>`+
+    marketBlock+
+    `</div></details>`;
+  let html=`<div class="results-summary">🏙️ <strong>${esc(myCluster||'')}</strong> — your cluster</div>`+strat+
+    `<div class="stats-grid">`+stat(total,'Owners')+stat(withPhone,'Reachable')+stat(notC,'To Call')+stat(cov+'%','Covered')+`</div>`+
+    `<div class="community-bar" style="margin:10px 0;"><div class="cb-title">💰 Avg AED <b style="color:var(--accent)">${avg.toLocaleString()}</b> &nbsp;·&nbsp; 🌍 ${overseas} overseas &nbsp;·&nbsp; ${notC} still to call</div>`+
+    `<div class="chip-row">`+
+      `<span class="chip clfil" data-f="all" style="${act('all')}">All ${total}</span>`+
+      `<span class="chip clfil" data-f="not" style="${act('not')}">🔥 Not called ${notC}</span>`+
+      `<span class="chip clfil" data-f="overseas" style="${act('overseas')}">🌍 Overseas ${overseas}</span>`+
+    `</div></div>`+
+    `<input id="clusterSearch" type="text" autocomplete="off" placeholder="🔍 Search this cluster — name, villa, number…" value="${esc(clusterQuery)}" style="width:100%;padding:11px 14px;margin:0 0 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.9rem;">`+
+    (qq?`<div style="color:var(--text-muted);font-size:.8rem;margin:-4px 0 10px;">${list.length} match${list.length===1?'':'es'} for "${esc(clusterQuery)}"</div>`:'');
+  html+= list.length ? list.map((r,i)=>clusterCard(r,i)).join('') : `<div class="no-results">${qq?'No owner matches "'+esc(clusterQuery)+'".':'No owners in this filter.'}</div>`;
+  box.innerHTML=html;
+  box.querySelectorAll('.clfil').forEach(el=>el.addEventListener('click',()=>{clusterFilter=el.dataset.f;renderCluster();}));
+  const cs=document.getElementById('clusterSearch');
+  if(cs){ cs.addEventListener('input',()=>{ clusterQuery=cs.value; const pos=cs.selectionStart; renderCluster(); const n=document.getElementById('clusterSearch'); if(n){ n.focus(); try{n.setSelectionRange(pos,pos);}catch(_){} } }); }
+  box.querySelectorAll('.cl-call').forEach(a=>a.addEventListener('click',()=>{ const r=list[+a.dataset.i]; markCalled(r); r.called=true; renderCluster(); }));
+  box.querySelectorAll('.cl-wa').forEach(a=>a.addEventListener('click',()=>{ const r=list[+a.dataset.i]; markMessaged(r); r.messaged=true; renderCluster(); }));
+}
+function clusterCard(r,i){
+  const b='display:inline-block;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:999px;margin:0 4px 0 0;';
+  let badges=''; if(r.called)badges+=`<span style="${b}background:#0e2a3a;color:#38bdf8;">✓ Called</span>`; if(r.messaged)badges+=`<span style="${b}background:#12351f;color:#4ade80;">✓ Messaged</span>`;
+  const meta=[]; if(r.villa)meta.push('🔑 '+esc(r.villa)); if(r.nationality)meta.push(esc(r.nationality)); if(r.price)meta.push('AED '+fmtNum(r.price)); if(r.year)meta.push('bought '+esc(r.year));
+  const phoneLbl=r.hasPhone?esc(fmtPhone(r.phone)):'';
+  const actions=r.hasPhone
+    ? `<div class="contact-row" style="gap:8px;"><a class="btn cl-call" data-i="${i}" href="${telHref(r)}" style="flex:1;background:#3b82f6;text-align:center;padding:10px;">📞 Call</a><a class="btn-wa cl-wa" data-i="${i}" target="_blank" rel="noopener" href="https://wa.me/${waNum(r.phone)}" style="flex:1;text-align:center;padding:10px;">💬 WhatsApp</a></div>`
+    : `<div style="color:var(--text-muted);font-size:.8rem;padding:8px 0 2px;">📵 No phone on file</div>`;
+  // extra numbers (some work, some don't) — show each with its own call + WhatsApp
+  const extra=(r.nums&&r.nums.length>1)
+    ? `<div style="margin-top:7px;font-size:.82rem;"><span style="color:var(--text-muted);">Other numbers: </span>`+
+      r.nums.slice(1).map(n=>`<span style="white-space:nowrap;margin-right:12px;"><a href="tel:+${waNum(n)}" style="color:#3b82f6;text-decoration:none;">📞 ${esc(fmtPhone(n))}</a> <a href="https://wa.me/${waNum(n)}" target="_blank" rel="noopener" style="color:var(--whatsapp);text-decoration:none;">💬</a></span>`).join('')+
+      `</div>` : '';
+  return `<div class="result-card"${r.sold?' style="border-color:var(--accent-border);"':''}><div class="result-title" style="font-size:1rem;">👤 ${esc(r.name)} <small style="color:var(--text-muted);font-weight:400;">${phoneLbl}</small></div>`+
+    (meta.length?`<div style="color:var(--text-muted);font-size:.82rem;margin:2px 0 6px;">${meta.join(' • ')}</div>`:'')+
+    soldBanner(r)+
+    (badges?`<div style="margin-bottom:6px;">${badges}</div>`:'')+
+    actions+extra+`</div>`;
+}
+let campChips=[];    // [{community, ct}] sub-communities matching the search
+let campArea='';     // '' = ALL matched; otherwise the one community loaded
+let campListOpen=false; // recipients list collapsed by default (no endless scroll)
+let campAll=[];      // all matched owners (across sub-communities) for the "All" view
+let campSkip={s:0,n:0}; // how many were dropped upfront: already-messaged / no-WhatsApp
+// Drop numbers already messaged before + numbers not on WhatsApp, BEFORE they hit the
+// list — so the list shows only fresh, sendable contacts and "how many" = real new sends.
+async function campDropKnown(list){
+  campSkip={s:0,n:0};
+  if(!list||!list.length) return list;
+  const url=API_URL.replace(/\/db-api$/,'/wa-provider');
+  try{
+    const res=await fetch(url,{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({code:currentCode||'',filter:true,recipients:list.map(r=>({phone:r.phone,phones:(r.nums&&r.nums.length)?r.nums:[r.phone]}))})});
+    const j=await res.json();
+    if(!j||j.error||!Array.isArray(j.drop)) return list;
+    const kept=[];
+    list.forEach((r,i)=>{
+      if(j.drop[i]){ if((j.reasons||[])[i]==='no_whatsapp') campSkip.n++; else campSkip.s++; }
+      else kept.push(r);
+    });
+    return kept;
+  }catch(e){ return list; }
+}
+// Clean AREA search — returns ONLY owners whose actual community/area matches,
+// so a "Portofino" search never shows Damac Lagoons / Al Furjan / other areas.
+const AREA_URL=API_URL.replace(/\/db-api$/,'/db-area');
+async function areaSearch(q){
+  try{
+    const r=await fetch(AREA_URL,{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({code:currentCode||'',q,hasPhone:true})});
+    const j=await r.json(); return (j&&j.data)||[];
+  }catch(e){ return []; }
+}
+let _campFindToken=0;
+async function campFind(){
+  const q=document.getElementById('campSearch').value.trim(); if(q.length<2) return;
+  const myToken=++_campFindToken;
+  const box=document.getElementById('campRecipients'); box.innerHTML='<div class="loading"><div class="spinner"></div>Finding contacts…</div>';
+  try{
+    const res=await api('search_full',{q,hasPhone:true});
+    if(myToken!==_campFindToken) return;   // a newer search/click started — drop this stale response
+    campChips=(res.communities||[]).filter(c=>c&&c.community);
+    campArea='';
+    // If the search matches a real community/area → load ONLY that area (no cross-community).
+    // Otherwise (a person's name, etc.) → fall back to the people search.
+    let rows;
+    if(campChips.length){ rows=await areaSearch(q); if(!rows.length) rows=res.data||[]; }
+    else { rows=res.data||[]; }
+    if(myToken!==_campFindToken) return;
+    const seen=new Set(); campAll=[];
+    (rows||[]).forEach(o=>{ if(!o||!o.id||seen.has(o.id)||o.role==='seller')return; seen.add(o.id); const r=recOf(o); if(r.phone) campAll.push(r); });
+    box.innerHTML='<div class="loading"><div class="spinner"></div>Removing already-messaged…</div>';
+    campAll=await campDropKnown(campAll);   // drop already-sent + no-WhatsApp upfront
+    if(myToken!==_campFindToken) return;
+    campRecipients=campAll.slice();
+    renderCampRecipients();
+  }catch(e){ if(myToken===_campFindToken) box.innerHTML='<div class="error-msg">Error: '+esc(e.message)+'</div>'; }
+}
+// Load contacts for exactly one community, so recipients never span different areas.
+async function campLoadCommunity(name){
+  campArea=name;
+  const box=document.getElementById('campRecipients'); box.innerHTML='<div class="loading"><div class="spinner"></div>Loading '+esc(name)+'…</div>';
+  try{
+    const {data}=await api('community',{name});
+    const seen=new Set(); let list=[];
+    (data||[]).forEach(o=>{ if(!o||!o.id||seen.has(o.id)||o.role==='seller')return; seen.add(o.id); const r=recOf(o); if(r.phone) list.push(r); });
+    campRecipients=await campDropKnown(list);   // drop already-sent + no-WhatsApp upfront
+    renderCampRecipients();
+  }catch(e){ box.innerHTML='<div class="error-msg">Error: '+esc(e.message)+'</div>'; }
+}
+function campAddNums(){
+  const raw=document.getElementById('campManualNums').value||'';
+  const nums=raw.split(/[\s,;]+/).map(s=>s.trim()).filter(s=>s.replace(/\D/g,'').length>=8);
+  if(!nums.length){ alert('Enter at least one phone number'); return; }
+  const have=new Set(campRecipients.map(r=>r.phone.replace(/\D/g,'').slice(-9)));
+  nums.forEach(n=>{ const k=n.replace(/\D/g,'').slice(-9); if(have.has(k))return; have.add(k); campRecipients.push({id:'m'+k,name:'',community:'',building:'',unit:'',phone:n,on:true}); });
+  document.getElementById('campManualNums').value='';
+  renderCampRecipients();
+}
+async function campAiPick(){
+  const q=document.getElementById('campSearch').value.trim(); if(!q){ alert('Describe who to message first'); return; }
+  const box=document.getElementById('campRecipients'); box.innerHTML='<div class="loading"><div class="spinner"></div>AI selecting…</div>';
+  try{
+    const data=await aiCall([{role:'user',content:'I want to message owners matching: "'+q+'". Reply with ONLY the single best search term (community, building, unit or name) to find them in the database — no explanation.'}]);
+    const term=(((data&&data.answer)||q).split('\n')[0]||q).replace(/["'.]/g,'').trim();
+    document.getElementById('campSearch').value=term||q; campFind();
+  }catch(e){ campFind(); }
+}
+function renderCampRecipients(){
+  const box=document.getElementById('campRecipients');
+  // area chips — "All" (everything matched) + one per sub-community to narrow
+  let chipHtml='';
+  if(campChips.length){
+    const allActive=!campArea;
+    const allChip=`<span class="chip camp-all${allActive?' active':''}" style="${allActive?'background:var(--accent);color:#fff;':''}">🌐 All areas <b>${campAll.length.toLocaleString()}</b></span>`;
+    chipHtml='<div class="cb-title" style="margin-bottom:6px;">📍 All matched, or tap one area to narrow:</div><div class="chip-row" style="margin-bottom:10px;">'+
+      allChip+
+      campChips.slice(0,40).map(c=>`<span class="chip camp-chip${c.community===campArea?' active':''}" data-community="${esc(c.community)}" style="${c.community===campArea?'background:var(--accent);color:#fff;':''}">🏙️ ${esc(c.community)} <b>${(c.ct||0).toLocaleString()}</b></span>`).join('')+
+      '</div>';
+  }
+  const bindChipsAndSel=()=>{
+    const allBtn=box.querySelector('.camp-all');
+    if(allBtn) allBtn.addEventListener('click',()=>{ campArea=''; campRecipients=campAll.slice(); renderCampRecipients(); });
+    box.querySelectorAll('.camp-chip').forEach(el=>el.addEventListener('click',()=>campLoadCommunity(el.getAttribute('data-community'))));
+    box.querySelectorAll('.camp-cb').forEach(cb=>cb.addEventListener('change',()=>{campRecipients[+cb.dataset.i].on=cb.checked;}));
+    const sa=document.getElementById('campSelAll'),sn=document.getElementById('campSelNone');
+    if(sa) sa.addEventListener('click',e=>{e.preventDefault();campRecipients.forEach(r=>r.on=true);renderCampRecipients();});
+    if(sn) sn.addEventListener('click',e=>{e.preventDefault();campRecipients.forEach(r=>r.on=false);renderCampRecipients();});
+    const tl=document.getElementById('campToggleList');
+    if(tl) tl.addEventListener('click',e=>{e.preventDefault();campListOpen=!campListOpen;renderCampRecipients();});
+  };
+  if(!campRecipients.length){ box.innerHTML=chipHtml+'<div class="no-results">No contacts with a phone number found</div>'; bindChipsAndSel(); return; }
+  const dropped=(campSkip.s||campSkip.n)?` <small style="color:var(--text-muted);">(removed ${campSkip.s} already-messaged${campSkip.n?', '+campSkip.n+' no-WhatsApp':''})</small>`:'';
+  const selCount=campRecipients.filter(r=>r.on).length;
+  const head=`<div class="results-summary"><strong>${campRecipients.length}</strong> fresh contacts${campArea?(' in '+esc(campArea)):''} · <strong>${selCount}</strong> selected${dropped} — <a href="#" id="campSelAll" style="color:var(--accent);">select all</a> / <a href="#" id="campSelNone" style="color:var(--accent);">none</a> · <a href="#" id="campToggleList" style="color:var(--accent);">${campListOpen?'▲ hide list':'▼ show list'}</a></div>`;
+  const rows=campListOpen?`<div id="campList" style="max-height:340px;overflow:auto;border:1px solid var(--border);border-radius:8px;">`+campRecipients.map((r,i)=>`<div class="code-item"><label style="display:flex;gap:8px;align-items:center;cursor:pointer;margin:0;"><input type="checkbox" class="camp-cb" data-i="${i}" ${r.on?'checked':''} style="width:auto;margin:0;"><span><strong>${esc(r.name)}</strong><br><small style="color:var(--text-muted);">${esc(r.community||'—')}${r.building?' • 🏢'+esc(r.building):''}${r.propNo?' • 🔑'+esc(r.propNo):''}${r.ptype?' • '+esc(r.ptype):''} • ${esc(fmtPhone(r.phone))}</small></span></label></div>`).join('')+`</div>`:'';
+  box.innerHTML=chipHtml+head+rows;
+  bindChipsAndSel();
+}
+// Local spintax drafts — used only as a guaranteed fallback if the AI endpoint is
+// unreachable, so "Write with AI" never dead-ends the agent with an error dialog.
+const LOCAL_COMPOSE=[
+  '{Hi|Hello|Hey} {name}, we have a {serious|genuine|ready} buyer interested in your unit at {community}. {Would you consider an offer?|Open to discussing a sale?|Worth a quick chat?}',
+  '{Hi|Hello} {name}, hope you\'re well! We\'re actively working with buyers around {community} and your unit came up. {No pressure at all|Just checking in} — would you be open to hearing an offer?',
+  '{Hi|Hey} {name}, quick one — we have {strong|active} interest in {unit} at {community} from a buyer ready to move fast. {Keen to explore?|Worth a 5-min chat?}'
+];
+async function campAiWrite(){
+  const p=document.getElementById('campAiPrompt').value.trim()||'a short friendly WhatsApp message to a property owner';
+  const lang=document.getElementById('campLang').value;
+  const btn=document.getElementById('campAiWriteBtn'); const old=btn.textContent; btn.textContent='✨ Writing…';
+  let text='';
+  // Try the AI endpoint, with one automatic retry on a transient failure.
+  for(let attempt=0; attempt<2 && !text; attempt++){
+    try{
+      const data=await api('compose',{prompt:p,lang});   // db-api compose action (Claude → Gemini → local template)
+      text=(data&&data.text)?String(data.text).trim():'';
+    }catch(e){ if(attempt===1) console.warn('compose failed:',e&&e.message); }
+  }
+  // Guaranteed fallback so the agent always gets a usable draft.
+  if(!text) text=LOCAL_COMPOSE[Math.floor(Math.random()*LOCAL_COMPOSE.length)];
+  document.getElementById('campMsg').value=text;
+  btn.textContent=old;
+}
+// First name only, and skip the name entirely if it's a company (LLC, Properties, etc.)
+function ownerFirstName(full){
+  const s=String(full||'').trim();
+  if(!s) return '';
+  if(/\b(l\.?\s?l\.?\s?c|fz-?e|fz-?co|fz-?llc|ltd|limited|co\.?|company|group|holdings?|investments?|properties|property|real\s?estate|developments?|developers?|trading|enterprises?|establishment|est\b|corp|corporation|llp|international|capital|ventures|partners|foundation|bank|fund|general\s?trad)\b/i.test(s)) return '';
+  const f=s.split(/\s+/)[0].replace(/[^A-Za-zÀ-ɏ'-]/g,'');
+  if(f.length<2) return '';
+  return f.charAt(0).toUpperCase()+f.slice(1).toLowerCase();
+}
+function fillMsg(tpl,r){
+  // spintax: {a|b|c} -> a random option per recipient, so no two messages are identical
+  let t=String(tpl).replace(/\{([^{}]*\|[^{}]*)\}/g,(m,g)=>{ const o=g.split('|'); return o[Math.floor(Math.random()*o.length)].trim(); });
+  const nm=ownerFirstName(r.name)||'there';   // company/blank -> "there"
+  t=t.replace(/\{name\}/g,nm).replace(/\{community\}/g,r.community||'').replace(/\{building\}/g,r.building||'').replace(/\{unit\}/g,r.unit||'');
+  // tidy stray spaces / punctuation left by any empty placeholders
+  return t.replace(/\s{2,}/g,' ').replace(/\s+([,.!?])/g,'$1').replace(/,\s*,/g,',').trim();
+}
+// Ready-made transactional templates — placeholders only, never sent automatically.
+// A template only ever lands in campMsg (and from there in a message) when the agent
+// explicitly clicks it, then explicitly taps "Send" per contact in the guided queue.
+const CAMP_TEMPLATES=[
+  {label:'👋 Introduction',text:'Hi {name}, I\'m reaching out about your property at {community}{building}. I work with active buyers/tenants in the area — happy to help if you\'re considering selling or renting.'},
+  {label:'💰 Buyer interest',text:'Hi {name}, we have a serious buyer interested in a unit like yours at {community}. Would you be open to a conversation about your unit{unit}?'},
+  {label:'🏠 Tenant interest',text:'Hi {name}, we have a qualified tenant looking in {community}. If your unit{unit} is available, I\'d love to discuss.'},
+  {label:'📈 Market update',text:'Hi {name}, prices in {community} have been moving lately — happy to share a free, no-obligation valuation for your unit{unit} if useful.'},
+  {label:'🔔 Follow-up',text:'Hi {name}, just following up on {community}{building} — let me know if now\'s a good time to chat.'}
+];
+function campRenderTemplates(){
+  const row=document.getElementById('campTplRow'); if(!row) return;
+  row.innerHTML=CAMP_TEMPLATES.map((t,i)=>`<span class="chip camp-tpl" data-i="${i}">${esc(t.label)}</span>`).join('');
+  row.querySelectorAll('.camp-tpl').forEach(el=>el.addEventListener('click',()=>{
+    document.getElementById('campMsg').value=CAMP_TEMPLATES[+el.dataset.i].text;   // fills the box only — user still taps Send per contact
+  }));
+}
+function campBuild(){
+  const tpl=document.getElementById('campMsg').value.trim();
+  const sel=campRecipients.filter(r=>r.on && r.phone);
+  const box=document.getElementById('campQueue');
+  if(!tpl){ alert('Write a message first (or tap AI write)'); return; }
+  if(!sel.length){ alert('No recipients selected'); return; }
+  // Twilio auto-send panel REMOVED — manual guided click-to-send only (safe, no ban, no cost).
+  const autoPanel = false ? `<div class="search-box" style="border-color:var(--whatsapp);">
+    <label class="label">🚀 Auto-send via Twilio (admin)</label>
+    <label class="label" style="margin-top:4px;">📱 Send from — your registered WhatsApp sender (blank = default)</label>
+    <input type="text" id="campFrom" placeholder="e.g. +9715XXXXXXXX  (blank = default/sandbox)">
+    <label class="label" style="margin-top:4px;">🧩 Template ContentSid — required for production cold messages</label>
+    <input type="text" id="campContentSid" placeholder="HX…  (blank = sandbox / 24h-session plain text)">
+    <button class="btn" id="campAutoBtn" style="background:var(--whatsapp);">🚀 Auto-send all ${sel.length}</button>
+    <div id="campAutoStatus"></div>
+  </div>` : '';
+  box.innerHTML=autoPanel+`<button class="btn" id="campGuideBtn" style="background:#3b82f6;margin-bottom:10px;">▶️ Guided send — one tap per contact</button><div class="results-summary">📤 Send queue — ${sel.length} message(s). Tap each to open WhatsApp pre-filled, then press send.</div>`+
+    sel.map((r,i)=>{ const msg=fillMsg(tpl,r); const url='https://wa.me/'+waNum(r.phone)+'?text='+encodeURIComponent(msg); const pl=propLine(r);
+      return `<div class="result-card" id="camp-q-${i}"><div class="result-title" style="font-size:1rem;">👤 ${esc(r.name)} <small style="color:var(--text-muted);font-weight:400;">${esc(fmtPhone(r.phone))}</small></div>${pl?`<div style="color:var(--text-muted);font-size:.82rem;margin:2px 0 6px;">${pl}</div>`:''}<div class="camp-q-badges" data-i="${i}" style="margin-bottom:6px;">${statusBadges(r)}</div><div class="info-block">${esc(msg)}</div><div class="contact-row" style="gap:8px;"><a class="btn-wa camp-send" data-i="${i}" target="_blank" rel="noopener" href="${url}" style="flex:2;text-align:center;padding:10px 16px;">💬 Send on WhatsApp</a><a class="btn camp-call" data-i="${i}" href="${telHref(r)}" style="flex:1;background:#3b82f6;text-align:center;padding:10px 16px;">📞 Call</a></div></div>`;
+    }).join('');
+  box.querySelectorAll('.camp-send').forEach(a=>a.addEventListener('click',()=>{ const i=+a.dataset.i; markMessaged(sel[i]); const b=box.querySelector('.camp-q-badges[data-i="'+i+'"]'); if(b) b.innerHTML=statusBadges(sel[i]); a.textContent='✅ Sent'; }));
+  box.querySelectorAll('.camp-call').forEach(a=>a.addEventListener('click',()=>{ const i=+a.dataset.i; markCalled(sel[i]); const b=box.querySelector('.camp-q-badges[data-i="'+i+'"]'); if(b) b.innerHTML=statusBadges(sel[i]); }));
+  loadOutreachStatus(sel).then(()=>{ box.querySelectorAll('.camp-q-badges').forEach(b=>{ const i=+b.dataset.i; if(sel[i]) b.innerHTML=statusBadges(sel[i]); }); }).catch(()=>{});
+  const ab=document.getElementById('campAutoBtn'); if(ab) ab.addEventListener('click',()=>campAutoSend(sel,tpl));
+  const gb=document.getElementById('campGuideBtn'); if(gb) gb.addEventListener('click',()=>campStartGuide(sel,tpl));
+}
+// Guided one-by-one sender: shows a single contact; "Send & Next" opens WhatsApp pre-filled then advances.
+let guide={list:[],idx:0,tpl:''};
+async function campStartGuide(sel,tpl){ guide={list:sel,idx:0,tpl:tpl}; await loadOutreachStatus(sel); campRenderGuide(); }
+function campRenderGuide(){
+  const box=document.getElementById('campQueue');
+  if(guide.idx>=guide.list.length){
+    box.innerHTML='<div class="no-results">✅ Done — you went through all '+guide.list.length+' contact(s). <br><button class="btn btn-secondary" id="guideRestart" style="margin-top:10px;">↺ Start over</button></div>';
+    const rs=document.getElementById('guideRestart'); if(rs) rs.addEventListener('click',()=>{ guide.idx=0; campRenderGuide(); });
+    return;
+  }
+  const r=guide.list[guide.idx]; const msg=fillMsg(guide.tpl,r); const url='https://wa.me/'+waNum(r.phone)+'?text='+encodeURIComponent(msg); const pl=propLine(r);
+  box.innerHTML=`<div class="result-card" style="border-color:var(--whatsapp);">
+    <div class="results-summary" style="margin:0 0 10px;">📨 ${guide.idx+1} / ${guide.list.length}</div>
+    <div class="result-title">👤 ${esc(r.name||'Contact')} <small style="color:var(--text-muted);font-weight:400;">${esc(fmtPhone(r.phone))}</small></div>
+    ${pl?`<div style="color:var(--text-muted);font-size:.85rem;margin:4px 0 6px;">${pl}</div>`:''}
+    <div id="guideBadges" style="margin-bottom:8px;">${statusBadges(r)}</div>
+    <div class="info-block">${esc(msg)}</div>
+    <div class="contact-row" style="gap:8px;margin-top:8px;">
+      <a class="btn-wa" id="guideSend" target="_blank" rel="noopener" href="${url}" style="flex:2;text-align:center;padding:14px;font-size:1rem;">💬 Send &amp; Next →</a>
+      <a class="btn" id="guideCall" href="${telHref(r)}" style="flex:1;background:#3b82f6;text-align:center;padding:14px;">📞 Call</a>
+    </div>
+    <div class="contact-row" style="gap:8px;margin-top:8px;">
+      <button class="btn btn-secondary" id="guideBack" style="flex:1;margin-top:0;">← Back</button>
+      <button class="btn btn-secondary" id="guideSkip" style="flex:1;margin-top:0;">Skip →</button>
+    </div></div>`;
+  document.getElementById('guideSend').addEventListener('click',()=>{
+    // remember this number so future campaigns skip it (no double-messaging) + mark messaged
+    markMessaged(guide.list[guide.idx]);
+    setTimeout(()=>{ guide.idx++; campRenderGuide(); },400);
+  });
+  document.getElementById('guideCall').addEventListener('click',()=>{
+    markCalled(guide.list[guide.idx]);
+    const b=document.getElementById('guideBadges'); if(b) b.innerHTML=statusBadges(guide.list[guide.idx]);
+  });
+  document.getElementById('guideSkip').addEventListener('click',()=>{ guide.idx++; campRenderGuide(); });
+  document.getElementById('guideBack').addEventListener('click',()=>{ if(guide.idx>0) guide.idx--; campRenderGuide(); });
+}
+// Auto-send the selected recipients through the Twilio wa-send edge function (admin only).
+const WA_SEND_URL=API_URL.replace(/\/db-api$/,'/wa-send');
+async function campAutoSend(sel,tpl){
+  // Auto-send is an admin-only, cost/ban-bearing action. The launch button lives on a
+  // hidden panel, but that's a UI convenience, not a security boundary — a stray console
+  // call (or a future accidental un-hide) must not be able to fire real sends as a
+  // non-admin. The server-side wa-send function must ALSO independently verify the admin
+  // flag for `code` — this client check does not replace that.
+  if(!isAdmin){ alert('Auto-send is admin-only.'); return; }
+  if(!confirm('Auto-send '+sel.length+' WhatsApp message(s) via Twilio? These are REAL messages and may incur cost.')) return;
+  const cs=(document.getElementById('campContentSid')||{}).value||'';
+  const fromNum=(document.getElementById('campFrom')||{}).value||'';
+  const btn=document.getElementById('campAutoBtn'); const old=btn.textContent; btn.textContent='Sending…'; btn.disabled=true;
+  const status=document.getElementById('campAutoStatus'); let sent=0;
+  try{
+    for(let i=0;i<sel.length;i+=100){
+      const batch=sel.slice(i,i+100).map(r=>({phone:r.phone,name:r.name,community:r.community,unit:r.unit}));
+      const res=await fetch(WA_SEND_URL,{method:'POST',headers:{'content-type':'application/json'},
+        body:JSON.stringify({code:currentCode||'',recipients:batch,body:tpl,contentSid:cs,from:fromNum})});
+      const r=await res.json();
+      if(r&&r.error){ status.innerHTML='<div class="error-msg">⚠️ '+esc(r.detail||r.error)+'</div>'; break; }
+      sent+=(r&&r.sent)||0;
+      const note=(r&&r.error_sample)?' <span style="color:var(--danger);">— some failed: '+esc(r.error_sample)+'</span>':'';
+      status.innerHTML='<div class="results-summary">✅ Sent '+sent+' / '+sel.length+note+'</div>';
+    }
+  }catch(e){ status.innerHTML='<div class="error-msg">'+esc(e.message||'send failed')+'</div>'; }
+  btn.textContent=old; btn.disabled=false;
+}
+
+// ---------- WHAPI (managed provider — send from your number, no hosting) ----------
+let campWhapiPaused=false, campWhapiStop=false, campWhapiRunning=false;
+function campWhapiTogglePause(){
+  if(!campWhapiRunning) return;
+  campWhapiPaused=!campWhapiPaused;
+  document.getElementById('campWhapiPauseBtn').textContent=campWhapiPaused?'▶️ Resume':'⏸️ Pause';
+}
+function campWhapiStopFn(){ if(campWhapiRunning){ campWhapiStop=true; campWhapiPaused=false; document.getElementById('campWhapiPauseBtn').textContent='⏸️ Pause'; } }
+async function campWhapiSend(){
+  // Same rationale as campAutoSend(): this bot-driven send is admin-only. Must be checked
+  // first, before touching any DOM/state, so a non-admin call is a pure no-op.
+  if(!isAdmin){ alert('Auto-send is admin-only.'); return; }
+  const tpl=document.getElementById('campMsg').value.trim();
+  let sel=campRecipients.filter(r=>r.on&&r.phone);
+  const status=document.getElementById('campWhapiStatus');
+  if(!tpl){ alert('Write a message first (or use AI write)'); return; }
+  if(!sel.length){ alert('No recipients — find contacts or add numbers first'); return; }
+  // ③ how many people should RECEIVE the message (blank = everyone available).
+  // Only SUCCESSFUL sends count toward this — failed / no-WhatsApp / already-messaged
+  // do NOT, so it keeps moving to new numbers until this many people actually receive.
+  const lim=parseInt(document.getElementById('campWhapiLimit').value,10);
+  const target=(lim>0)?lim:sel.length;
+  // ③ random gap between each message: a random value between min and max seconds
+  let secMin=Math.max(2, parseInt(document.getElementById('campWhapiDelay').value,10)||60);
+  let secMax=Math.max(secMin, parseInt(document.getElementById('campWhapiDelayMax').value,10)||secMin);
+  if(!confirm('Send until '+target+' people RECEIVE the message (from '+sel.length+' available).\nRandom '+secMin+'–'+secMax+'s between each. Failed / non-WhatsApp / already-messaged do NOT count — it moves to the next number.\n⚠️ This does NOT prevent bans — use a burner number only.')) return;
+  const url=API_URL.replace(/\/db-api$/,'/wa-provider');
+  const btn=document.getElementById('campWhapiBtn'); const old=btn.textContent; btn.textContent='Sending…'; btn.disabled=true;
+  const pauseBtn=document.getElementById('campWhapiPauseBtn'), stopBtn=document.getElementById('campWhapiStopBtn');
+  campWhapiRunning=true; campWhapiPaused=false; campWhapiStop=false;
+  pauseBtn.style.display='block'; stopBtn.style.display='block'; pauseBtn.textContent='⏸️ Pause';
+  let sent=0,skipped=0,nowa=0,failed=0,tried=0,lastErr='';
+  // Keep going down the list until `target` people RECEIVE. One send per request
+  // (avoids "Load failed"). Failures / skips do NOT count toward target — we just
+  // move to the next number and try again, so exactly `target` people get it.
+  for(let i=0;i<sel.length && sent<target;i++){
+    // pause/stop controls
+    if(campWhapiStop) break;
+    while(campWhapiPaused && !campWhapiStop){
+      status.innerHTML='<div class="results-summary" style="color:#f59e0b;">⏸️ Paused — ✅ '+sent+' / '+target+' received so far. Tap ▶️ Resume to continue.</div>';
+      await new Promise(res=>setTimeout(res,500));
+    }
+    if(campWhapiStop) break;
+    const r=sel[i]; let wasSkip=false;
+    tried++;
+    try{
+      const res=await fetch(url,{method:'POST',headers:{'content-type':'application/json'},
+        body:JSON.stringify({code:currentCode||'',recipients:[{phone:r.phone,phones:(r.nums&&r.nums.length)?r.nums:[r.phone],message:fillMsg(tpl,r)}],minDelayMs:0,maxDelayMs:0})});
+      const j=await res.json();
+      if(j&&j.error){ lastErr=j.detail||j.error; failed++; }
+      else if(j&&j.sent){ sent++; }
+      else if(j&&j.skipped){ skipped++; wasSkip=true; }
+      else if(j&&j.no_whatsapp){ nowa++; wasSkip=true; }
+      else { failed++; if(j&&j.error_sample) lastErr=j.error_sample; }
+    }catch(e){ failed++; lastErr=e.message||'network'; }
+    status.innerHTML='<div class="results-summary">✅ '+sent+' / '+target+' received'+(nowa?(' • 🚫 '+nowa+' no WhatsApp'):'')+(skipped?(' • ⏭️ '+skipped+' already'):'')+(failed?(' • ⚠️ '+failed+' failed'):'')+' — '+tried+' tried'+(lastErr?(' <small style="color:var(--danger);">('+esc(lastErr)+')</small>'):'')+'</div>';
+    if(sent>=target) break;
+    // pause between real attempts (skips are instant, no need to wait)
+    if(!wasSkip && i<sel.length-1){ const wait=(secMin+Math.random()*(secMax-secMin))*1000; await new Promise(res=>setTimeout(res,wait)); }
+  }
+  if(campWhapiStop) status.innerHTML+='<div class="results-summary" style="color:var(--text-muted);">⏹️ Stopped — '+sent+' received. Press send again to continue with the rest.</div>';
+  else if(sent<target) status.innerHTML+='<div class="results-summary" style="color:var(--text-muted);">Ran out of fresh contacts — '+sent+' received (needed '+target+'). Search a bigger area for more.</div>';
+  campWhapiRunning=false; campWhapiPaused=false; campWhapiStop=false;
+  pauseBtn.style.display='none'; stopBtn.style.display='none';
+  btn.textContent=old; btn.disabled=false;
+}
+
+// ---------- INIT ----------
+document.addEventListener('DOMContentLoaded',()=>{
+  // No auto-fill of the access code field — the login box stays clean until the
+  // user manually types a code (and only reopens a prior session if they had
+  // explicitly checked "Remember me", via the sessionStorage/localStorage restore below).
+  var sess=JSON.parse(sessionStorage.getItem('dbAuth')||localStorage.getItem('dbAuth')||'null');
+  if(sess){ isAdmin=!!sess.admin; currentCode=sess.code; window.currentName=sess.name||''; myCluster=sess.cluster||null; if(isAdmin&&!myCluster)myCluster='PORTOFINO'; enterApp(false); }
+
+  document.getElementById('loginSubmitBtn').addEventListener('click',handleLogin);
+  document.getElementById('loginCode').addEventListener('keypress',e=>{if(e.key==='Enter')handleLogin();});
+  document.getElementById('toggleCode').addEventListener('click',()=>{
+    const inp=document.getElementById('loginCode'), b=document.getElementById('toggleCode');
+    if(inp.type==='password'){ inp.type='text'; b.textContent='🙈 Hide'; }
+    else { inp.type='password'; b.textContent='👁 Show'; }
+  });
+  document.getElementById('logoutBtn').addEventListener('click',handleLogout);
+  document.getElementById('logoutBtn2').addEventListener('click',handleLogout);
+  document.getElementById('adminBtn').addEventListener('click',goToAdmin);
+  document.getElementById('backBtn').addEventListener('click',goToSearch);
+  document.getElementById('themeToggleBtn').addEventListener('click',()=>document.body.classList.toggle('light'));
+  document.getElementById('themeToggleBtn2').addEventListener('click',()=>document.body.classList.toggle('light'));
+  document.getElementById('aiSendBtn').addEventListener('click',aiAsk);
+  document.getElementById('nameSearchBtn').addEventListener('click',nameSearch);
+  document.getElementById('phoneSearchBtn').addEventListener('click',phoneSearch);
+  document.getElementById('applyFiltersBtn').addEventListener('click',applyFilters);
+  document.getElementById('openFilterBtn').addEventListener('click',goToFilter);
+  document.getElementById('filterBackBtn').addEventListener('click',filterToSearch);
+  document.getElementById('logoutBtn3').addEventListener('click',handleLogout);
+  document.getElementById('themeToggleBtn3').addEventListener('click',()=>document.body.classList.toggle('light'));
+  document.getElementById('generateBtn').addEventListener('click',generateCode);
+  // per-user cluster command center
+  document.getElementById('clusterBtn').addEventListener('click',goToCluster);
+  document.getElementById('clusterBackBtn').addEventListener('click',clusterToSearch);
+  document.getElementById('clusterRefreshBtn').addEventListener('click',()=>{clusterData=[];loadCluster();});
+  document.getElementById('logoutBtn6').addEventListener('click',handleLogout);
+  document.getElementById('themeToggleBtn6').addEventListener('click',()=>document.body.classList.toggle('light'));
+  // bulk WhatsApp campaigns
+  document.getElementById('campaignBtn').addEventListener('click',goToCampaign);
+  document.getElementById('campaignBackBtn').addEventListener('click',campToSearch);
+  document.getElementById('logoutBtn4').addEventListener('click',handleLogout);
+  document.getElementById('themeToggleBtn4').addEventListener('click',()=>document.body.classList.toggle('light'));
+  document.getElementById('campSearchBtn').addEventListener('click',campFind);
+  document.getElementById('campAddNumsBtn').addEventListener('click',campAddNums);
+  document.getElementById('campAiPickBtn').addEventListener('click',campAiPick);
+  document.getElementById('campAiWriteBtn').addEventListener('click',campAiWrite);
+  document.getElementById('campBuildBtn').addEventListener('click',campBuild);
+  document.getElementById('campSearch').addEventListener('keypress',e=>{if(e.key==='Enter')campFind();});
+  document.getElementById('campWhapiBtn').addEventListener('click',campWhapiSend);
+  document.getElementById('campWhapiPauseBtn').addEventListener('click',campWhapiTogglePause);
+  document.getElementById('campWhapiStopBtn').addEventListener('click',campWhapiStopFn);
+  // email marketing
+  document.getElementById('emailBtn').addEventListener('click',goToEmail);
+  document.getElementById('emailBackBtn').addEventListener('click',emailToSearch);
+  document.getElementById('logoutBtn5').addEventListener('click',handleLogout);
+  document.getElementById('themeToggleBtn5').addEventListener('click',()=>document.body.classList.toggle('light'));
+  document.getElementById('emSaveBtn').addEventListener('click',saveEmailCampaign);
+  document.getElementById('emSendNowBtn').addEventListener('click',emSendNow);
+  document.getElementById('emPauseBtn').addEventListener('click',emPauseResume);
+  document.getElementById('emTestBtn').addEventListener('click',emTest);
+  document.getElementById('emRequeueBtn').addEventListener('click',emRequeue);
+  document.getElementById('emRefreshBtn').addEventListener('click',loadEmailStatus);
+  document.getElementById('emResetBtn').addEventListener('click',emResetCampaign);
+  document.getElementById('emFile').addEventListener('change',emReadFile);
+  // delegated handlers (copy + admin enable/disable) — avoids inline-quote bugs
+  document.body.addEventListener('click',e=>{
+    if(e.target.classList.contains('copy-btn')&&e.target.dataset.copy){ copyText(e.target.dataset.copy); }
+    if(e.target.classList.contains('toggle-code')){ toggleCode(e.target.dataset.code, e.target.dataset.active==='1'); }
+    if(e.target.classList.contains('rename-code')){ renameCode(e.target.dataset.code, e.target.dataset.name); }
+    if(e.target.classList.contains('delete-code')){ deleteCode(e.target.dataset.code); }
+  });
+  document.getElementById('clearNameBtn').addEventListener('click',()=>{document.getElementById('nameInput').value='';show('resultsContainer','');});
+  document.getElementById('clearPhoneBtn').addEventListener('click',()=>{document.getElementById('phoneInput').value='';show('resultsContainer','');});
+  document.getElementById('aiInput').addEventListener('keypress',e=>{if(e.key==='Enter')aiAsk();});
+  document.getElementById('nameInput').addEventListener('keypress',e=>{if(e.key==='Enter')nameSearch();});
+  document.getElementById('phoneInput').addEventListener('keypress',e=>{if(e.key==='Enter')phoneSearch();});
+
+  attachAreaAutocomplete();
+  attachNameAutocomplete();
+
+  document.querySelectorAll('.tab-btn').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.getElementById('tab-'+btn.dataset.tab).classList.add('active');document.querySelectorAll('.suggestions').forEach(s=>s.classList.remove('show'));});});
+
+  // Neural particle background (matrix) — fill set once/frame; paused when tab hidden.
+  const canvas=document.getElementById('neuralCanvas'),ctx=canvas.getContext('2d');
+  const LINK_DIST=120, MAX_PARTICLES=60, AREA_PER_PARTICLE=18000;
+  function rs(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+  window.addEventListener('resize',rs);rs();
+  let parts=[];
+  class N{constructor(){this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height;this.vx=(Math.random()-0.5)*0.4;this.vy=(Math.random()-0.5)*0.4;this.r=Math.random()*1.5+1;}u(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>canvas.width)this.vx*=-1;if(this.y<0||this.y>canvas.height)this.vy*=-1;}d(){ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fill();}}
+  const dens=Math.min(MAX_PARTICLES,Math.floor((canvas.width*canvas.height)/AREA_PER_PARTICLE));for(let i=0;i<dens;i++)parts.push(new N());
+  let rafId=null;
+  function loop(){ctx.clearRect(0,0,canvas.width,canvas.height);const ac=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();ctx.fillStyle=ac;for(let i=0;i<parts.length;i++){parts[i].u();parts[i].d();for(let j=i+1;j<parts.length;j++){const dx=parts[i].x-parts[j].x,dy=parts[i].y-parts[j].y,ds=Math.sqrt(dx*dx+dy*dy);if(ds<LINK_DIST){ctx.beginPath();ctx.moveTo(parts[i].x,parts[i].y);ctx.lineTo(parts[j].x,parts[j].y);ctx.strokeStyle=ac==='#ef2b2b'?`rgba(239,43,43,${0.15-(ds/LINK_DIST)*0.15})`:`rgba(204,17,17,${0.1-(ds/LINK_DIST)*0.1})`;ctx.lineWidth=0.6;ctx.stroke();}}}rafId=requestAnimationFrame(loop);}
+  loop();
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden){ if(rafId){cancelAnimationFrame(rafId);rafId=null;} } else if(rafId===null){ loop(); } });
+});
+</script>
+
+</body>
+</html>
