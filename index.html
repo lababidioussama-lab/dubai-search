@@ -147,8 +147,31 @@ input,select,textarea{border-radius:10px;padding:13px 14px;}
 
 @media(min-width:900px){.login-hero h2{font-size:2.8rem;}.login-hero p{font-size:1rem;}}
 @media(max-width:700px){.feature-grid{grid-template-columns:1fr;}}
-@media(max-width:600px){.landing-stats{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:480px){.login-hero h2{font-size:1.9rem;}.login-hero p{font-size:.86rem;}.landing-footer{flex-direction:column;align-items:flex-start;}.landing-footer button{width:100%;}}
+/* ---- Phone: compress the landing to ~one screen. Feature cards become a
+   2-column icon+title grid (descriptions hidden), spacing tightens, and the
+   Get Access CTA pins to the bottom so it's always visible. ---- */
+@media(max-width:600px){
+  .landing-screen{padding:18px 14px calc(88px + env(safe-area-inset-bottom));}
+  .landing-topbar{margin-bottom:16px;}
+  .login-hero h2{font-size:1.8rem;}
+  .login-hero p{font-size:.84rem;margin-top:8px;}
+  .landing-stats{grid-template-columns:repeat(2,1fr);margin:16px 0;}
+  .landing-stats .stat-card{padding:10px 6px;min-height:52px;}
+  .landing-stats .stat-value{font-size:1rem;}
+  .feature-grid{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+  .feature-card{padding:11px 12px;}
+  .feature-card .qa-ic{margin-bottom:7px;}
+  .feature-card h3{font-size:.76rem;margin-bottom:0;}
+  .feature-card p{display:none;}
+  .landing-coverage{margin-bottom:0;}
+  .landing-coverage .chip-row .chip{font-size:.7rem;padding:5px 10px;}
+  .landing-footer{position:fixed;left:0;right:0;bottom:0;margin:0;padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+    background:rgba(10,7,8,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-top:1px solid var(--border);z-index:5;}
+  .landing-footer-who{display:none;}
+  .landing-footer button{width:100%!important;}  /* the button carries an inline width:auto */
+}
+@media(max-width:480px){.login-hero h2{font-size:1.7rem;}}
 
 /* ---- Quick actions — flyer-style icon cards (rounded red icon square + title + description) ---- */
 .qa{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:13px 14px;border:1px solid var(--border);border-radius:13px;margin-bottom:9px;background:var(--input-bg);cursor:pointer;transition:.15s;position:relative;}
