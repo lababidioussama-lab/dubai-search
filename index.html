@@ -105,14 +105,6 @@ input,select,textarea{border-radius:10px;padding:13px 14px;}
 .side-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:0 8px 26px rgba(0,0,0,.28);backdrop-filter:blur(10px);}
 .side-head{font-size:.82rem;font-weight:800;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
 
-/* ---- Hero headline — flyer-style intro above the stats strip ---- */
-.hero-block{margin:4px 2px 22px;}
-.hero-block h2{font-size:2rem;font-weight:900;letter-spacing:-.03em;line-height:1.14;}
-.hero-block h2 em{font-style:normal;color:var(--accent);text-shadow:0 0 16px var(--accent-glow);}
-.hero-block p{color:var(--text-muted);font-size:.85rem;line-height:1.55;margin-top:10px;max-width:640px;}
-@media(min-width:900px){.hero-block h2{font-size:2.5rem;}}
-@media(max-width:520px){.hero-block h2{font-size:1.6rem;}}
-
 /* login page — hero copy sits above the card, not inside it */
 .login-outer{width:100%;max-width:480px;display:flex;flex-direction:column;gap:24px;}
 .login-hero{text-align:left;padding:0 4px;}
@@ -422,10 +414,6 @@ body.has-nav #mainApp .appbar .top-buttons{display:none;}   /* nav replaces the 
       <button class="top-btn admin-btn" id="adminBtn" style="display:none;"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.2M12 18.8V21M4.9 4.9l1.55 1.55M17.55 17.55l1.55 1.55M3 12h2.2M18.8 12H21M4.9 19.1l1.55-1.55M17.55 6.45l1.55-1.55"/></svg> Admin</button>
       <button class="top-btn" id="logoutBtn"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Exit</button>
     </div>
-  </div>
-  <div class="hero-block">
-    <h2>Every owner.<br>Every property.<br><em>One search.</em></h2>
-    <p>The AI-powered database of Dubai property owners, phone numbers and transaction history — built for brokers who close.</p>
   </div>
   <div class="stats-grid">
     <div class="stat-card"><div class="stat-value" id="statOwners">…</div><div class="stat-label">Owners</div></div>
