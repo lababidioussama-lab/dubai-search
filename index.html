@@ -492,6 +492,16 @@ body.has-nav #mainApp .appbar .top-buttons{display:none;}   /* nav replaces the 
   .ai-chat{max-height:38vh;}
   .ai-hint{padding:8px;font-size:.74rem;}
   .footer{padding:14px 0;}
+  /* ---- App-like single-screen order: search first, stats after, no duplicated panels.
+     Quick actions & Top areas repeat what the tabs + bottom nav already offer, so
+     they're desktop-only; footer is hidden too. ---- */
+  #mainApp .container{display:flex;flex-direction:column;}
+  #mainApp .appbar{order:1;}
+  #mainApp .tabs{order:2;margin-bottom:10px;}
+  #mainApp .dash-grid{order:3;}
+  #mainApp .stats-grid{order:4;margin:2px 0 0;}
+  #mainApp .side-col{display:none;}
+  #mainApp .footer{display:none;}
 }
 </style>
 <nav id="navShell" class="navshell" aria-label="Sections">
