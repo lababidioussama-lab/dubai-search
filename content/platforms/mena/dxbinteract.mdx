@@ -1,0 +1,209 @@
+---
+title: DXBInteract Data Parser & API
+description: Extract DXBInteract Dubai data — Dubai Land Department transactions, sold prices, price-history and off-plan project tracking — one of the richest UAE transaction sources via one REST API.
+---
+
+export const platform = {
+  name: 'DXBInteract',
+  slug: 'dxbinteract',
+  country: 'United Arab Emirates',
+  region: 'mena',
+  owner: 'DXBInteract',
+  type: 'Aggregator',
+  listingTypes: ['sold', 'new-build', 'price-history'],
+  monthlyVisits: 'Medium',
+  activeListings: 'DLD transactions + off-plan projects',
+  hasApi: 'no',
+  antiBot: 'medium',
+  antiBotTech: [],
+  parsePriority: 4,
+  dataFields: ['transaction', 'soldPrice', 'priceHistory', 'offPlan', 'project', 'developer', 'area', 'geo', 'propertyType', 'beds', 'saleDate'],
+  officialUrl: 'https://dxbinteract.com',
+  sources: [
+    { label: 'DXBInteract', url: 'https://dxbinteract.com/' },
+    { label: 'DXBInteract — Dubai property prices / transactions', url: 'https://dxbinteract.com/dubai-property-prices' },
+  ],
+}
+
+# DXBInteract Data Parser & API
+
+**DXBInteract is one of the richest free Dubai transaction sources — Dubai Land Department recorded sales, price history and off-plan project tracking — and PropAPIS extracts its transaction, sold-price and off-plan data through a single REST API.** Pair it with consumer portals to add authoritative sold and price-history coverage for Dubai without building your own scraper.
+
+<PlatformFacts platform={platform} />
+
+## Platform Overview
+
+### Market Position
+
+- One of the richest data-richness sources in the region: direct Dubai Land Department (DLD) transaction data plus off-plan project tracking
+- Free-to-browse analytics site (medium traffic), complementing the B2B Property Monitor data layer
+- Goldmine for resale / sold / price-history — the segment consumer portals under-cover (per the MENA & Africa research report)
+- Off-plan project tracking captures the Gulf's dominant new-build segment
+
+### Market Coverage
+
+Geographic Coverage:
+
+- Dubai: Full DLD transaction universe
+- Off-plan projects across Dubai communities
+
+Data Domains:
+
+- Transactions: Recorded DLD sales
+- Price History: Historical price movement per area
+- Off-Plan: Project and launch tracking
+
+### Data Availability
+
+While the Gulf's consumer portals lead on off-plan / new-build listings — the largest and richest segment in the region — DXBInteract complements them with authoritative DLD sold and transaction data plus off-plan project tracking, giving deep resale and price-history coverage for Dubai (per the MENA & Africa research report).
+
+Data Categories:
+
+- Sold / Transaction: DLD recorded sales
+- Price History: Historical movement per area
+- Off-Plan Projects: Project and launch tracking
+- Price Trends: Area-level price movement
+
+## Data Fields Available
+
+PropAPIS extracts structured data from DXBInteract:
+
+### Transaction Data
+
+- Transaction: DLD recorded sale
+- Sold Price: Recorded sale price (AED)
+- Sale Date: Transaction date
+- Property Type: Apartment, villa, etc
+- Area: Built-up / plot size (sq ft)
+
+### Price History
+
+- Price History: Historical movement per area/unit
+- Price Trends: Area-level trend data
+
+### Off-Plan / Project Data
+
+- Project: Development name
+- Developer: Developer name
+- Project Status: Launch / under construction / ready
+
+### Location Data
+
+- Community and Sub-community
+- Emirate / City
+- Coordinates: Latitude and longitude
+
+## API Endpoints
+
+### Get Transaction History
+
+```python
+from propapis import PropAPIS
+
+api = PropAPIS(api_key='your_api_key')
+
+# Get DLD transaction history for an area
+transactions = api.platforms.dxbinteract.get_transactions(
+    community='Business Bay',
+    property_type='Apartment',
+    sold_in_last_months=12
+)
+
+for tx in transactions[:10]:
+    print(f"{tx.building} - AED {tx.sold_price:,} on {tx.sale_date}")
+    print(f"  {tx.bedrooms} bed | {tx.area_sqft} sq ft")
+```
+
+### Get Price History
+
+```python
+# Get price history for an area
+history = api.platforms.dxbinteract.get_price_history(
+    community='Dubai Marina',
+    property_type='Apartment'
+)
+
+for point in history[:12]:
+    print(f"{point.month}: AED {point.avg_price_sqft:,}/sq ft")
+```
+
+## Quick Start
+
+<Tabs items={['Python', 'JavaScript', 'cURL']}>
+
+```python
+from propapis import PropAPIS
+
+api = PropAPIS(api_key='your_api_key')
+
+# Get recent DLD transactions in Business Bay
+transactions = api.platforms.dxbinteract.get_transactions(
+    community='Business Bay'
+)
+
+for tx in transactions[:5]:
+    print(f"AED {tx.sold_price:,} on {tx.sale_date}")
+```
+
+
+```javascript
+import { PropAPIS } from 'propapis';
+
+const api = new PropAPIS({ apiKey: 'your_api_key' });
+
+// Get recent DLD transactions in Business Bay
+const transactions = await api.platforms.dxbinteract.getTransactions({
+  community: 'Business Bay',
+});
+
+transactions.slice(0, 5).forEach((tx) => {
+  console.log(`AED ${tx.soldPrice.toLocaleString()} on ${tx.saleDate}`);
+});
+```
+
+
+```bash
+curl "https://api.propapis.com/v1/platforms/dxbinteract/transactions?community=Business%20Bay" \
+  -H "Authorization: Bearer your_api_key"
+```
+
+</Tabs>
+
+## Frequently asked questions
+
+<FaqJsonLd
+  items={[
+    {
+      question: 'Does DXBInteract have a public API?',
+      answer:
+        'DXBInteract is a free analytics site without an open public API. PropAPIS extracts its Dubai Land Department transaction, sold-price and off-plan data and serves it through a single REST API with Python and JavaScript SDKs.',
+    },
+    {
+      question: 'What makes DXBInteract data useful?',
+      answer:
+        'It exposes direct Dubai Land Department transaction data, price history and off-plan project tracking — authoritative sold and resale data that consumer listing portals under-cover.',
+    },
+    {
+      question: 'How does DXBInteract compare to Property Monitor?',
+      answer:
+        'Both surface Dubai Land Department transaction data. Property Monitor is a B2B / subscription product (now part of Dubizzle Group) with AVM and a Dynamic Price Index, while DXBInteract is a free analytics site — PropAPIS can extract both for the deepest Dubai transaction coverage.',
+    },
+  ]}
+/>
+
+## Related platforms
+
+<Cards>
+  <Card title="Property Monitor" href="/platforms/mena/property-monitor">
+    Dubizzle Group's Dubai transaction, AVM and price-history data layer.
+  </Card>
+  <Card title="Bayut" href="/platforms/mena/bayut">
+    The UAE's leading off-plan and resale property portal.
+  </Card>
+  <Card title="Dubizzle" href="/platforms/mena/dubizzle">
+    UAE's largest classifieds marketplace.
+  </Card>
+  <Card title="Property Finder" href="/platforms/mena/property-finder">
+    Multi-Gulf portal with price-trend and transaction data.
+  </Card>
+</Cards>
