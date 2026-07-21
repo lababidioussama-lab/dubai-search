@@ -111,8 +111,12 @@ input,select,textarea{border-radius:10px;padding:13px 14px;}
 .login-hero h2{font-size:2.3rem;font-weight:900;letter-spacing:-.03em;line-height:1.14;}
 .login-hero h2 em{font-style:normal;color:var(--accent);text-shadow:0 0 18px var(--accent-glow);}
 .login-hero p{color:var(--text-muted);font-size:.92rem;line-height:1.55;margin-top:12px;max-width:440px;}
+.login-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:22px;}
+.login-stats .stat-card{background:var(--surface);}
+.login-coverage{margin-top:20px;}
+.login-coverage .lc-label{font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;font-weight:800;margin-bottom:9px;}
 @media(min-width:900px){.login-outer{max-width:560px;}.login-hero h2{font-size:2.8rem;}.login-hero p{font-size:1rem;max-width:480px;}}
-@media(max-width:480px){.login-hero h2{font-size:1.9rem;}.login-hero p{font-size:.86rem;}}
+@media(max-width:480px){.login-hero h2{font-size:1.9rem;}.login-hero p{font-size:.86rem;}.login-stats{grid-template-columns:repeat(2,1fr);}}
 
 /* ---- Quick actions — flyer-style icon cards (rounded red icon square + title + description) ---- */
 .qa{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:13px 14px;border:1px solid var(--border);border-radius:13px;margin-bottom:9px;background:var(--input-bg);cursor:pointer;transition:.15s;position:relative;}
@@ -235,8 +239,25 @@ body:not(.light)::after{
 <div class="login-overlay" id="loginOverlay">
   <div class="login-outer">
     <div class="login-hero">
+      <span class="ai-badge" style="margin:0 0 14px;">AI Powered</span>
       <h2>Every owner.<br>Every property.<br><em>One search.</em></h2>
       <p>The AI-powered database of Dubai property owners, phone numbers and transaction history — built for brokers who close.</p>
+      <div class="login-stats">
+        <div class="stat-card"><div class="stat-value">250K+</div><div class="stat-label">Owners</div></div>
+        <div class="stat-card"><div class="stat-value">310K+</div><div class="stat-label">Properties</div></div>
+        <div class="stat-card"><div class="stat-value">1,900+</div><div class="stat-label">Projects</div></div>
+        <div class="stat-card"><div class="stat-value">220K+</div><div class="stat-label">Phones</div></div>
+      </div>
+      <div class="login-coverage">
+        <div class="lc-label">Coverage — top communities</div>
+        <div class="chip-row">
+          <span class="chip">Damac Hills</span>
+          <span class="chip">JVC</span>
+          <span class="chip">Business Bay</span>
+          <span class="chip">Dubai Marina</span>
+          <span class="chip">Palm Jumeirah</span>
+        </div>
+      </div>
     </div>
     <div class="login-box">
     <div class="brandmark" role="img" aria-label="DB Search" style="width:64px;height:64px;border-radius:16px;margin:0 auto 16px;"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#ef2b2b" stroke-width="2.6" stroke-linecap="round"><circle cx="10" cy="10" r="6.2"></circle><line x1="14.8" y1="14.8" x2="20.6" y2="20.6"></line></svg></div>
