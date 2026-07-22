@@ -1310,7 +1310,20 @@ let suggTimer=null;
 
 // ---------- HELPERS ----------
 function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
-function waNum(d){d=String(d||'').replace(/\D/g,'');if(d.startsWith('00'))d=d.slice(2);if(d.startsWith('0')&&d.length===10)d='971'+d.slice(1);else if(d.length===9&&d.startsWith('5'))d='971'+d;return d;}
+// Normalize any stored phone shape to a full-international digit string for wa.me links.
+// Previously only handled "0XXXXXXXXX" (10 digits) and 9-digit numbers starting with "5" —
+// any other local shape (9-digit number not starting with 5, or already-prefixed numbers with
+// odd spacing/dashes) fell through un-prefixed, producing a broken wa.me link that opens
+// WhatsApp's generic invite/share screen instead of the contact's chat.
+function waNum(d){
+  d=String(d||'').replace(/\D/g,'');
+  if(!d) return '';
+  if(d.startsWith('00')) d=d.slice(2);
+  if(d.startsWith('971')) return d;               // already has the UAE country code
+  if(d.startsWith('0')) d=d.slice(1);              // strip local trunk prefix
+  if(d.length===9) return '971'+d;                 // any 9-digit local number, not just ones starting with 5
+  return d;                                        // assume it already carries its own country code
+}
 function goodEmail(e){return e && e!=='0' && /@/.test(e);}
 // pull a value out of raw_data by fuzzy key match (source files use different headers)
 function fromRaw(rec, keys){
