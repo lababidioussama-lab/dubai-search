@@ -265,6 +265,72 @@ body:not(.light)::after{
 
 /* nav brand mark on desktop sticky bar gets the same glow treatment */
 .nav-logo{box-shadow:0 0 0 1px var(--border),0 0 14px rgba(239,43,43,.3);}
+
+/* ---------- DAMAC Lagoons Market tab ---------- */
+.dl-grid2{display:grid;grid-template-columns:1fr;gap:14px;}
+@media(min-width:680px){.dl-grid2{grid-template-columns:1.3fr 1fr;}}
+.dl-section{margin-bottom:18px;}
+.dl-section-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;}
+.dl-section-title{font-size:.86rem;font-weight:800;letter-spacing:.01em;display:flex;align-items:center;gap:7px;}
+.dl-section-note{font-size:.7rem;color:var(--text-muted);}
+.dl-chart-wrap{position:relative;}
+.dl-chart-labels{display:flex;justify-content:space-between;font-size:.62rem;color:var(--text-muted);
+  margin-top:6px;letter-spacing:.02em;}
+.dl-chart-callout{position:absolute;top:2px;right:2px;text-align:right;}
+.dl-chart-callout .v{font-size:1.05rem;font-weight:800;color:var(--accent);text-shadow:0 0 14px var(--accent-glow);}
+.dl-chart-callout .l{font-size:.6rem;color:var(--text-muted);letter-spacing:.05em;text-transform:uppercase;}
+.dl-rank-row{display:grid;grid-template-columns:18px 104px 1fr 90px;align-items:center;gap:10px;
+  padding:8px 0;border-bottom:1px solid var(--border);font-size:.79rem;}
+.dl-rank-row:last-child{border-bottom:none;}
+.dl-rank-num{color:var(--text-muted);font-size:.68rem;font-variant-numeric:tabular-nums;}
+.dl-rank-name{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.dl-rank-bar-track{background:var(--border);border-radius:4px;height:7px;overflow:hidden;}
+.dl-rank-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent-soft),var(--accent));border-radius:4px;
+  box-shadow:0 0 8px var(--accent-soft);}
+.dl-rank-vol{text-align:right;font-variant-numeric:tabular-nums;color:var(--text-muted);font-size:.72rem;}
+.dl-mix-track{display:flex;height:24px;border-radius:7px;overflow:hidden;border:1px solid var(--border);}
+.dl-mix-cash{background:var(--whatsapp);}
+.dl-mix-mortgage{background:var(--accent);}
+.dl-mix-legend{display:flex;gap:20px;margin-top:12px;font-size:.78rem;flex-wrap:wrap;}
+.dl-mix-legend span{display:flex;align-items:center;gap:7px;}
+.dl-dot{width:9px;height:9px;border-radius:2px;display:inline-block;}
+.dl-mix-sub-row{display:flex;justify-content:space-between;font-size:.82rem;padding:5px 0;}
+.dl-mix-sub-row.total{border-top:1px solid var(--border);margin-top:8px;padding-top:10px;font-weight:700;}
+.dl-mix-sub-row .v{font-variant-numeric:tabular-nums;color:var(--text-muted);}
+.dl-mix-sub-row.total .v{color:var(--whatsapp);}
+.dl-flip-row{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;
+  border-bottom:1px solid var(--border);font-size:.82rem;}
+.dl-flip-row:last-child{border-bottom:none;}
+.dl-flip-name{font-weight:800;}
+.dl-flip-meta{color:var(--text-muted);font-size:.73rem;margin-top:1px;}
+.dl-flip-price{font-variant-numeric:tabular-nums;color:var(--accent);font-weight:700;}
+.dl-badge{display:inline-block;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-border);
+  border-radius:20px;padding:2px 8px;font-size:.62rem;font-weight:800;margin-left:6px;}
+.dl-txn-search{width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text);
+  padding:11px 12px;border-radius:8px;font-size:.85rem;margin-bottom:12px;}
+.dl-txn-search:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+.dl-cluster-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;}
+.dl-cchip{background:var(--surface-2);border:1px solid var(--border);color:var(--text-muted);
+  border-radius:20px;padding:6px 12px;font-size:.74rem;font-weight:700;cursor:pointer;transition:all .15s;}
+.dl-cchip:hover{border-color:var(--accent-border);color:var(--text);}
+.dl-cchip.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.dl-txn-scroll{overflow-x:auto;border-radius:10px;border:1px solid var(--border);}
+.dl-txn-scroll-body{max-height:420px;overflow-y:auto;}
+table.dl-txn{border-collapse:collapse;width:100%;min-width:720px;font-size:.78rem;}
+table.dl-txn thead th{position:sticky;top:0;background:var(--surface-2);color:var(--text-muted);
+  text-align:left;font-size:.62rem;text-transform:uppercase;letter-spacing:.04em;font-weight:800;
+  padding:10px 12px;border-bottom:1px solid var(--border);white-space:nowrap;}
+table.dl-txn td{padding:9px 12px;border-bottom:1px solid var(--border);white-space:nowrap;}
+table.dl-txn tbody tr:last-child td{border-bottom:none;}
+table.dl-txn tbody tr:hover{background:var(--accent-soft);}
+table.dl-txn td.mono{font-variant-numeric:tabular-nums;font-weight:700;}
+table.dl-txn td.num{font-variant-numeric:tabular-nums;text-align:right;color:var(--text-muted);}
+.dl-tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.66rem;font-weight:800;white-space:nowrap;}
+.dl-tag-td{background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-border);}
+.dl-tag-oq{background:rgba(139,92,246,.14);color:#a78bfa;border:1px solid rgba(139,92,246,.4);}
+.dl-tag-cash{background:rgba(37,211,102,.12);color:var(--whatsapp);border:1px solid rgba(37,211,102,.4);}
+.dl-tag-mortgage{background:rgba(255,255,255,.06);color:var(--text-muted);border:1px solid var(--border);}
+.dl-txn-foot-note{font-size:.68rem;color:var(--text-muted);margin-top:8px;text-align:center;}
 </style></head><body>
 <canvas id="neuralCanvas"></canvas>
 
@@ -1550,24 +1616,51 @@ function renderDamacTransactions(rows){
   }).join('');
   return `<div class="community-bar"><div class="cb-title">🏝️ DAMAC LAGOONS — SALE HISTORY:</div>${items}</div>`;
 }
-// DAMAC Lagoons market analysis (Market tab) — one aggregate call (damac_lagoons_market_stats
-// RPC via db-api's damac_lagoons_market action) rendered as stat cards + breakdown tables.
+// DAMAC Lagoons market analysis (Market tab) — one call to db-api's damac_lagoons_market
+// action returns both the aggregate stats (damac_lagoons_market_stats RPC) and the full
+// transactions list, rendered as stat cards, an SVG trend chart, ranked cluster bars, a
+// payment-mix bar, flipped villas, and a filterable/searchable transactions table.
 // Fetched once per page load and cached — the Market tab click re-shows the cached render
 // instead of re-hitting the network every time the user tabs back to it.
 let _dlMarketCache=null;
 async function loadDamacMarket(){
   const box=document.getElementById('dlMarketContainer');
   if(!box) return;
-  if(_dlMarketCache){ box.innerHTML=renderDamacMarket(_dlMarketCache); return; }
+  if(_dlMarketCache){ box.innerHTML=renderDamacMarket(_dlMarketCache.data,_dlMarketCache.transactions); bindDamacMarketFilters(); return; }
   box.innerHTML='<div class="loading"><div class="spinner"></div>Loading market data…</div>';
   try{
-    const {data,error}=await api('damac_lagoons_market',{});
-    if(error||!data){ box.innerHTML='<div class="error-msg">Error loading market data'+(error?': '+esc(error):'')+'</div>'; return; }
-    _dlMarketCache=data;
-    box.innerHTML=renderDamacMarket(data);
+    const res=await api('damac_lagoons_market',{});
+    if(res.error||!res.data){ box.innerHTML='<div class="error-msg">Error loading market data'+(res.error?': '+esc(res.error):'')+'</div>'; return; }
+    _dlMarketCache={data:res.data,transactions:res.transactions||[]};
+    box.innerHTML=renderDamacMarket(res.data,res.transactions||[]);
+    bindDamacMarketFilters();
   }catch(e){ box.innerHTML='<div class="error-msg">Error: '+esc(e.message)+'</div>'; }
 }
-function renderDamacMarket(d){
+// Builds an SVG area-chart path (line + filled area) from an arbitrary list of {total_volume}
+// points — scales to whatever date range/values the live data currently has, unlike a
+// hardcoded path that would go stale as new transactions are added.
+function dlBuildAreaChart(points){
+  const W=640,H=200,padL=8,padR=8,padT=12,padB=0;
+  const plotW=W-padL-padR,plotH=H-padT-padB;
+  const vols=points.map(p=>p.total_volume||0);
+  const vmin=Math.min(...vols),vmax=Math.max(...vols);
+  const vrange=(vmax-vmin)||1;
+  const n=points.length;
+  const xAt=i=>padL+(plotW*i/((n-1)||1));
+  const yAt=v=>padT+plotH-(plotH*(v-vmin)/vrange);
+  const pts=points.map((p,i)=>[xAt(i),yAt(p.total_volume||0)]);
+  const line='M '+pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' L ');
+  const area=line+` L ${pts[n-1][0].toFixed(1)},${(padT+plotH).toFixed(1)} L ${pts[0][0].toFixed(1)},${(padT+plotH).toFixed(1)} Z`;
+  return {line,area,lastX:pts[n-1][0],lastY:pts[n-1][1]};
+}
+function dlMonthLabel(m){
+  const parts=String(m||'').split('-');
+  if(parts.length!==2) return m||'';
+  const names=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const idx=parseInt(parts[1],10)-1;
+  return names[idx]||m;
+}
+function renderDamacMarket(d,transactions){
   const o=d.overall||{};
   const money=n=>n==null?'—':'AED '+emNum(Math.round(n));
   const cards=`<div class="stats-grid" style="margin-bottom:16px;">
@@ -1582,23 +1675,127 @@ function renderDamacMarket(d){
     💵 ${emNum(o.cash_count)} cash / 🏦 ${emNum(o.mortgage_count)} mortgage (avg LTV ${o.avg_ltv!=null?(o.avg_ltv*100).toFixed(0)+'%':'—'})
   </div>`;
 
-  const bySub=(d.by_sub_project||[]).map(s=>`<div class="dl-row">
-    <b>${esc(s.sub_project)}</b> — ${emNum(s.transactions)} sales · avg ${money(s.avg_price)} · AED ${emNum(s.avg_price_per_sqft)}/sqft ·
-    range ${money(s.min_price)}–${money(s.max_price)} · vol ${money(s.total_volume)}
-  </div>`).join('');
-  const subBlock=`<div class="community-bar" style="margin-bottom:16px;"><div class="cb-title">🏘️ BY CLUSTER (highest volume first)</div>${bySub||'<div class="no-results">No data</div>'}</div>`;
+  const months=d.by_month||[];
+  let chartBlock='';
+  if(months.length){
+    const chart=dlBuildAreaChart(months);
+    const last=months[months.length-1];
+    chartBlock=`<div class="community-bar dl-chart-wrap">
+      <div class="dl-chart-callout"><div class="v">${money(last.total_volume).replace('AED ','')}</div><div class="l">${esc(dlMonthLabel(last.month))} ${esc(String(last.month||'').split('-')[0]||'')}</div></div>
+      <svg viewBox="0 0 640 200" width="100%" height="176" preserveAspectRatio="none" style="overflow:visible;">
+        <defs><linearGradient id="dlAreaFill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+        </linearGradient></defs>
+        <g stroke="var(--border)" stroke-width="1">
+          <line x1="8" y1="12" x2="632" y2="12"/><line x1="8" y1="96" x2="632" y2="96"/><line x1="8" y1="180" x2="632" y2="180"/>
+        </g>
+        <path d="${chart.area}" fill="url(#dlAreaFill)"/>
+        <path d="${chart.line}" fill="none" stroke="var(--accent)" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round"/>
+        <circle cx="${chart.lastX.toFixed(1)}" cy="${chart.lastY.toFixed(1)}" r="4.5" fill="var(--accent)"/>
+      </svg>
+      <div class="dl-chart-labels">${months.map(m=>`<span>${esc(dlMonthLabel(m.month))}</span>`).join('')}</div>
+    </div>`;
+  }
 
-  const byMonth=(d.by_month||[]).map(m=>`<div class="dl-row">
-    <b>${esc(m.month)}</b> — ${emNum(m.transactions)} sales · avg ${money(m.avg_price)} · AED ${emNum(m.avg_price_per_sqft)}/sqft · vol ${money(m.total_volume)}
+  const bySub=d.by_sub_project||[];
+  const maxVol=Math.max(1,...bySub.map(s=>s.total_volume||0));
+  const rankRows=bySub.map((s,i)=>`<div class="dl-rank-row">
+    <div class="dl-rank-num">${String(i+1).padStart(2,'0')}</div>
+    <div class="dl-rank-name">${esc(s.sub_project)}</div>
+    <div class="dl-rank-bar-track"><div class="dl-rank-bar-fill" style="width:${((s.total_volume||0)/maxVol*100).toFixed(1)}%;"></div></div>
+    <div class="dl-rank-vol">${emNum(Math.round((s.total_volume||0)/1e6*10)/10)}M</div>
   </div>`).join('');
-  const monthBlock=`<div class="community-bar" style="margin-bottom:16px;"><div class="cb-title">📈 MONTHLY TREND</div>${byMonth||'<div class="no-results">No data</div>'}</div>`;
+  const rankBlock=`<div class="community-bar">${rankRows||'<div class="no-results">No data</div>'}</div>`;
 
-  const resold=(d.resold_villas||[]).map(r=>`<div class="dl-row">
-    🔁 <b>${esc(r.villa)}</b> — ${esc(r.sub_project)} · sold ${emNum(r.times_sold)}x · last ${money(r.last_price)} on ${esc(r.last_sale_date)}
-  </div>`).join('');
-  const resoldBlock=resold?`<div class="community-bar"><div class="cb-title">🔁 FLIPPED VILLAS (sold more than once)</div>${resold}</div>`:'';
+  const cashPct=o.total_transactions?Math.round((o.cash_count||0)/o.total_transactions*100):0;
+  const mortPct=100-cashPct;
+  const mixBlock=`<div class="community-bar">
+    <div class="dl-mix-track"><div class="dl-mix-cash" style="width:${cashPct}%;"></div><div class="dl-mix-mortgage" style="width:${mortPct}%;"></div></div>
+    <div class="dl-mix-legend">
+      <span><i class="dl-dot" style="background:var(--whatsapp);"></i> Cash · ${emNum(o.cash_count)} (${cashPct}%)</span>
+      <span><i class="dl-dot" style="background:var(--accent);"></i> Mortgage · ${emNum(o.mortgage_count)} (${mortPct}%)</span>
+    </div>
+    <div class="dl-mix-sub-row"><span>Title Deed</span><span class="v">${emNum(o.title_deed_count)}</span></div>
+    <div class="dl-mix-sub-row"><span>Oqood</span><span class="v">${emNum(o.oqood_count)}</span></div>
+    <div class="dl-mix-sub-row total"><span>Avg loan-to-value</span><span class="v">${o.avg_ltv!=null?(o.avg_ltv*100).toFixed(0)+'%':'—'}</span></div>
+  </div>`;
 
-  return cards+subBlock+monthBlock+resoldBlock;
+  const resold=(d.resold_villas||[]).map(r=>`<div class="dl-flip-row"><div><span class="dl-flip-name">${esc(r.villa)}</span><span class="dl-badge">${emNum(r.times_sold)}×</span><div class="dl-flip-meta">${esc(r.sub_project)} · last sold ${esc(r.last_sale_date)}</div></div><div class="dl-flip-price">${money(r.last_price)}</div></div>`).join('');
+  const resoldBlock=resold?`<div class="dl-section" style="margin-bottom:0;">
+    <div class="dl-section-head"><div class="dl-section-title">🔁 Flipped villas</div><div class="dl-section-note">sold more than once</div></div>
+    <div class="community-bar">${resold}</div>
+  </div>`:'';
+
+  const clusters=[...new Set(bySub.map(s=>s.sub_project))];
+  const chips=`<span class="dl-cchip active" data-cluster="">All clusters</span>`+
+    clusters.map(c=>`<span class="dl-cchip" data-cluster="${esc(c)}">${esc(c)}</span>`).join('');
+
+  const txnRows=(transactions||[]).slice(0,500).map(t=>{
+    const sqft=t.bua_sqft!=null?emNum(Math.round(t.bua_sqft)):'—';
+    const psf=t.price_per_sqft!=null?emNum(Math.round(t.price_per_sqft)):'—';
+    const pay=t.payment_method==='cash'?'<span class="dl-tag dl-tag-cash">Cash</span>':
+      `<span class="dl-tag dl-tag-mortgage">Mortgage${t.ltv!=null?' '+Math.round(t.ltv*100)+'%':''}</span>`;
+    const typCls=t.sale_type==='Title Deed'?'td':'oq';
+    return `<tr data-cluster="${esc(t.sub_project||'')}">
+      <td>${esc(t.sale_date||'')}</td>
+      <td>${esc(t.sub_project||'')}</td>
+      <td class="mono">${esc(t.villa||'')}</td>
+      <td><span class="dl-tag dl-tag-${typCls}">${esc(t.sale_type||'')}</span></td>
+      <td class="num">${money(t.price)}</td>
+      <td class="num">${sqft}</td>
+      <td class="num">${psf}</td>
+      <td>${pay}</td>
+    </tr>`;
+  }).join('');
+
+  const txnBlock=`<div class="dl-section" style="margin-bottom:0;">
+    <div class="dl-section-head"><div class="dl-section-title">🧾 All transactions</div><div class="dl-section-note">newest first · ${emNum((transactions||[]).length)} total</div></div>
+    <input class="dl-txn-search" id="dlTxnSearch" placeholder="Filter by villa or sale type… e.g. BL323, Oqood" />
+    <div class="dl-cluster-chips" id="dlClusterChips">${chips}</div>
+    <div class="dl-txn-scroll"><div class="dl-txn-scroll-body">
+      <table class="dl-txn">
+        <thead><tr><th>Date</th><th>Cluster</th><th>Villa</th><th>Type</th><th>Price</th><th>BUA sqft</th><th>AED/sqft</th><th>Payment</th></tr></thead>
+        <tbody id="dlTxnBody">${txnRows}</tbody>
+      </table>
+    </div></div>
+  </div>`;
+
+  return cards+
+    `<div class="dl-grid2">
+      <div class="dl-section"><div class="dl-section-head"><div class="dl-section-title">📈 Monthly volume</div><div class="dl-section-note">AED, by month</div></div>${chartBlock}</div>
+      <div class="dl-section"><div class="dl-section-head"><div class="dl-section-title">💳 Payment mix</div><div class="dl-section-note">of ${emNum(o.total_transactions)} sales</div></div>${mixBlock}</div>
+    </div>
+    <div class="dl-section"><div class="dl-section-head"><div class="dl-section-title">🏘️ Clusters by volume</div><div class="dl-section-note">highest first</div></div>${rankBlock}</div>
+    ${resoldBlock}
+    <div style="height:18px;"></div>
+    ${txnBlock}`;
+}
+function bindDamacMarketFilters(){
+  const input=document.getElementById('dlTxnSearch');
+  const chipBox=document.getElementById('dlClusterChips');
+  const body=document.getElementById('dlTxnBody');
+  if(!body) return;
+  let activeCluster='';
+  function applyFilters(){
+    const q=(input?input.value:'').trim().toLowerCase();
+    body.querySelectorAll('tr').forEach(r=>{
+      const matchesCluster=!activeCluster||r.getAttribute('data-cluster')===activeCluster;
+      const matchesText=!q||r.textContent.toLowerCase().includes(q);
+      r.style.display=(matchesCluster&&matchesText)?'':'none';
+    });
+  }
+  if(input) input.addEventListener('input',applyFilters);
+  if(chipBox){
+    chipBox.querySelectorAll('.dl-cchip').forEach(chip=>{
+      chip.addEventListener('click',()=>{
+        chipBox.querySelectorAll('.dl-cchip').forEach(c=>c.classList.remove('active'));
+        chip.classList.add('active');
+        activeCluster=chip.getAttribute('data-cluster')||'';
+        applyFilters();
+      });
+    });
+  }
 }
 function bindChips(targetId){
   document.querySelectorAll('#'+targetId+' .chip').forEach(el=>el.addEventListener('click',()=>searchCommunity(el.getAttribute('data-community'),targetId)));
