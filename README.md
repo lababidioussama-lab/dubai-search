@@ -35,9 +35,15 @@ Run the server (stdio transport):
 npm start
 ```
 
-## Using with an MCP client
+## Using with Claude Desktop (local server)
 
-Add to your client's MCP server config, e.g.:
+1. Build the server first (`npm install && npm run build`) so `dist/index.js` exists.
+2. Open Claude Desktop's config file:
+   - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+   - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+   (In Claude Desktop: Settings → Developer → Edit Config)
+3. Add this server under `mcpServers`, using an **absolute path** to `dist/index.js`:
 
 ```json
 {
@@ -52,6 +58,15 @@ Add to your client's MCP server config, e.g.:
   }
 }
 ```
+
+4. Fully quit and restart Claude Desktop.
+5. Click the "Add files, connectors, and more" icon in the input box → Connectors → Manage connectors → **uae-real-estate** to confirm the 9 tools are listed.
+
+If it doesn't connect, check the server runs standalone first (`RAPIDAPI_KEY=... node dist/index.js`), then check logs:
+- **macOS**: `tail -n 20 -f ~/Library/Logs/Claude/mcp*.log`
+- **Windows**: `%APPDATA%\Claude\logs\mcp*.log`
+
+This is the same pattern used for the [official filesystem MCP server](https://modelcontextprotocol.io/docs/develop/connect-local-servers) — a local server run via `command`/`args`, distinct from remote gateway configs like RapidAPI's hosted `mcp.rapidapi.com` proxy.
 
 ## Development
 
