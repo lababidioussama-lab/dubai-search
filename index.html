@@ -338,7 +338,7 @@ body:not(.light)::after{
 .dl-cchip:hover{border-color:var(--accent-border);color:var(--text);}
 .dl-cchip.active{background:var(--accent);color:#fff;border-color:var(--accent);}
 .dl-txn-scroll{overflow-x:auto;border-radius:10px;border:1px solid var(--border);}
-.dl-txn-scroll-body{max-height:420px;overflow-y:auto;}
+.dl-txn-scroll-body{max-height:420px;overflow-y:auto;}.dl-scroll-cap{max-height:280px;overflow-y:auto;}@media(max-width:600px){.dl-scroll-cap{max-height:220px;}.dl-txn-scroll-body{max-height:320px;}.dl-section{margin-bottom:14px;}.dl-chart-wrap svg{height:130px;}.community-bar{padding:11px 12px;}}
 table.dl-txn{border-collapse:collapse;width:100%;min-width:720px;font-size:.78rem;}
 table.dl-txn thead th{position:sticky;top:0;background:var(--surface-2);color:var(--text-muted);
   text-align:left;font-size:.62rem;text-transform:uppercase;letter-spacing:.04em;font-weight:800;
@@ -1771,7 +1771,7 @@ function renderDamacMarket(d,transactions){
     <div class="dl-rank-bar-track"><div class="dl-rank-bar-fill" style="width:${((s.total_volume||0)/maxVol*100).toFixed(1)}%;"></div></div>
     <div class="dl-rank-vol">${emNum(Math.round((s.total_volume||0)/1e6*10)/10)}M</div>
   </div>`).join('');
-  const rankBlock=`<div class="community-bar">${rankRows||'<div class="no-results">No data</div>'}</div>`;
+  const rankBlock=`<div class="community-bar"><div class="dl-scroll-cap">${rankRows||'<div class="no-results">No data</div>'}</div></div>`;
 
   const cashPct=o.total_transactions?Math.round((o.cash_count||0)/o.total_transactions*100):0;
   const mortPct=100-cashPct;
@@ -1789,7 +1789,7 @@ function renderDamacMarket(d,transactions){
   const resold=(d.resold_villas||[]).map(r=>`<div class="dl-flip-row"><div><span class="dl-flip-name">${esc(r.villa)}</span><span class="dl-badge">${emNum(r.times_sold)}×</span><div class="dl-flip-meta">${esc(r.sub_project)} · last sold ${esc(r.last_sale_date)}</div></div><div class="dl-flip-price">${money(r.last_price)}</div></div>`).join('');
   const resoldBlock=resold?`<div class="dl-section" style="margin-bottom:0;">
     <div class="dl-section-head"><div class="dl-section-title">🔁 Flipped villas</div><div class="dl-section-note">sold more than once</div></div>
-    <div class="community-bar">${resold}</div>
+    <div class="community-bar"><div class="dl-scroll-cap">${resold}</div></div>
   </div>`:'';
 
   const clusters=[...new Set(bySub.map(s=>s.sub_project))];
