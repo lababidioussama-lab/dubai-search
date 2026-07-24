@@ -2,8 +2,10 @@
 Bayut Scraper Engine — smart extraction + professional Excel report.
 
 Key upgrades over the original version:
-  - Extracts data from Bayut's embedded __NEXT_DATA__ JSON (the same data
-    the page itself renders from) instead of fragile whole-page regex.
+  - Extracts data from Bayut's embedded page-state JSON (the same data the
+    page itself renders from -- Bayut's "Strat" frontend hydrates via
+    window.__STRAT_SERVER_STATE__; __NEXT_DATA__ is checked first only as
+    a harmless no-op fallback) instead of fragile whole-page regex.
     This fixes the classic bugs: bathrooms always showing "253", location
     resolving to "DAMAC Hills Villas/Townhouses" instead of the real
     sub-community, trailing commas in price, and duplicated permit numbers
@@ -1393,25 +1395,101 @@ def handle_captcha(page: ChromiumPage) -> None:
 # ==========================================
 # STRUCTURED-DATA EXTRACTION (the "smart" core)
 # ==========================================
+def _extract_balanced_json(text: str, start_idx: int) -> Optional[str]:
+    """From text[start_idx] == '{', return the substring up to and including
+    the matching closing brace, respecting string literals (so braces
+    inside quoted values, e.g. descriptions, don't throw off the count)."""
+    depth = 0
+    in_string = False
+    escape = False
+    quote_char = ""
+    for i in range(start_idx, len(text)):
+        ch = text[i]
+        if in_string:
+            if escape:
+                escape = False
+            elif ch == "\\":
+                escape = True
+            elif ch == quote_char:
+                in_string = False
+        else:
+            if ch in ("\"", "'"):
+                in_string = True
+                quote_char = ch
+            elif ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0:
+                    return text[start_idx:i + 1]
+    return None
+
+
+def _find_property_object(obj: Any, _depth: int = 0) -> Optional[Dict[str, Any]]:
+    """Recursively search a state tree for the dict describing the current
+    property listing, identified by having both a numeric 'price' and a
+    'location' array -- fields only the listing object itself has."""
+    if _depth > 12:
+        return None
+    if isinstance(obj, dict):
+        if isinstance(obj.get("price"), (int, float)) and isinstance(obj.get("location"), list):
+            return obj
+        for v in obj.values():
+            found = _find_property_object(v, _depth + 1)
+            if found:
+                return found
+    elif isinstance(obj, list):
+        for item in obj:
+            found = _find_property_object(item, _depth + 1)
+            if found:
+                return found
+    return None
+
+
 def extract_next_data(html_content: str) -> Optional[Dict[str, Any]]:
-    """Pull Bayut's embedded __NEXT_DATA__ JSON payload, if present."""
+    """Pull Bayut's embedded property JSON, if present.
+
+    Bayut actually runs on a custom "Strat" frontend, not Next.js
+    (confirmed live: pages hydrate via
+    ``<script id="browserInitialState">window.__STRAT_SERVER_STATE__ = {...}``,
+    there's no ``__NEXT_DATA__`` script tag at all) -- so this function was
+    silently returning None on every real listing page, and every listing
+    was falling through to the much less reliable regex/breadcrumb text
+    fallback below. That's what caused unrelated listings to show identical
+    duplicated bedroom/bathroom/area/location values: the fallback's
+    breadcrumb heuristic was picking up static site-nav links (same on
+    every page) instead of the property's actual details.
+    """
     match = re.search(
         r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>',
         html_content, re.DOTALL,
     )
-    if not match:
+    if match:
+        try:
+            data = json.loads(match.group(1))
+            page_props = data.get("props", {}).get("pageProps", {})
+            for key in ("property", "propertyData", "listing", "propertyDetails"):
+                prop = page_props.get(key)
+                if isinstance(prop, dict) and prop:
+                    return prop
+        except (json.JSONDecodeError, ValueError):
+            pass
+
+    marker_idx = html_content.find("__STRAT_SERVER_STATE__")
+    if marker_idx == -1:
+        return None
+    brace_idx = html_content.find("{", marker_idx)
+    if brace_idx == -1:
+        return None
+    json_str = _extract_balanced_json(html_content, brace_idx)
+    if not json_str:
         return None
     try:
-        data = json.loads(match.group(1))
+        data = json.loads(json_str)
     except (json.JSONDecodeError, ValueError):
         return None
 
-    page_props = data.get("props", {}).get("pageProps", {})
-    for key in ("property", "propertyData", "listing", "propertyDetails"):
-        prop = page_props.get(key)
-        if isinstance(prop, dict) and prop:
-            return prop
-    return None
+    return _find_property_object(data)
 
 
 def dig(d: Optional[Dict[str, Any]], *path: str, default: Any = None) -> Any:
@@ -1669,6 +1747,11 @@ TRAKHEESI_NUMERIC_FIELDS = {
 # the page footer, into its captured value.
 TRAKHEESI_SECTION_HEADERS = [
     "Listing Details", "Authority Information", "Property Details",
+    # "Broker Information" (individual agent Name/Email/Mobile card) isn't
+    # a field we capture -- without this boundary, "Authority Name" swallows
+    # the whole card into its value (confirmed live: e.g. "HAUS & HAUS REAL
+    # ESTATE BROKER L.L.C Broker Information # 79116 Name ... Email ... Mobile ...").
+    "Broker Information",
     "Report violation", "Feedback", "Call Us", "dubailand.gov.ae",
 ]
 
