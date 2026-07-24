@@ -17,6 +17,15 @@ async function main() {
   const rig = createSceneRig(canvas);
   const cluster = await loadCluster('portofino');
 
+  function labelFor(unit: { typeCode: string; tier: keyof typeof TIERS; bedrooms: number | null; bedroomsConfirmed: boolean }): string {
+    const legendLabel = cluster.legend[unit.typeCode]?.label;
+    if (legendLabel) return legendLabel;
+    if (unit.bedroomsConfirmed && unit.bedrooms != null) {
+      return `${unit.bedrooms}BR ${unit.bedrooms <= 5 ? 'Townhouse' : 'Villa'}`;
+    }
+    return TIERS[unit.tier].label;
+  }
+
   const villaField = buildVillaField(cluster);
   rig.scene.add(villaField.group);
   rig.scene.add(buildGround(cluster));
@@ -52,8 +61,7 @@ async function main() {
     activeId = id;
     villaField.setHighlight(id, 1);
 
-    const tierLabel = TIERS[unit.tier].label;
-    callout.show(id, `${unit.typeCode} · ${tierLabel}`, top, rig.cameraRig.camera);
+    callout.show(id, labelFor(unit), top, rig.cameraRig.camera);
 
     const focusDistance = Math.max(unit.footprint.width, unit.footprint.depth) * 5.5;
     rig.cameraRig.flyTo(top.clone().setY(unit.footprint.height * 0.3), focusDistance, 1.0);
@@ -61,7 +69,7 @@ async function main() {
 
   const searchableUnits = cluster.units.map((u) => ({
     id: u.id,
-    tierLabel: TIERS[u.tier].label,
+    tierLabel: labelFor(u),
     verified: u.verified,
   }));
 

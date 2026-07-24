@@ -1,5 +1,5 @@
-import type { PlacedCluster, PlacedUnit, RawClusterData, RoadSegment, TierId } from './types';
-import { TIERS } from './types';
+import type { PlacedCluster, PlacedUnit, RawClusterData, RawUnit, RoadSegment } from './types';
+import { sizeRatiosFor } from './types';
 
 const WORLD_TARGET_SPAN = 260;
 /** fraction of measured neighbour spacing a building's footprint fills; leaves a gap either side */
@@ -58,29 +58,34 @@ export function placeCluster(raw: RawClusterData): PlacedCluster {
   const worldPosById = new Map<string, Vec2>();
   for (const u of units) worldPosById.set(u.id, toWorld(u.planPx));
 
-  // --- derive tier footprint sizes from measured real spacing ---
-  const spacingsByTier = new Map<TierId, number[]>();
+  // --- derive footprint sizes from measured real spacing ---
+  // Units are grouped by their size ratio (bedroom-interpolated when confirmed,
+  // tier bucket otherwise) rather than raw tier, so a real 4BR townhouse gets
+  // its own size between 3BR and 5BR instead of being forced into one bucket.
+  const sizeKey = (u: RawUnit) => Math.round(sizeRatiosFor(u).width);
+
+  const spacingsBySize = new Map<number, number[]>();
   for (const group of groups.values()) {
     for (let i = 1; i < group.length; i++) {
       const a = worldPosById.get(group[i - 1].id)!;
       const b = worldPosById.get(group[i].id)!;
       const d = dist(a, b);
       if (d <= 0 || !Number.isFinite(d)) continue;
-      const tier = group[i].tier;
-      if (!spacingsByTier.has(tier)) spacingsByTier.set(tier, []);
-      spacingsByTier.get(tier)!.push(d);
+      const key = sizeKey(group[i]);
+      if (!spacingsBySize.has(key)) spacingsBySize.set(key, []);
+      spacingsBySize.get(key)!.push(d);
     }
   }
 
-  let anchorTier: TierId | null = null;
+  let anchorKey: number | null = null;
   let anchorSampleCount = -1;
-  for (const [tier, samples] of spacingsByTier) {
+  for (const [key, samples] of spacingsBySize) {
     if (samples.length > anchorSampleCount) {
-      anchorTier = tier;
+      anchorKey = key;
       anchorSampleCount = samples.length;
     }
   }
-  if (anchorTier === null) anchorTier = 3;
+  if (anchorKey === null) anchorKey = sizeKey(units[0]);
 
   const median = (arr: number[]): number => {
     const sorted = [...arr].sort((a, b) => a - b);
@@ -88,25 +93,25 @@ export function placeCluster(raw: RawClusterData): PlacedCluster {
     return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
   };
 
-  const anchorSamples = spacingsByTier.get(anchorTier) ?? [20];
+  const anchorSamples = spacingsBySize.get(anchorKey) ?? [20];
   const anchorSpacing = median(anchorSamples);
   const anchorWidth = anchorSpacing * PACKING_FACTOR;
 
-  const footprintByTier: Record<TierId, { width: number; depth: number; height: number }> = {
-    1: sizeFor(1),
-    2: sizeFor(2),
-    3: sizeFor(3),
-    4: sizeFor(4),
-  };
-  function sizeFor(tier: TierId) {
-    const t = TIERS[tier];
-    const anchor = TIERS[anchorTier as TierId];
-    const width = anchorWidth * (t.relWidth / anchor.relWidth);
-    return {
-      width,
-      depth: width * (t.relDepth / t.relWidth),
-      height: width * (t.relHeight / t.relWidth),
-    };
+  const footprintCache = new Map<number, { width: number; depth: number; height: number }>();
+  function footprintFor(u: RawUnit) {
+    const ratios = sizeRatiosFor(u);
+    const key = Math.round(ratios.width);
+    let fp = footprintCache.get(key);
+    if (!fp) {
+      const width = anchorWidth * (ratios.width / anchorKey!);
+      fp = {
+        width,
+        depth: width * (ratios.depth / ratios.width),
+        height: width * (ratios.height / ratios.width),
+      };
+      footprintCache.set(key, fp);
+    }
+    return fp;
   }
 
   // overall centroid, used to determine "outward" direction for road offset
@@ -138,7 +143,7 @@ export function placeCluster(raw: RawClusterData): PlacedCluster {
         ...u,
         position: pos,
         rotationY,
-        footprint: footprintByTier[u.tier],
+        footprint: footprintFor(u),
       });
     }
 
@@ -150,9 +155,9 @@ export function placeCluster(raw: RawClusterData): PlacedCluster {
       );
       const overallDir: Vec2 = { x: rowCenter.x - overallCenter.x, z: rowCenter.z - overallCenter.z };
 
-      const tier = group[0].tier;
-      const halfDepth = footprintByTier[tier].depth / 2;
-      const roadWidth = footprintByTier[tier].width * ROAD_WIDTH_FACTOR;
+      const rowFootprint = footprintFor(group[0]);
+      const halfDepth = rowFootprint.depth / 2;
+      const roadWidth = rowFootprint.width * ROAD_WIDTH_FACTOR;
       const offsetDist = halfDepth * ROAD_OFFSET_GAP + roadWidth / 2;
 
       const roadPoints: Vec2[] = positions.map((p, i) => {

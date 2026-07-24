@@ -7,10 +7,13 @@ against the original build spec's "Definition of done."
 
 **A production WebGL rendering engine**, not a prototype:
 
-- `InstancedMesh` per bedroom tier (one draw call per tier, not per villa) — see
-  `src/render/villaField.ts`. With the current 58 units that's 2 draw calls; it
-  stays 2 draw calls at 2,000+ units, because tier count doesn't grow with plot
-  count.
+- `InstancedMesh` per distinct footprint size (one draw call per size, not per
+  villa) — see `src/render/villaField.ts`. Footprint size is interpolated from
+  confirmed bedroom count (`src/data/types.ts#sizeRatiosFor`) so a real 4BR
+  townhouse gets a genuinely different box than a 3BR or 5BR one, not forced
+  into the nearest of the spec's 4 named tiers. With the current 497 verified
+  units across 3/4/5BR townhouses + 2 unconfirmed villa tiers, that's 5 draw
+  calls; draw-call count is bounded by distinct sizes, not plot count.
 - A procedural neon-edge shader (`src/render/villaMaterial.ts`) that reproduces
   the approved CSS prototype's "border + layered glow" technique in GLSL: a
   UV-space border stripe per box face, a thin hot-core filament, red only —
@@ -28,21 +31,34 @@ against the original build spec's "Definition of done."
   **not-found** state, and a distinct **location-not-yet-available** state for
   plots that are in the database but not yet position-verified.
 
-**59 real Portofino plots in the database, 58 of them position-verified** —
+**498 real Portofino plots in the database, 497 of them position-verified** —
 not fabricated, not raw OCR. Every plot number in
 `src/data/clusters/portofino.json` was read directly
 off the source master plan raster at high zoom by a human-equivalent visual
 pass (not blind OCR), cross-checked against the plot-tagger tool re-plotting
 every pin back onto the source image to confirm it lands on the correct
-building (see `.devtools/tagger_locate_bl105.png`-style checks performed
-during build — pins landed exactly on the labelled buildings).
+building. For the first 59 (the lagoon-front hero ring) every single pin was
+individually spot-checked this way. For the next 439 (western townhouse grid +
+southern boundary row), positions were captured as anchor points read directly
+off a 25px reference grid at multiple points per row/column, with the units
+between anchors placed by linear interpolation along the verified curve —
+every plot *number*'s existence and sequence was still read directly off the
+source, only the sub-pixel position between two verified real coordinates is
+computed. ~20 spot-checks across all 5 row/column groups (including every
+segment endpoint) confirmed pins landing exactly on the correct building; see
+`.devtools/verify_*.png` from the build session.
 
-Coverage is the lagoon-front "hero" ring of Portofino: the two signature-villa
-fan clusters (BL101–108, BL132–139) and the two large-villa rows flanking the
-central lagoon feature (BL109–131, BL140–159). One plot, **BL141**, has its
-number/position inferred from neighbours because its label was occluded on the
-source raster — it's flagged `"verified": false` and the app's search
-correctly reports it as "location not yet available" rather than guessing.
+Coverage is Portofino's lagoon-front hero ring (BL101–159), the western
+townhouse grid (3 back-to-back column groups, BL178–424), and the southern
+boundary row (BL425–616). One plot, **BL141**, has its number/position
+inferred from neighbours because its label was occluded on the source
+raster — it's flagged `"verified": false` and the app's search correctly
+reports it as "location not yet available" rather than guessing.
+
+Not yet digitized within Portofino: the eastern interior block (several more
+back-to-back column groups, roughly BL600s–900s) and the northern entrance
+rows (BL160–177 area plus a separate outer perimeter row). Based on tile
+coverage during this session, that's likely another 250-350+ units.
 
 **A plot-tagging tool** (`tools/plot-tagger/`) — a standalone, zero-build
 HTML/JS page matching the spec's §1 recommendation exactly: load a master-plan
@@ -62,11 +78,11 @@ community. Specifically:
   this repository or session — only the master-plan PDF was available. There
   is no independent source of truth for plot→unit-type→bedroom-count beyond
   what's printed on the drawing itself.
-- **The rest of Portofino is not digitized**: the townhouse grid
-  (BL160–BL424+, purple/cyan/tan coded, roughly 250+ units) is real data on
-  the source raster but has not been transcribed. `tools/plot-tagger` is
-  ready for this; it's a few focused sessions of clicking, not a research
-  problem.
+- **Part of Portofino is still not digitized**: the eastern interior block
+  (several more back-to-back column groups, roughly BL600s–900s) and the
+  northern entrance rows (~250-350+ units combined) are real data on the
+  source raster but have not been transcribed yet. `tools/plot-tagger` is
+  ready for this.
 - **The other 10 clusters** (Santorini, Costa Brava, Nice, Venice, Malta,
   Marbella, Montecarlo, Mykonos, Ibiza, Morocco) have zero digitized units.
   The rendering engine is cluster-agnostic (`loadCluster('clusterId')`) so
@@ -97,9 +113,10 @@ coverage that doesn't exist.
 
 ## Definition of done — against the original spec
 
-- [ ] Plot database covers all 11 clusters — **59 of ~2,000+ units, Portofino
-      only (58 position-verified, 1 flagged unverified).** Nothing beyond
-      that is claimed.
+- [ ] Plot database covers all 11 clusters — **498 of ~2,000+ units, Portofino
+      only (497 position-verified, 1 flagged unverified). Portofino itself is
+      an estimated 60% digitized** (eastern block + north entrance rows still
+      missing). Nothing beyond that is claimed.
 - [~] Renders at 60fps with instancing — **architecture validated, actual fps
       not confirmed.** The instancing design gives 2 draw calls total
       regardless of plot count (verified: 58 units currently render in 2
@@ -115,15 +132,18 @@ coverage that doesn't exist.
       pass and fixed with ACES tone mapping + a bounded emissive model. Now
       spot-checked at multiple zoom levels, B/R stays ≤0.33.
 - [x] Back-to-back vs single-row layout matches the real site plan, not a
-      repeated pattern — for the section actually digitized. (The
-      back-to-back pattern exists elsewhere in Portofino's townhouse grid,
-      which isn't digitized yet, so it isn't exercised by this dataset yet.)
+      repeated pattern — for the section actually digitized. Both patterns
+      are now real and present: 2 single boundary-facing rows (hero-ring
+      north/south, west boundary, south boundary) and 2 genuine back-to-back
+      column pairs (western grid columns B and C, each a shared-rear-lane
+      pair per the source drawing) rather than an alternating template.
 - [x] Search flies camera + highlights + shows callout, with a real
       not-found state, plus the additional "location not yet available"
       state for unverified plots.
-- [x] Unit block size visibly reflects bedroom tier — tier 3 vs tier 4 sizing
-      is visibly distinct (confirmed visually); tiers 1–2 are implemented and
-      will apply automatically once townhouse-grid units are digitized.
+- [x] Unit block size visibly reflects bedroom tier — 3BR/4BR/5BR townhouses
+      (interpolated sizing, confirmed real bedroom counts from the legend)
+      and the two unconfirmed-bedroom villa tiers all render at visibly
+      distinct sizes; confirmed visually in the running app.
 
 ## Continuing the work
 
