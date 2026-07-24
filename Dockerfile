@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.11-slim-bookworm
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     chromium \
@@ -19,7 +19,7 @@ WORKDIR /app
 
 COPY webapp/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
-RUN python -m playwright install --with-deps chromium
+RUN python -m playwright install chromium
 
 COPY scripts/ ./scripts/
 COPY webapp/ ./webapp/
