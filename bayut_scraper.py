@@ -176,8 +176,6 @@ LOCATION_DATABASE: Dict[str, str] = {
     # ---- Jumeirah Village Circle (JVC) ----
     "jumeirah village circle": "dubai/jumeirah-village-circle",
     "jvc": "dubai/jumeirah-village-circle",
-    "damac tower 108": "dubai/jumeirah-village-circle/damac-tower-108",
-    "tower 108": "dubai/jumeirah-village-circle/damac-tower-108",
     "jumeirah village triangle": "dubai/jumeirah-village-triangle",
     "jvt": "dubai/jumeirah-village-triangle",
 
@@ -536,7 +534,27 @@ def resolve_location_via_site_search(page: "ChromiumPage", user_input: str) -> O
 
 
 def resolve_location(user_input: str, page: Optional["ChromiumPage"] = None) -> Tuple[str, str]:
+    """Resolution order, most-trustworthy first:
+      1. Bayut's own live search (authoritative — it's their real data,
+         works for ANY project/building/cluster, not just ones we've
+         hand-entered). Tried first whenever a browser page is available.
+      2. Local shortcut database — exact match, then fuzzy-typo match.
+         Used when there's no page (e.g. unit tests) or live search fails.
+      3. A raw slugified guess as the last resort.
+    Hardcoded per-building slug guesses proved unreliable in practice
+    (DAMAC Tower 108, Westwood Grande, Costa Brava all pointed at dead
+    URLs Bayut silently redirected off of) — live search avoids that
+    entirely since it's driven by Bayut's own resolved data, not a guess.
+    """
     clean_input = user_input.lower().strip()
+
+    if page is not None:
+        live_path = resolve_location_via_site_search(page, user_input)
+        if live_path:
+            cprint(f"🔎 Found '{user_input}' via Bayut's own search ---> {live_path}")
+            return live_path, user_input.title()
+        cprint(f"⚠️  Bayut's own search couldn't resolve '{user_input}' — trying the local shortcut list.")
+
     if clean_input in LOCATION_DATABASE:
         return LOCATION_DATABASE[clean_input], clean_input.title()
     keys = list(LOCATION_DATABASE.keys())
@@ -548,14 +566,8 @@ def resolve_location(user_input: str, page: Optional["ChromiumPage"] = None) -> 
         cprint(f"💡 Auto-corrected spelling '{user_input}' ---> Matched to: '{best_match.title()}'")
         return LOCATION_DATABASE[best_match], best_match.title()
 
-    if page is not None:
-        live_path = resolve_location_via_site_search(page, user_input)
-        if live_path:
-            cprint(f"🔎 Not in local database — found '{user_input}' via Bayut's own search ---> {live_path}")
-            return live_path, user_input.title()
-        cprint(f"⚠️  Bayut's search couldn't resolve '{user_input}' either — falling back to a guessed URL.")
-        cprint("    Results may be off-target; check the 'Location Match' column afterwards.")
-
+    cprint(f"⚠️  Could not confidently resolve '{user_input}' — using a guessed URL.")
+    cprint("    Results may be off-target; check the 'Location Match' column afterwards.")
     formatted_slug = format_slug(user_input)
     if formatted_slug and formatted_slug != "uae":
         return f"dubai/{formatted_slug}", user_input.title()
@@ -624,7 +636,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def get_user_inputs(args: argparse.Namespace) -> ScrapeConfig:
+def get_user_inputs(args: argparse.Namespace, page: Optional[ChromiumPage] = None) -> ScrapeConfig:
     print_logo()
     cprint("=" * 70)
     cprint("     SMART BAYUT SCRAPER ENGINE (STRUCTURED-DATA EDITION)     ")
@@ -643,7 +655,7 @@ def get_user_inputs(args: argparse.Namespace) -> ScrapeConfig:
     if not location_raw:
         location_raw = "Dubai"
 
-    loc_path, resolved_name = resolve_location(location_raw)
+    loc_path, resolved_name = resolve_location(location_raw, page=page)
 
     bedrooms = args.bedrooms
     if not bedrooms:
@@ -819,35 +831,51 @@ def extract_from_json(prop: Dict[str, Any], prop_url: str, config: ScrapeConfig)
     }
 
 
+def _visible_text(html: str) -> str:
+    """Strip script/style content and tags so regexes only see what a user
+    would actually see — not JS bundles, JSON blobs, or attribute values
+    that happen to contain stray digits next to unrelated words."""
+    html = re.sub(r"<script[^>]*>.*?</script>", " ", html, flags=re.DOTALL | re.IGNORECASE)
+    html = re.sub(r"<style[^>]*>.*?</style>", " ", html, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<[^>]+>", " ", html)
+    return re.sub(r"\s+", " ", text).strip()
+
+
 def extract_from_regex_fallback(page: ChromiumPage, full_html: str, prop_url: str, config: ScrapeConfig) -> Dict[str, Any]:
     """Scoped fallback if __NEXT_DATA__ isn't found — still safer than the
-    original whole-page regex because we search inside the details card."""
+    original whole-page regex because we search inside the details card,
+    and only over visible text (not raw HTML/script content, which is what
+    previously let a stray "202" match as a bedroom count)."""
     card = page.ele("css:div[aria-label='Property details'], div[class*='details'], main", timeout=1)
     scope_html = card.html if card else full_html
+    scope_text = _visible_text(scope_html)
 
     price: Any = "N/A"
-    price_match = re.search(r"AED\s*([\d,]+)(?!\d)", scope_html)
+    price_match = re.search(r"AED\s*([\d,]+)(?!\d)", scope_text)
     if price_match:
         price = clean_number(price_match.group(1))
 
     beds: Any = "N/A"
-    beds_match = re.search(r"\b(\d+|Studio)\s*(?:Bed|Beds|BR)\b", scope_html, re.IGNORECASE)
+    # capped at 2 digits (no real listing has 100+ bedrooms) and requires a
+    # spelled-out "Bed(room)(s)" or "B/R" — bare "BR" alone was too generic
+    # and matched unrelated reference codes elsewhere on the page.
+    beds_match = re.search(r"\b(\d{1,2}|Studio)\s*(?:Bedrooms?|Beds?|B\s*/\s*R)\b", scope_text, re.IGNORECASE)
     if beds_match:
         beds = beds_match.group(1)
 
     baths: Any = "N/A"
-    baths_match = re.search(r"\b(\d+)\s*(?:Bathroom|Bathrooms)\b", scope_html, re.IGNORECASE)
+    baths_match = re.search(r"\b(\d{1,2})\s*(?:Bathrooms?|Baths?)\b", scope_text, re.IGNORECASE)
     if baths_match:
         baths = clean_number(baths_match.group(1))
 
     area: Any = "N/A"
-    area_match = re.search(r"([\d,]+)\s*sqft", scope_html, re.IGNORECASE)
+    area_match = re.search(r"([\d,]+)\s*sqft", scope_text, re.IGNORECASE)
     if area_match:
         area = clean_number(area_match.group(1))
 
     permit = "N/A"
     permit_label_match = re.search(
-        r'Permit\s*Number[^0-9]{0,20}(\d{6,12})', scope_html, re.IGNORECASE,
+        r'Permit\s*Number[^0-9]{0,20}(\d{6,12})', scope_text, re.IGNORECASE,
     )
     if permit_label_match:
         permit = permit_label_match.group(1)
@@ -901,18 +929,22 @@ def extract_from_regex_fallback(page: ChromiumPage, full_html: str, prop_url: st
 # ------------------------------------------
 # Every Bayut listing shows a Trakheesi (Dubai Land Department) permit
 # number next to a QR code. The QR encodes a link to DLD's own "Real
-# Estate Permit Card" verification page. Confirmed from a live screenshot,
-# that card is a fixed set of label/value rows — NOT an individual agent's
-# name or phone number (DLD doesn't publish that), just the licensed
-# brokerage company and its RERA license number, plus the permit/property
-# details:
-#   Listing Details:      Transaction Number, Listing Number, End Date
+# Estate Permit Card" verification page — NOT an individual agent's name
+# or phone number (DLD doesn't publish that), just the licensed brokerage
+# company and its RERA license number, plus permit/property details.
+# Confirmed against two live examples (a land/sale permit and a rental
+# unit permit), which have slightly different field sets:
+#   Listing Details:       Transaction Number, Listing Number, End Date
 #   Authority Information: License #, Authority Name  (= the brokerage)
-#   Property Details:     Property Name, Property Type, Property Size(Sqm),
-#                          Zone Name, Property Value(AED), Permit Type
+#   Property Details:      Property Name, [Building Name], Property Type,
+#                           Property Size(Sqm), Zone Name,
+#                           Property Value(AED), Permit Type,
+#                           [Rooms Count, Room Type]  (rental units only)
+# followed by page footer boilerplate ("Report violation", "Feedback",
+# "Call Us: ...") that must be excluded, not captured as a field value.
 # Extraction works by finding each known label in the flattened page text
-# and taking everything up to whichever other known label comes next —
-# robust to blank values (e.g. "Property Name" often has no value).
+# and taking everything up to whichever other known label/boundary comes
+# next — robust to blank values (e.g. "Property Name" is sometimes empty).
 # ==========================================
 TRAKHEESI_FIELD_LABELS: List[Tuple[str, str]] = [
     ("Transaction Number", "Trakheesi Transaction No."),
@@ -921,17 +953,26 @@ TRAKHEESI_FIELD_LABELS: List[Tuple[str, str]] = [
     ("License #", "Trakheesi License No."),
     ("Authority Name", "Trakheesi Authority Name"),
     ("Property Name", "Trakheesi Property Name"),
+    ("Building Name", "Trakheesi Building Name"),
     ("Property Type", "Trakheesi Property Type"),
     ("Property Size(Sqm)", "Trakheesi Property Size (Sqm)"),
     ("Zone Name", "Trakheesi Zone Name"),
     ("Property Value(AED)", "Trakheesi Property Value (AED)"),
     ("Permit Type", "Trakheesi Permit Type"),
+    ("Rooms Count", "Trakheesi Rooms Count"),
+    ("Room Type", "Trakheesi Room Type"),
 ]
-TRAKHEESI_NUMERIC_FIELDS = {"Trakheesi Property Size (Sqm)", "Trakheesi Property Value (AED)"}
-# Section headings on the card aren't fields themselves, but they must also
-# act as stop-boundaries so e.g. "Authority Name" doesn't swallow the next
-# section's heading ("Property Details") into its value.
-TRAKHEESI_SECTION_HEADERS = ["Listing Details", "Authority Information", "Property Details"]
+TRAKHEESI_NUMERIC_FIELDS = {
+    "Trakheesi Property Size (Sqm)", "Trakheesi Property Value (AED)", "Trakheesi Rooms Count",
+}
+# Section headings and footer boilerplate aren't fields themselves, but
+# must also act as stop-boundaries so e.g. "Authority Name" doesn't
+# swallow the next section's heading, or "Permit Type" doesn't swallow
+# the page footer, into its captured value.
+TRAKHEESI_SECTION_HEADERS = [
+    "Listing Details", "Authority Information", "Property Details",
+    "Report violation", "Feedback", "Call Us", "dubailand.gov.ae",
+]
 
 
 def _blank_trakheesi_fields() -> Dict[str, Any]:
@@ -1046,7 +1087,11 @@ def extract_trakheesi_details(page: ChromiumPage, trakheesi_url: str) -> Dict[st
 
             value = text[start:end].strip(" :.- ")
             if value:
-                result[out_label] = clean_number(value) if out_label in TRAKHEESI_NUMERIC_FIELDS and re.match(r"^[\d,.]+$", value) else value
+                if out_label in TRAKHEESI_NUMERIC_FIELDS:
+                    numeric_value = clean_number(value)
+                    result[out_label] = numeric_value if numeric_value is not None else value
+                else:
+                    result[out_label] = value
     except Exception as exc:
         logger.debug("Trakheesi lookup failed for %s: %s", trakheesi_url, exc)
     return result
@@ -1323,8 +1368,20 @@ def _write_dashboard_sheet(wb, df: pd.DataFrame, config: ScrapeConfig) -> None:
     ws.column_dimensions["B"].width = 16
 
 
-def _write_listings_sheet(wb, df: pd.DataFrame, config: ScrapeConfig):
-    ws = wb.create_sheet("Listings")
+# The main "Listings" sheet only shows the columns an agent actually
+# scans while browsing — everything else (Trakheesi legal/permit detail,
+# coordinates, raw agency contact, cover photo) lives on "Full Details",
+# joined by Permit Number / Property URL. Cramming all ~36 columns into
+# one sheet made it unreadable, which is what this fixes.
+CORE_LISTING_COLUMNS = [
+    "Title", "Price (AED)", "Price / sqft (AED)", "Value Rating", "Bedrooms", "Bathrooms",
+    "Area (sqft)", "Full Location", "Location Match", "Completion Status", "Furnishing",
+    "Permit Number", "Trakheesi Verified", "Trakheesi Authority Name", "Purpose", "Property URL",
+]
+
+
+def _write_data_sheet(wb, sheet_name: str, df: pd.DataFrame, config: ScrapeConfig, table_name: str):
+    ws = wb.create_sheet(sheet_name)
     n_rows, n_cols = df.shape
     last_col_letter = get_column_letter(n_cols)
     col_names = list(df.columns)
@@ -1378,7 +1435,7 @@ def _write_listings_sheet(wb, df: pd.DataFrame, config: ScrapeConfig):
         max_len = max([len(str(col_name))] + [len(str(v)) for v in df[col_name].astype(str).tolist()])
         ws.column_dimensions[get_column_letter(c)].width = min(max(12, max_len + 2), 55)
 
-    table = Table(displayName="Listings", ref=f"A{header_row}:{last_col_letter}{header_row + n_rows}")
+    table = Table(displayName=table_name, ref=f"A{header_row}:{last_col_letter}{header_row + n_rows}")
     table.tableStyleInfo = TableStyleInfo(
         name="TableStyleMedium9", showRowStripes=False,
         showFirstColumn=False, showLastColumn=False, showColumnStripes=False,
@@ -1410,14 +1467,17 @@ def write_professional_excel(df: pd.DataFrame, out_path: str, config: ScrapeConf
 
     _write_cover_sheet(wb, df, config)
     _write_dashboard_sheet(wb, df, config)
-    _write_listings_sheet(wb, df, config)
+
+    core_cols = [c for c in CORE_LISTING_COLUMNS if c in df.columns]
+    _write_data_sheet(wb, "Listings", df[core_cols], config, table_name="Listings")
+    _write_data_sheet(wb, "Full Details", df, config, table_name="FullDetails")
 
     wb.active = wb.sheetnames.index("Listings")
     wb.save(out_path)
 
 
 def run_search(page: ChromiumPage, args: argparse.Namespace) -> None:
-    config = get_user_inputs(args)
+    config = get_user_inputs(args, page=page)
     logger.info("[1/3] Target URL: %s", config.target_url)
 
     all_property_urls = collect_property_urls(page, config)
