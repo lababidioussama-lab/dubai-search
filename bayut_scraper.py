@@ -1,5 +1,5 @@
 """
-Bayut Scraper Engine — smart extraction + professional Excel export.
+Bayut Scraper Engine — smart extraction + professional Excel report.
 
 Key upgrades over the original version:
   - Extracts data from Bayut's embedded __NEXT_DATA__ JSON (the same data
@@ -12,13 +12,18 @@ Key upgrades over the original version:
     the whole HTML) if JSON extraction fails for a given page.
   - Adds richer, cleaner fields: City / Community / Sub-Community / Tower,
     Completion Status, Furnishing, Agency, Agent Phone, Reference Number,
-    Price per sqft, Listed Date, Latitude/Longitude, Cover Photo URL.
+    Price per sqft, Value Rating, Listed Date, Latitude/Longitude, Cover
+    Photo URL.
   - Numeric columns are stored as real numbers (int/float), not strings,
     so Excel can sort/filter/sum them.
-  - Retries failed page loads instead of silently dropping listings.
-  - Professional Excel workbook: styled header, frozen header row,
-    autofilter, currency/number formats, banded rows, clickable URL
-    hyperlinks, auto-sized columns, and a summary sheet with stats.
+  - Retries failed page loads and logs failures instead of silently
+    dropping listings.
+  - Structured logging (console + optional log file) instead of ad-hoc
+    prints for operational status.
+  - Three-sheet Excel workbook: a Cover page with search criteria, a
+    Dashboard with KPI tiles and charts, and a styled Listings table with
+    conditional-formatting color scale, banded rows, autofilter, frozen
+    header, and clickable URL hyperlinks.
 """
 
 import time
@@ -26,15 +31,23 @@ import re
 import json
 import random
 import os
+import sys
+import logging
 import difflib
 import argparse
+from dataclasses import dataclass, field
 from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.table import Table, TableStyleInfo
+from openpyxl.formatting.rule import ColorScaleRule
+from openpyxl.chart import BarChart, PieChart, Reference
 from DrissionPage import ChromiumPage, ChromiumOptions
+
+__version__ = "2.0.0"
 
 # ==========================================
 # TERMINAL COLOR & LOGO CONFIGURATION
@@ -42,8 +55,13 @@ from DrissionPage import ChromiumPage, ChromiumOptions
 GREEN = "\033[92m"
 RESET = "\033[0m"
 
+BRAND_NAVY = "1F4E78"
+BRAND_BLUE = "2E75B6"
+BRAND_GOLD = "C9A227"
+BRAND_LIGHT = "F2F6FC"
 
-def print_logo():
+
+def print_logo() -> None:
     logo = f"""{GREEN}
 ██████╗  █████╗ ██╗   ██╗██╗   ██╗████████╗    ███████╗ ██████╗██████╗  █████╗ ██████╗ ███████╗██████╗
 ██╔══██╗██╔══██╗╚██╗ ██╔╝██║   ██║╚══██╔══╝    ██╔════╝██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗
@@ -52,13 +70,51 @@ def print_logo():
 ██████╔╝███████║   ██║   ╚██████╔╝   ██║       ███████║╚██████╗██║  ██║██║  ██║██║     ███████╗██║  ██║
 ╚═════╝ ╚══════╝   ╚═╝    ╚═════╝    ╚═╝       ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚══════╝╚═╝  ╚═╝
 
-                 [ B U I L T   B Y   O U S S A M A ]
+                 [ B U I L T   B Y   O U S S A M A ]           v{__version__}
 {RESET}"""
     print(logo)
 
 
-def cprint(text):
+def cprint(text: str) -> None:
     print(f"{GREEN}{text}{RESET}")
+
+
+# ==========================================
+# LOGGING
+# ==========================================
+class ColorFormatter(logging.Formatter):
+    COLORS = {
+        logging.DEBUG: "\033[90m",
+        logging.INFO: "\033[92m",
+        logging.WARNING: "\033[93m",
+        logging.ERROR: "\033[91m",
+    }
+
+    def format(self, record: logging.LogRecord) -> str:
+        color = self.COLORS.get(record.levelno, "")
+        return f"{color}{super().format(record)}{RESET}"
+
+
+def setup_logging(verbose: bool = False, log_file: Optional[str] = None) -> logging.Logger:
+    logger = logging.getLogger("bayut_scraper")
+    logger.setLevel(logging.DEBUG if verbose else logging.INFO)
+    logger.handlers.clear()
+    logger.propagate = False
+
+    console = logging.StreamHandler(sys.stdout)
+    console.setFormatter(ColorFormatter("%(message)s"))
+    logger.addHandler(console)
+
+    if log_file:
+        os.makedirs(os.path.dirname(log_file) or ".", exist_ok=True)
+        file_handler = logging.FileHandler(log_file, encoding="utf-8")
+        file_handler.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
+        logger.addHandler(file_handler)
+
+    return logger
+
+
+logger = logging.getLogger("bayut_scraper")
 
 
 # ==========================================
@@ -67,7 +123,7 @@ def cprint(text):
 # towers/buildings so free-text input resolves to an exact Bayut slug
 # instead of falling through to fuzzy-matching or a raw slugified guess.
 # ==========================================
-LOCATION_DATABASE = {
+LOCATION_DATABASE: Dict[str, str] = {
     # ---- DAMAC Lagoons (sub-communities) ----
     "santorini": "dubai/damac-lagoons/santorini",
     "damac lagoons santorini": "dubai/damac-lagoons/santorini",
@@ -301,19 +357,26 @@ LOCATION_DATABASE = {
     "remraam": "dubai/remraam",
 }
 
+BEDROOM_LABELS: Dict[str, str] = {
+    "a": "All Bedrooms", "0": "Studio", "1": "1 Bedroom", "2": "2 Bedrooms",
+    "3": "3 Bedrooms", "4": "4 Bedrooms", "5": "5+ Bedrooms",
+}
 
-def format_slug(text):
+
+def format_slug(text: str) -> str:
     text = text.lower().strip()
     text = re.sub(r'[^a-z0-9\s-]', '', text)
     text = re.sub(r'[\s_]+', '-', text)
     return text
 
 
-def resolve_location(user_input):
+def resolve_location(user_input: str) -> Tuple[str, str]:
     clean_input = user_input.lower().strip()
     if clean_input in LOCATION_DATABASE:
         return LOCATION_DATABASE[clean_input], clean_input.title()
     keys = list(LOCATION_DATABASE.keys())
+    # cutoff=0.60 only auto-corrects genuine typos (e.g. "dama hils" ->
+    # "damac hills"); anything looser starts matching unrelated projects.
     matches = difflib.get_close_matches(clean_input, keys, n=1, cutoff=0.60)
     if matches:
         best_match = matches[0]
@@ -325,7 +388,7 @@ def resolve_location(user_input):
     return "dubai", "Dubai"
 
 
-def build_bayut_url(purpose_choice, bed_choice, location_path):
+def build_bayut_url(purpose_choice: str, bed_choice: str, location_path: str) -> str:
     purpose_slug = "to-rent" if purpose_choice == "2" else "for-sale"
     # NOTE: the choice value IS the bedroom count (0=Studio ... 5=5+ Beds).
     # "All Bedrooms" is its own sentinel ("a"), not a numeric slot, so there
@@ -338,7 +401,16 @@ def build_bayut_url(purpose_choice, bed_choice, location_path):
     return f"https://www.bayut.com/{purpose_slug}/{bed_slug}/{location_path}/"
 
 
-def parse_args():
+@dataclass
+class ScrapeConfig:
+    purpose_str: str
+    location: str
+    bedrooms_label: str
+    max_listings: Optional[int]
+    target_url: str
+
+
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Bayut Scraper Engine")
     parser.add_argument("--purpose", choices=["1", "2"], help="1=Buy, 2=Rent")
     parser.add_argument("--location", help="Project / community / area name")
@@ -347,10 +419,12 @@ def parse_args():
     parser.add_argument("--max-listings", type=int, help="Cap on number of listings")
     parser.add_argument("--headless", action="store_true", help="Run browser headless")
     parser.add_argument("--out", help="Output .xlsx path (default: Desktop, auto-named)")
+    parser.add_argument("--verbose", action="store_true", help="Enable debug-level logging")
+    parser.add_argument("--log-file", help="Also write logs to this file")
     return parser.parse_args()
 
 
-def get_user_inputs(args):
+def get_user_inputs(args: argparse.Namespace) -> ScrapeConfig:
     print_logo()
     cprint("=" * 70)
     cprint("     SMART BAYUT SCRAPER ENGINE (STRUCTURED-DATA EDITION)     ")
@@ -387,15 +461,16 @@ def get_user_inputs(args):
 
     target_url = build_bayut_url(purpose, bedrooms, loc_path)
 
-    return {
-        "purpose_str": "For Rent" if purpose == "2" else "For Sale",
-        "location": resolved_name,
-        "max_listings": max_listings,
-        "target_url": target_url,
-    }
+    return ScrapeConfig(
+        purpose_str="For Rent" if purpose == "2" else "For Sale",
+        location=resolved_name,
+        bedrooms_label=BEDROOM_LABELS.get(bedrooms, "All Bedrooms"),
+        max_listings=max_listings,
+        target_url=target_url,
+    )
 
 
-def handle_captcha(page):
+def handle_captcha(page: ChromiumPage) -> None:
     if any(term in page.title or term in page.html for term in ["Just a moment...", "cf-challenge", "Verify you are human"]):
         cprint("\n" + "!" * 60)
         cprint("⚠️  [CAPTCHA DETECTED] Complete the verification in the browser...")
@@ -408,7 +483,7 @@ def handle_captcha(page):
 # ==========================================
 # STRUCTURED-DATA EXTRACTION (the "smart" core)
 # ==========================================
-def extract_next_data(html_content):
+def extract_next_data(html_content: str) -> Optional[Dict[str, Any]]:
     """Pull Bayut's embedded __NEXT_DATA__ JSON payload, if present."""
     match = re.search(
         r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>',
@@ -429,7 +504,7 @@ def extract_next_data(html_content):
     return None
 
 
-def dig(d, *path, default=None):
+def dig(d: Optional[Dict[str, Any]], *path: str, default: Any = None) -> Any:
     cur = d
     for key in path:
         if not isinstance(cur, dict):
@@ -440,7 +515,7 @@ def dig(d, *path, default=None):
     return cur
 
 
-def build_location_hierarchy(prop):
+def build_location_hierarchy(prop: Dict[str, Any]) -> Tuple[str, str, str, str, str]:
     """
     Bayut exposes a 'location' array ordered from most specific to least
     specific (e.g. [Tower, Sub-Community, Community, City, Country]) or the
@@ -448,7 +523,7 @@ def build_location_hierarchy(prop):
     when present, otherwise assume specific -> general.
     """
     loc = prop.get("location")
-    levels = {}
+    levels: Dict[int, str] = {}
     if isinstance(loc, list) and loc:
         for entry in loc:
             if not isinstance(entry, dict):
@@ -473,7 +548,7 @@ def build_location_hierarchy(prop):
     return "N/A", "N/A", "N/A", "N/A", "N/A"
 
 
-def clean_number(value):
+def clean_number(value: Any) -> Optional[float]:
     if value is None:
         return None
     if isinstance(value, (int, float)):
@@ -487,7 +562,7 @@ def clean_number(value):
         return None
 
 
-def extract_from_json(prop, prop_url, config):
+def extract_from_json(prop: Dict[str, Any], prop_url: str, config: ScrapeConfig) -> Dict[str, Any]:
     price = clean_number(prop.get("price"))
     area = clean_number(dig(prop, "area") or dig(prop, "coveredArea") or dig(prop, "plotArea"))
     beds = prop.get("rooms")
@@ -525,7 +600,7 @@ def extract_from_json(prop, prop_url, config):
         "Area (sqft)": area,
         "Permit Number": permit,
         "Reference No.": reference,
-        "Full Location": full_loc if full_loc != "N/A" else config["location"],
+        "Full Location": full_loc if full_loc != "N/A" else config.location,
         "City": city,
         "Community": community,
         "Sub-Community": sub_community,
@@ -538,32 +613,32 @@ def extract_from_json(prop, prop_url, config):
         "Latitude": lat if lat is not None else "N/A",
         "Longitude": lng if lng is not None else "N/A",
         "Cover Photo": cover_url or "N/A",
-        "Purpose": config["purpose_str"],
+        "Purpose": config.purpose_str,
     }
 
 
-def extract_from_regex_fallback(page, full_html, prop_url, config):
+def extract_from_regex_fallback(page: ChromiumPage, full_html: str, prop_url: str, config: ScrapeConfig) -> Dict[str, Any]:
     """Scoped fallback if __NEXT_DATA__ isn't found — still safer than the
     original whole-page regex because we search inside the details card."""
     card = page.ele("css:div[aria-label='Property details'], div[class*='details'], main", timeout=1)
     scope_html = card.html if card else full_html
 
-    price = "N/A"
+    price: Any = "N/A"
     price_match = re.search(r"AED\s*([\d,]+)(?!\d)", scope_html)
     if price_match:
         price = clean_number(price_match.group(1))
 
-    beds = "N/A"
+    beds: Any = "N/A"
     beds_match = re.search(r"\b(\d+|Studio)\s*(?:Bed|Beds|BR)\b", scope_html, re.IGNORECASE)
     if beds_match:
         beds = beds_match.group(1)
 
-    baths = "N/A"
+    baths: Any = "N/A"
     baths_match = re.search(r"\b(\d+)\s*(?:Bathroom|Bathrooms)\b", scope_html, re.IGNORECASE)
     if baths_match:
         baths = clean_number(baths_match.group(1))
 
-    area = "N/A"
+    area: Any = "N/A"
     area_match = re.search(r"([\d,]+)\s*sqft", scope_html, re.IGNORECASE)
     if area_match:
         area = clean_number(area_match.group(1))
@@ -580,7 +655,7 @@ def extract_from_regex_fallback(page, full_html, prop_url, config):
     if h1_el:
         title = h1_el.text.strip()
 
-    location = config["location"]
+    location = config.location
     bread_el = page.eles("css:a[href*='/for-sale/'], a[href*='/to-rent/']")
     if len(bread_el) >= 2:
         for el in reversed(bread_el):
@@ -614,19 +689,19 @@ def extract_from_regex_fallback(page, full_html, prop_url, config):
         "Latitude": "N/A",
         "Longitude": "N/A",
         "Cover Photo": "N/A",
-        "Purpose": config["purpose_str"],
+        "Purpose": config.purpose_str,
     }
 
 
-def collect_property_urls(page, config):
-    all_property_urls = []
+def collect_property_urls(page: ChromiumPage, config: ScrapeConfig) -> List[str]:
+    all_property_urls: List[str] = []
     seen_urls = set()
     current_page = 1
-    current_url = config["target_url"]
-    max_listings = config["max_listings"]
+    current_url = config.target_url
+    max_listings = config.max_listings
 
     while True:
-        cprint(f"Collecting links from Search Page {current_page}...")
+        logger.info("Collecting links from Search Page %d...", current_page)
         page.get(current_url)
         time.sleep(1.2)
         handle_captcha(page)
@@ -651,7 +726,8 @@ def collect_property_urls(page, config):
                     page_urls_found += 1
                     if max_listings and len(all_property_urls) >= max_listings:
                         break
-            except Exception:
+            except Exception as exc:
+                logger.debug("Skipped a listing card: %s", exc)
                 continue
 
         if max_listings and len(all_property_urls) >= max_listings:
@@ -668,7 +744,8 @@ def collect_property_urls(page, config):
     return all_property_urls
 
 
-def extract_property(page, prop_url, config, retries=2):
+def extract_property(page: ChromiumPage, prop_url: str, config: ScrapeConfig, retries: int = 2) -> Optional[Dict[str, Any]]:
+    last_exc: Optional[Exception] = None
     for attempt in range(retries + 1):
         try:
             page.get(prop_url)
@@ -682,129 +759,310 @@ def extract_property(page, prop_url, config, retries=2):
             if prop_json:
                 return extract_from_json(prop_json, prop_url, config)
             return extract_from_regex_fallback(page, full_html, prop_url, config)
-        except Exception:
+        except Exception as exc:
+            last_exc = exc
             if attempt < retries:
+                logger.debug("Retry %d/%d for %s (%s)", attempt + 1, retries, prop_url, exc)
                 time.sleep(1.0)
                 continue
-            return None
+
+    logger.warning("Failed to extract %s after %d attempts: %s", prop_url, retries + 1, last_exc)
     return None
 
 
-# ==========================================
-# PROFESSIONAL EXCEL EXPORT
-# ==========================================
-def write_professional_excel(df, out_path, config):
-    with pd.ExcelWriter(out_path, engine="openpyxl") as writer:
-        df.to_excel(writer, index=False, sheet_name="Listings", startrow=1)
-        wb = writer.book
-        ws = writer.sheets["Listings"]
+def add_value_ratings(df: pd.DataFrame) -> pd.DataFrame:
+    """Classify each listing's price/sqft against the dataset's own
+    distribution so a reader can spot deals at a glance."""
+    numeric = df["Price / sqft (AED)"].apply(lambda v: v if isinstance(v, (int, float)) else None)
+    valid = numeric.dropna()
 
-        n_rows, n_cols = df.shape
-        last_col_letter = get_column_letter(n_cols)
+    if len(valid) >= 3:
+        low, high = valid.quantile(0.33), valid.quantile(0.66)
 
-        # --- Title banner ---
-        ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=n_cols)
-        title_cell = ws.cell(row=1, column=1)
-        title_cell.value = (
-            f"Bayut {config['purpose_str']} — {config['location']}  "
-            f"({n_rows} listings, generated {datetime.now().strftime('%Y-%m-%d %H:%M')})"
+        def rate(v: Any) -> str:
+            if not isinstance(v, (int, float)):
+                return "N/A"
+            if v <= low:
+                return "🟢 Great Value"
+            if v <= high:
+                return "🟡 Fair Price"
+            return "🔴 Premium"
+
+        df["Value Rating"] = numeric.apply(rate)
+    else:
+        df["Value Rating"] = "N/A"
+    return df
+
+
+# ==========================================
+# PROFESSIONAL EXCEL REPORT
+# ==========================================
+def _style_header_cell(cell, fill_color: str = BRAND_BLUE) -> None:
+    cell.fill = PatternFill("solid", fgColor=fill_color)
+    cell.font = Font(bold=True, color="FFFFFF")
+    cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+
+def _write_cover_sheet(wb, df: pd.DataFrame, config: ScrapeConfig) -> None:
+    ws = wb.create_sheet("Cover")
+    ws.sheet_view.showGridLines = False
+
+    ws.merge_cells("B2:H4")
+    title = ws["B2"]
+    title.value = "BAYUT MARKET REPORT"
+    title.font = Font(size=26, bold=True, color="FFFFFF")
+    title.fill = PatternFill("solid", fgColor=BRAND_NAVY)
+    title.alignment = Alignment(horizontal="center", vertical="center")
+    for row in ws["B2:H4"]:
+        for cell in row:
+            cell.fill = PatternFill("solid", fgColor=BRAND_NAVY)
+
+    ws.merge_cells("B5:H5")
+    subtitle = ws["B5"]
+    subtitle.value = f"{config.location}  •  {config.purpose_str}  •  Prepared by Oussama's Smart Scraper"
+    subtitle.font = Font(size=12, italic=True, color=BRAND_GOLD)
+    subtitle.fill = PatternFill("solid", fgColor=BRAND_NAVY)
+    subtitle.alignment = Alignment(horizontal="center", vertical="center")
+
+    for r in range(2, 6):
+        ws.row_dimensions[r].height = 24 if r != 5 else 20
+
+    criteria = [
+        ("Location", config.location),
+        ("Purpose", config.purpose_str),
+        ("Bedrooms", config.bedrooms_label),
+        ("Requested Max Listings", config.max_listings or "All available"),
+        ("Total Listings Captured", len(df)),
+        ("Report Generated", datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+    ]
+    start_row = 8
+    ws.cell(row=start_row - 1, column=2, value="Search Criteria").font = Font(size=13, bold=True, color=BRAND_NAVY)
+    thin_border = Border(*(Side(style="thin", color="B7B7B7"),) * 4)
+    for i, (label, value) in enumerate(criteria):
+        r = start_row + i
+        label_cell = ws.cell(row=r, column=2, value=label)
+        value_cell = ws.cell(row=r, column=3, value=value)
+        label_cell.font = Font(bold=True, color=BRAND_NAVY)
+        label_cell.fill = PatternFill("solid", fgColor=BRAND_LIGHT)
+        label_cell.border = thin_border
+        value_cell.border = thin_border
+        ws.merge_cells(start_row=r, start_column=3, end_row=r, end_column=5)
+
+    ws.column_dimensions["A"].width = 3
+    ws.column_dimensions["B"].width = 24
+    for col in "CDEFGH":
+        ws.column_dimensions[col].width = 16
+
+
+def _write_dashboard_sheet(wb, df: pd.DataFrame, config: ScrapeConfig) -> None:
+    ws = wb.create_sheet("Dashboard")
+    ws.sheet_view.showGridLines = False
+
+    ws.merge_cells("A1:H1")
+    header = ws["A1"]
+    header.value = "Key Metrics"
+    header.font = Font(size=16, bold=True, color="FFFFFF")
+    header.fill = PatternFill("solid", fgColor=BRAND_NAVY)
+    header.alignment = Alignment(horizontal="center", vertical="center")
+    ws.row_dimensions[1].height = 26
+
+    price_numeric = df["Price (AED)"].apply(lambda v: v if isinstance(v, (int, float)) else None).dropna()
+    area_numeric = df["Area (sqft)"].apply(lambda v: v if isinstance(v, (int, float)) else None).dropna()
+    ppsf_numeric = df["Price / sqft (AED)"].apply(lambda v: v if isinstance(v, (int, float)) else None).dropna()
+
+    tiles = [
+        ("Total Listings", len(df)),
+        ("Average Price (AED)", f"{price_numeric.mean():,.0f}" if len(price_numeric) else "N/A"),
+        ("Min Price (AED)", f"{price_numeric.min():,.0f}" if len(price_numeric) else "N/A"),
+        ("Max Price (AED)", f"{price_numeric.max():,.0f}" if len(price_numeric) else "N/A"),
+        ("Avg Price / sqft (AED)", f"{ppsf_numeric.mean():,.0f}" if len(ppsf_numeric) else "N/A"),
+        ("Average Area (sqft)", f"{area_numeric.mean():,.0f}" if len(area_numeric) else "N/A"),
+    ]
+    tile_col = 1
+    for label, value in tiles:
+        col_letter = get_column_letter(tile_col)
+        next_col_letter = get_column_letter(tile_col + 1)
+        ws.merge_cells(f"{col_letter}3:{next_col_letter}3")
+        ws.merge_cells(f"{col_letter}4:{next_col_letter}4")
+        label_cell = ws[f"{col_letter}3"]
+        label_cell.value = label
+        label_cell.font = Font(size=9, bold=True, color="FFFFFF")
+        label_cell.fill = PatternFill("solid", fgColor=BRAND_BLUE)
+        label_cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        value_cell = ws[f"{col_letter}4"]
+        value_cell.value = value
+        value_cell.font = Font(size=14, bold=True, color=BRAND_NAVY)
+        value_cell.fill = PatternFill("solid", fgColor=BRAND_LIGHT)
+        value_cell.alignment = Alignment(horizontal="center", vertical="center")
+        tile_col += 2
+    ws.row_dimensions[3].height = 28
+    ws.row_dimensions[4].height = 24
+
+    # --- Chart 1: Average price by bedroom count ---
+    bed_table_row = 7
+    ws.cell(row=bed_table_row, column=1, value="Bedrooms").font = Font(bold=True)
+    ws.cell(row=bed_table_row, column=2, value="Avg Price (AED)").font = Font(bold=True)
+    priced = df[df["Price (AED)"].apply(lambda v: isinstance(v, (int, float)))]
+    if len(priced):
+        bed_avg = (
+            priced.assign(_bed=priced["Bedrooms"].astype(str))
+            .groupby("_bed")["Price (AED)"].mean().round(0).sort_index()
         )
-        title_cell.font = Font(size=14, bold=True, color="FFFFFF")
-        title_cell.fill = PatternFill("solid", fgColor="1F4E78")
-        title_cell.alignment = Alignment(horizontal="center", vertical="center")
-        ws.row_dimensions[1].height = 26
+        for i, (bed_label, avg_price) in enumerate(bed_avg.items(), start=1):
+            ws.cell(row=bed_table_row + i, column=1, value=bed_label)
+            ws.cell(row=bed_table_row + i, column=2, value=float(avg_price))
+        bed_rows = len(bed_avg)
 
-        # --- Header row styling ---
-        header_row = 2
-        header_fill = PatternFill("solid", fgColor="2E75B6")
-        header_font = Font(bold=True, color="FFFFFF")
-        thin_border = Border(*(Side(style="thin", color="B7B7B7"),) * 4)
-        for col_idx in range(1, n_cols + 1):
-            cell = ws.cell(row=header_row, column=col_idx)
-            cell.fill = header_fill
-            cell.font = header_font
-            cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
-            cell.border = thin_border
-        ws.row_dimensions[header_row].height = 24
+        bar = BarChart()
+        bar.title = "Average Price by Bedrooms"
+        bar.y_axis.title = "AED"
+        bar.x_axis.title = "Bedrooms"
+        bar.style = 10
+        data_ref = Reference(ws, min_col=2, min_row=bed_table_row, max_row=bed_table_row + bed_rows)
+        cats_ref = Reference(ws, min_col=1, min_row=bed_table_row + 1, max_row=bed_table_row + bed_rows)
+        bar.add_data(data_ref, titles_from_data=True)
+        bar.set_categories(cats_ref)
+        bar.width, bar.height = 16, 9
+        ws.add_chart(bar, "D7")
 
-        # --- Banded rows + borders + number formats ---
-        band_fill = PatternFill("solid", fgColor="F2F6FC")
-        currency_cols = {"Price (AED)", "Price / sqft (AED)"}
-        number_cols = {"Area (sqft)", "Bathrooms", "Bedrooms", "Latitude", "Longitude"}
-        col_names = list(df.columns)
+    # --- Chart 2: Listings by community ---
+    community_table_row = bed_table_row + 12
+    ws.cell(row=community_table_row, column=1, value="Community").font = Font(bold=True)
+    ws.cell(row=community_table_row, column=2, value="Listings").font = Font(bold=True)
+    community_counts = df[df["Community"] != "N/A"]["Community"].value_counts().head(8)
+    if len(community_counts):
+        for i, (community, count) in enumerate(community_counts.items(), start=1):
+            ws.cell(row=community_table_row + i, column=1, value=community)
+            ws.cell(row=community_table_row + i, column=2, value=int(count))
+        comm_rows = len(community_counts)
 
-        for r in range(n_rows):
-            excel_row = header_row + 1 + r
-            for c, col_name in enumerate(col_names, start=1):
-                cell = ws.cell(row=excel_row, column=c)
-                cell.border = thin_border
-                if r % 2 == 1:
-                    cell.fill = band_fill
-                if col_name in currency_cols and isinstance(cell.value, (int, float)):
-                    cell.number_format = '#,##0 "AED"'
-                elif col_name in number_cols and isinstance(cell.value, (int, float)):
-                    cell.number_format = "#,##0"
-                if col_name == "Property URL" and cell.value:
-                    cell.hyperlink = cell.value
-                    cell.font = Font(color="1155CC", underline="single")
+        pie = PieChart()
+        pie.title = "Listings by Community"
+        data_ref = Reference(ws, min_col=2, min_row=community_table_row, max_row=community_table_row + comm_rows)
+        cats_ref = Reference(ws, min_col=1, min_row=community_table_row + 1, max_row=community_table_row + comm_rows)
+        pie.add_data(data_ref, titles_from_data=True)
+        pie.set_categories(cats_ref)
+        pie.width, pie.height = 16, 9
+        ws.add_chart(pie, f"D{community_table_row}")
 
-        # --- Freeze header, autofilter, column widths ---
-        ws.freeze_panes = f"A{header_row + 1}"
-        ws.auto_filter.ref = f"A{header_row}:{last_col_letter}{header_row + n_rows}"
+    ws.column_dimensions["A"].width = 20
+    ws.column_dimensions["B"].width = 16
 
+
+def _write_listings_sheet(wb, df: pd.DataFrame, config: ScrapeConfig):
+    ws = wb.create_sheet("Listings")
+    n_rows, n_cols = df.shape
+    last_col_letter = get_column_letter(n_cols)
+    col_names = list(df.columns)
+
+    # --- Title banner ---
+    ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=n_cols)
+    title_cell = ws.cell(row=1, column=1)
+    title_cell.value = (
+        f"Bayut {config.purpose_str} — {config.location}  "
+        f"({n_rows} listings, generated {datetime.now().strftime('%Y-%m-%d %H:%M')})"
+    )
+    title_cell.font = Font(size=14, bold=True, color="FFFFFF")
+    title_cell.fill = PatternFill("solid", fgColor=BRAND_NAVY)
+    title_cell.alignment = Alignment(horizontal="center", vertical="center")
+    ws.row_dimensions[1].height = 26
+
+    # --- Header row ---
+    header_row = 2
+    for c, col_name in enumerate(col_names, start=1):
+        cell = ws.cell(row=header_row, column=c, value=col_name)
+        _style_header_cell(cell)
+    ws.row_dimensions[header_row].height = 24
+
+    # --- Data rows: values, banding, borders, number formats, hyperlinks ---
+    thin_border = Border(*(Side(style="thin", color="B7B7B7"),) * 4)
+    band_fill = PatternFill("solid", fgColor=BRAND_LIGHT)
+    currency_cols = {"Price (AED)", "Price / sqft (AED)"}
+    number_cols = {"Area (sqft)", "Bathrooms", "Bedrooms", "Latitude", "Longitude"}
+
+    for r, (_, row) in enumerate(df.iterrows()):
+        excel_row = header_row + 1 + r
         for c, col_name in enumerate(col_names, start=1):
-            max_len = max([len(str(col_name))] + [len(str(v)) for v in df[col_name].astype(str).tolist()])
-            ws.column_dimensions[get_column_letter(c)].width = min(max(12, max_len + 2), 55)
+            value = row[col_name]
+            cell = ws.cell(row=excel_row, column=c, value=value)
+            cell.border = thin_border
+            if r % 2 == 1:
+                cell.fill = band_fill
+            if col_name in currency_cols and isinstance(value, (int, float)):
+                cell.number_format = '#,##0 "AED"'
+            elif col_name in number_cols and isinstance(value, (int, float)):
+                cell.number_format = "#,##0"
+            if col_name == "Property URL" and value:
+                cell.hyperlink = value
+                cell.font = Font(color="1155CC", underline="single")
 
-        table = Table(displayName="Listings", ref=f"A{header_row}:{last_col_letter}{header_row + n_rows}")
-        table.tableStyleInfo = TableStyleInfo(
-            name="TableStyleMedium9", showRowStripes=False,
-            showFirstColumn=False, showLastColumn=False, showColumnStripes=False,
+    # --- Freeze header, autofilter, column widths ---
+    ws.freeze_panes = f"A{header_row + 1}"
+    ws.auto_filter.ref = f"A{header_row}:{last_col_letter}{header_row + n_rows}"
+
+    for c, col_name in enumerate(col_names, start=1):
+        max_len = max([len(str(col_name))] + [len(str(v)) for v in df[col_name].astype(str).tolist()])
+        ws.column_dimensions[get_column_letter(c)].width = min(max(12, max_len + 2), 55)
+
+    table = Table(displayName="Listings", ref=f"A{header_row}:{last_col_letter}{header_row + n_rows}")
+    table.tableStyleInfo = TableStyleInfo(
+        name="TableStyleMedium9", showRowStripes=False,
+        showFirstColumn=False, showLastColumn=False, showColumnStripes=False,
+    )
+    ws.add_table(table)
+
+    # --- Conditional formatting: green (cheap) -> red (expensive) per sqft ---
+    if "Price / sqft (AED)" in col_names:
+        ppsf_col = get_column_letter(col_names.index("Price / sqft (AED)") + 1)
+        rng = f"{ppsf_col}{header_row + 1}:{ppsf_col}{header_row + n_rows}"
+        ws.conditional_formatting.add(
+            rng,
+            ColorScaleRule(
+                start_type="min", start_color="63BE7B",
+                mid_type="percentile", mid_value=50, mid_color="FFEB84",
+                end_type="max", end_color="F8696B",
+            ),
         )
 
-        # --- Summary sheet ---
-        summary_ws = wb.create_sheet("Summary")
-        numeric_price = df["Price (AED)"].apply(lambda v: v if isinstance(v, (int, float)) else None).dropna()
-        numeric_area = df["Area (sqft)"].apply(lambda v: v if isinstance(v, (int, float)) else None).dropna()
-        stats = [
-            ("Location", config["location"]),
-            ("Purpose", config["purpose_str"]),
-            ("Total Listings", n_rows),
-            ("Average Price (AED)", round(numeric_price.mean(), 0) if len(numeric_price) else "N/A"),
-            ("Min Price (AED)", int(numeric_price.min()) if len(numeric_price) else "N/A"),
-            ("Max Price (AED)", int(numeric_price.max()) if len(numeric_price) else "N/A"),
-            ("Average Area (sqft)", round(numeric_area.mean(), 0) if len(numeric_area) else "N/A"),
-            ("Generated On", datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
-        ]
-        summary_ws.cell(row=1, column=1, value="Summary").font = Font(size=14, bold=True)
-        for i, (label, value) in enumerate(stats, start=3):
-            summary_ws.cell(row=i, column=1, value=label).font = Font(bold=True)
-            summary_ws.cell(row=i, column=2, value=value)
-        summary_ws.column_dimensions["A"].width = 24
-        summary_ws.column_dimensions["B"].width = 24
-
-        ws.add_table(table)
+    return ws
 
 
-def run_search(page, args):
+def write_professional_excel(df: pd.DataFrame, out_path: str, config: ScrapeConfig) -> None:
+    df = add_value_ratings(df)
+
+    from openpyxl import Workbook
+    wb = Workbook()
+    wb.remove(wb.active)  # drop the default blank sheet
+
+    _write_cover_sheet(wb, df, config)
+    _write_dashboard_sheet(wb, df, config)
+    _write_listings_sheet(wb, df, config)
+
+    wb.active = wb.sheetnames.index("Listings")
+    wb.save(out_path)
+
+
+def run_search(page: ChromiumPage, args: argparse.Namespace) -> None:
     config = get_user_inputs(args)
-    cprint(f"\n[1/3] Target URL:\n      {config['target_url']}\n")
+    logger.info("[1/3] Target URL: %s", config.target_url)
 
     all_property_urls = collect_property_urls(page, config)
-    cprint(f"\n[2/3] Collected {len(all_property_urls)} links. Extracting structured details...\n")
+    logger.info("[2/3] Collected %d links. Extracting structured details...", len(all_property_urls))
 
-    all_properties = []
+    all_properties: List[Dict[str, Any]] = []
     for idx, prop_url in enumerate(all_property_urls, 1):
         record = extract_property(page, prop_url, config)
         if record:
             all_properties.append(record)
-            print(f"[{idx}/{len(all_property_urls)}] Extracted -> Permit: {record['Permit Number']} | "
-                  f"Price: {record['Price (AED)']} | Location: {record['Full Location']}")
+            logger.info(
+                "[%d/%d] Extracted -> Permit: %s | Price: %s | Location: %s",
+                idx, len(all_property_urls), record["Permit Number"], record["Price (AED)"], record["Full Location"],
+            )
         else:
-            print(f"[{idx}/{len(all_property_urls)}] Failed after retries, skipped.")
+            logger.warning("[%d/%d] Failed after retries, skipped.", idx, len(all_property_urls))
 
     if not all_properties:
-        cprint("\n⚠️  No listings extracted.")
+        logger.warning("No listings extracted.")
         return
 
     df = pd.DataFrame(all_properties)
@@ -815,14 +1073,14 @@ def run_search(page, args):
     else:
         desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
         os.makedirs(desktop_path, exist_ok=True)
-        file_name = f"bayut_{config['location'].replace(' ', '_').lower()}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+        file_name = f"bayut_{config.location.replace(' ', '_').lower()}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
         full_path = os.path.join(desktop_path, file_name)
 
     write_professional_excel(df, full_path, config)
-    cprint(f"\n✨ DONE! Saved {len(df)} listings to: {full_path}")
+    logger.info("[3/3] DONE! Saved %d listings to: %s", len(df), full_path)
 
 
-def blank_args(headless):
+def blank_args(headless: bool) -> argparse.Namespace:
     """Fresh, unset args for subsequent loop runs so the user is re-prompted
     for every field instead of the first run's CLI flags sticking around."""
     return argparse.Namespace(
@@ -831,8 +1089,9 @@ def blank_args(headless):
     )
 
 
-def scrape_bayut():
+def scrape_bayut() -> None:
     args = parse_args()
+    setup_logging(verbose=args.verbose, log_file=args.log_file)
 
     co = ChromiumOptions()
     co.no_imgs(True)
