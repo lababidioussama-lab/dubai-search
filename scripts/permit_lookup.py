@@ -39,8 +39,18 @@ import time
 import traceback
 from pathlib import Path
 
-import openpyxl
-from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
+try:
+    import openpyxl
+    from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
+except ImportError as e:
+    print("\n" + "=" * 70)
+    print(f"Missing dependency: {e}")
+    print("Run these two commands first, then try again:")
+    print("    pip install playwright openpyxl")
+    print("    playwright install chromium")
+    print("=" * 70)
+    input("\nPress Enter to close this window...")
+    sys.exit(1)
 
 # ---------------------------------------------------------------------------
 # CONFIG — these selectors are best-guess placeholders based on the login
