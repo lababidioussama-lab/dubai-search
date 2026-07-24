@@ -18,9 +18,32 @@ const logEl = document.getElementById('log');
 const badgeEl = document.getElementById('badge');
 const actionsEl = document.getElementById('actions');
 
+let missCount = 0;
+
 async function poll() {
-  const res = await fetch(`/jobs/${jobId}/status`);
-  const data = await res.json();
+  let res, data;
+  try {
+    res = await fetch(`/jobs/${jobId}/status`);
+    data = await res.json();
+  } catch (e) {
+    setTimeout(poll, 2000);
+    return;
+  }
+
+  if (!res.ok || !data || data.error === 'not found') {
+    missCount++;
+    // A couple of misses in a row means the server process restarted
+    // (most likely it ran out of memory) and lost this job's state.
+    if (missCount >= 2) {
+      badgeEl.textContent = 'lost';
+      badgeEl.className = 'status-badge status-error';
+      actionsEl.innerHTML = `<p class="flash">The server restarted before this job finished — most likely it ran out of memory (common on Render's free tier when Chromium loads a heavy page). Try again; if it keeps happening, this job may need more RAM than the free plan gives it.</p>`;
+      return;
+    }
+    setTimeout(poll, 2000);
+    return;
+  }
+  missCount = 0;
 
   logEl.textContent = data.logs.join('\n');
   logEl.scrollTop = logEl.scrollHeight;
