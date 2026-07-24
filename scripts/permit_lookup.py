@@ -38,6 +38,7 @@ import sys
 import time
 import traceback
 from pathlib import Path
+from typing import Tuple
 
 try:
     import openpyxl
@@ -82,6 +83,27 @@ RETRIES_PER_PERMIT = 2
 # ---------------------------------------------------------------------------
 
 DEBUG_DIR = Path(__file__).resolve().parent / "debug"
+
+
+def get_credentials() -> Tuple[str, str]:
+    """Load prospectsx.com credentials from credentials_local.py next to this
+    script if it exists, otherwise prompt for them. credentials_local.py is
+    git-ignored and never committed/pushed — see credentials_local.example.py."""
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import credentials_local  # type: ignore
+
+        username = getattr(credentials_local, "PROSPECTS_USERNAME", "").strip()
+        password = getattr(credentials_local, "PROSPECTS_PASSWORD", "").strip()
+        if username and password:
+            print(f"Using saved credentials for '{username}' (from credentials_local.py).")
+            return username, password
+    except ImportError:
+        pass
+
+    username = input("prospectsx.com username: ").strip()
+    password = getpass.getpass("prospectsx.com password: ")
+    return username, password
 
 
 def col_letter_to_index(letter: str) -> int:
@@ -172,22 +194,29 @@ def search_permit_with_retries(page, permit_number: str, label: str) -> str:
     return f"ERROR after {RETRIES_PER_PERMIT} attempts: {last_error}"
 
 
-def run(args) -> None:
-    username = input("prospectsx.com username: ").strip()
-    password = getpass.getpass("prospectsx.com password: ")
+def run_lookup(
+    excel_path: str,
+    sheet: str = "Listings",
+    permit_column: str = "L",
+    start_row: int = 3,
+    headless: bool = False,
+) -> None:
+    """Look up every permit number in `sheet`/`permit_column` on prospectsx.com
+    and write the result into the column right after it, on the same row."""
+    username, password = get_credentials()
 
-    wb = openpyxl.load_workbook(args.excel_path)
-    if args.sheet not in wb.sheetnames:
-        print(f"Sheet '{args.sheet}' not found. Available sheets: {wb.sheetnames}")
+    wb = openpyxl.load_workbook(excel_path)
+    if sheet not in wb.sheetnames:
+        print(f"Sheet '{sheet}' not found. Available sheets: {wb.sheetnames}")
         sys.exit(1)
-    ws = wb[args.sheet]
+    ws = wb[sheet]
 
-    permit_col = col_letter_to_index(args.permit_column)
+    permit_col = col_letter_to_index(permit_column)
     result_col = permit_col + 1  # write result in the column right after the permit number
-    ws.cell(row=args.start_row - 1, column=result_col, value="Prospects Search Result")
+    ws.cell(row=start_row - 1, column=result_col, value="Prospects Search Result")
 
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=args.headless)
+        browser = pw.chromium.launch(headless=headless)
         page = browser.new_page()
         page.set_default_timeout(NAV_TIMEOUT_MS)
 
@@ -196,7 +225,7 @@ def run(args) -> None:
             login(page, username, password)
             print("Logged in.")
 
-            row = args.start_row
+            row = start_row
             processed = 0
             while True:
                 permit_number = ws.cell(row=row, column=permit_col).value
@@ -209,7 +238,7 @@ def run(args) -> None:
                 processed += 1
 
                 if processed % 10 == 0:
-                    wb.save(args.excel_path)
+                    wb.save(excel_path)
                     print(f"  Saved progress ({processed} permits done).")
 
                 row += 1
@@ -217,8 +246,8 @@ def run(args) -> None:
 
             print(f"Finished. Processed {processed} permits.")
         finally:
-            wb.save(args.excel_path)
-            print(f"Saved results to {args.excel_path}")
+            wb.save(excel_path)
+            print(f"Saved results to {excel_path}")
             browser.close()
 
 
@@ -232,7 +261,13 @@ def main():
     args = parser.parse_args()
 
     try:
-        run(args)
+        run_lookup(
+            args.excel_path,
+            sheet=args.sheet,
+            permit_column=args.permit_column,
+            start_row=args.start_row,
+            headless=args.headless,
+        )
     except KeyboardInterrupt:
         print("\nStopped by user (progress up to this point was saved).")
     except Exception:
