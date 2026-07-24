@@ -31,7 +31,7 @@ against the original build spec's "Definition of done."
   **not-found** state, and a distinct **location-not-yet-available** state for
   plots that are in the database but not yet position-verified.
 
-**563 real Portofino plots in the database, 562 of them position-verified** —
+**666 real Portofino plots in the database, 665 of them position-verified** —
 not fabricated, not raw OCR. Every plot number in
 `src/data/clusters/portofino.json` was read directly
 off the source master plan raster at high zoom by a human-equivalent visual
@@ -58,11 +58,17 @@ was occluded on the source raster — it's flagged `"verified": false` and the
 app's search correctly reports it as "location not yet available" rather than
 guessing.
 
-Not yet digitized within Portofino: the eastern interior block (several more
-back-to-back column groups, roughly BL600s–900s interior rows), and a few
-small sub-clusters visible near the entrance (BL933–942, BL844–853, and an
-inner back-row behind the north entrance row, BL950s–960s). Based on tile
-coverage during this session, that's likely another 200-300+ units.
+This pass also added most of the eastern interior block: two boundary rows
+(BL900–926), two long parallel columns (BL801–819, BL762–781), and three
+shorter interior rows (BL822–841, BL861–869, BL870–877).
+
+Not yet digitized within Portofino: one large eastern column pair (roughly
+BL634–720, along the community's eastern edge — my anchor readings for it
+were inconsistent between crops, so it was deliberately left out rather than
+risk wrong data) and a few small sub-clusters near the entrance (BL933–942,
+BL844–853, and an inner back-row behind the north entrance row,
+BL950s–960s). Based on tile coverage during this session, that's likely
+another 100-150 units.
 
 **A plot-tagging tool** (`tools/plot-tagger/`) — a standalone, zero-build
 HTML/JS page matching the spec's §1 recommendation exactly: load a master-plan
@@ -117,9 +123,9 @@ coverage that doesn't exist.
 
 ## Definition of done — against the original spec
 
-- [ ] Plot database covers all 11 clusters — **563 of ~2,000+ units, Portofino
-      only (562 position-verified, 1 flagged unverified). Portofino itself is
-      an estimated 65-70% digitized** (eastern interior block + a few small
+- [ ] Plot database covers all 11 clusters — **666 of ~2,000+ units, Portofino
+      only (665 position-verified, 1 flagged unverified). Portofino itself is
+      an estimated 80-85% digitized** (one eastern column pair + a few small
       sub-clusters still missing). Nothing beyond that is claimed.
 - [~] Renders at 60fps with instancing — **architecture validated, actual fps
       not confirmed.** The instancing design gives 2 draw calls total

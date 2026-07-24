@@ -8474,6 +8474,1551 @@
       ],
       "verified": true,
       "notes": null
+    },
+    {
+      "id": "BL900",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row1",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8888,
+        5170
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL901",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row1",
+      "typeCode": "BL-5-E",
+      "tier": 1,
+      "bedrooms": 5,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8872,
+        5175
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL902",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row1",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8856,
+        5180
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL903",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row1",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8841,
+        5186
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL904",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row1",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8825,
+        5191
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL905",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row1",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8809,
+        5196
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL906",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row1",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8793,
+        5201
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL907",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row1",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8777,
+        5206
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL908",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row1",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8762,
+        5212
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL909",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row1",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8746,
+        5217
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL910",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row1",
+      "typeCode": "BL-5-E",
+      "tier": 1,
+      "bedrooms": 5,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8730,
+        5222
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL911",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row1",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8708,
+        5224
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL912",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row1",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8686,
+        5227
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL913",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row1",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8664,
+        5229
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL914",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row1",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8641,
+        5231
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL915",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row1",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8619,
+        5233
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL916",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row1",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8597,
+        5236
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL917",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row1",
+      "typeCode": "BL-5-E",
+      "tier": 1,
+      "bedrooms": 5,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8575,
+        5238
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL918",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row1",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8575,
+        5238
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL919",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row2",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8508,
+        5258
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL920",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row2",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8491,
+        5260
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL921",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row2",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8474,
+        5263
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL922",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row2",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8457,
+        5265
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL923",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row2",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8439,
+        5268
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL924",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row2",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8422,
+        5270
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL925",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row2",
+      "typeCode": "BL-5-E",
+      "tier": 1,
+      "bedrooms": 5,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8405,
+        5273
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL926",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-row2",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8388,
+        5275
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL801",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-west",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8945,
+        5623
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL802",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-west",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8928,
+        5606
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL803",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-west",
+      "typeCode": "BL-5-E",
+      "tier": 1,
+      "bedrooms": 5,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8910,
+        5589
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL804",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-west",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8892,
+        5572
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL805",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-west",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8875,
+        5555
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL806",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-west",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8858,
+        5538
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL807",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-west",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8840,
+        5521
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL808",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-west",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8822,
+        5504
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL809",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-west",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8805,
+        5487
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL810",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-west",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8788,
+        5470
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL811",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-west",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8770,
+        5453
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL812",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-west",
+      "typeCode": "BL-5-E",
+      "tier": 1,
+      "bedrooms": 5,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8784,
+        5434
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL813",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-west",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8798,
+        5414
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL814",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-west",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8812,
+        5395
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL815",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-west",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8826,
+        5376
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL816",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-west",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8841,
+        5356
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL817",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-west",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8855,
+        5337
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL818",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-west",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8869,
+        5317
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL819",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-west",
+      "typeCode": "BL-5-E",
+      "tier": 1,
+      "bedrooms": 5,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8883,
+        5298
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL762",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-east",
+      "typeCode": "BL-5-E",
+      "tier": 1,
+      "bedrooms": 5,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8955,
+        5288
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL763",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-east",
+      "typeCode": "BL-3-M",
+      "tier": 1,
+      "bedrooms": 3,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8942,
+        5307
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL764",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-east",
+      "typeCode": "BL-3-M",
+      "tier": 1,
+      "bedrooms": 3,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8929,
+        5326
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL765",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-east",
+      "typeCode": "BL-3-M",
+      "tier": 1,
+      "bedrooms": 3,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8916,
+        5345
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL766",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-east",
+      "typeCode": "BL-3-M",
+      "tier": 1,
+      "bedrooms": 3,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8902,
+        5364
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL767",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-east",
+      "typeCode": "BL-3-M",
+      "tier": 1,
+      "bedrooms": 3,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8889,
+        5383
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL768",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-east",
+      "typeCode": "BL-3-M",
+      "tier": 1,
+      "bedrooms": 3,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8876,
+        5402
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL769",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-east",
+      "typeCode": "BL-3-M",
+      "tier": 1,
+      "bedrooms": 3,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8863,
+        5421
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL770",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-east",
+      "typeCode": "BL-5-E",
+      "tier": 1,
+      "bedrooms": 5,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8850,
+        5440
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL771",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-east",
+      "typeCode": "BL-3-M",
+      "tier": 1,
+      "bedrooms": 3,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8865,
+        5457
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL772",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-east",
+      "typeCode": "BL-3-M",
+      "tier": 1,
+      "bedrooms": 3,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8880,
+        5473
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL773",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-east",
+      "typeCode": "BL-3-M",
+      "tier": 1,
+      "bedrooms": 3,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8894,
+        5490
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL774",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-east",
+      "typeCode": "BL-3-M",
+      "tier": 1,
+      "bedrooms": 3,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8909,
+        5507
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL775",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-east",
+      "typeCode": "BL-3-M",
+      "tier": 1,
+      "bedrooms": 3,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8924,
+        5523
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL776",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-east",
+      "typeCode": "BL-3-M",
+      "tier": 1,
+      "bedrooms": 3,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8939,
+        5540
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL777",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-east",
+      "typeCode": "BL-5-E",
+      "tier": 1,
+      "bedrooms": 5,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8954,
+        5556
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL778",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-east",
+      "typeCode": "BL-3-M",
+      "tier": 1,
+      "bedrooms": 3,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8969,
+        5573
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL779",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-east",
+      "typeCode": "BL-3-M",
+      "tier": 1,
+      "bedrooms": 3,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8983,
+        5590
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL780",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-east",
+      "typeCode": "BL-3-M",
+      "tier": 1,
+      "bedrooms": 3,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8998,
+        5606
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL781",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-col1-east",
+      "typeCode": "BL-3-M",
+      "tier": 1,
+      "bedrooms": 3,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        9013,
+        5623
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL861",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-861",
+      "typeCode": "BL-5-E",
+      "tier": 1,
+      "bedrooms": 5,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8480,
+        5395
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL862",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-861",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8468,
+        5393
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL863",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-861",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8457,
+        5391
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL864",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-861",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8446,
+        5389
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL865",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-861",
+      "typeCode": "BL-5-E",
+      "tier": 1,
+      "bedrooms": 5,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8434,
+        5386
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL866",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-861",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8422,
+        5384
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL867",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-861",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8411,
+        5382
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL868",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-861",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8400,
+        5380
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL869",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-861",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8388,
+        5378
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL870",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-870",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8525,
+        5368
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL871",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-870",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8546,
+        5364
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL872",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-870",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8568,
+        5359
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL873",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-870",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8589,
+        5355
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL874",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-870",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8611,
+        5351
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL875",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-870",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8632,
+        5347
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL876",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-870",
+      "typeCode": "BL-5-E",
+      "tier": 1,
+      "bedrooms": 5,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8654,
+        5342
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL877",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-870",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8675,
+        5338
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL822",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-822",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8725,
+        5405
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL823",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-822",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8711,
+        5407
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL824",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-822",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8698,
+        5408
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL825",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-822",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8684,
+        5410
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL826",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-822",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8670,
+        5412
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL827",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-822",
+      "typeCode": "BL-5-E",
+      "tier": 1,
+      "bedrooms": 5,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8656,
+        5413
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL828",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-822",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8642,
+        5415
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL829",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-822",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8629,
+        5417
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL830",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-822",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8615,
+        5418
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL831",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-822",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8601,
+        5420
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL832",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-822",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8588,
+        5422
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL833",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-822",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8574,
+        5423
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL834",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-822",
+      "typeCode": "BL-5-E",
+      "tier": 1,
+      "bedrooms": 5,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8560,
+        5425
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL835",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-822",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8535,
+        5428
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL836",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-822",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8510,
+        5430
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL837",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-822",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8485,
+        5433
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL838",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-822",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8460,
+        5435
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL839",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-822",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8435,
+        5438
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL840",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-822",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8410,
+        5440
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL841",
+      "cluster": "portofino",
+      "rowGroup": "portofino-east-mid-822",
+      "typeCode": "BL-4-M",
+      "tier": 1,
+      "bedrooms": 4,
+      "bedroomsConfirmed": true,
+      "planPx": [
+        8385,
+        5443
+      ],
+      "verified": true,
+      "notes": null
     }
   ]
 }
