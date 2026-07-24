@@ -1,0 +1,26 @@
+{
+  "name": "damac-lagoons-3d-map",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Interactive 3D villa map of DAMAC Lagoons",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:41729/git/lababidioussama-lab/dubai-search"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "three": "^0.185.1"
+  },
+  "devDependencies": {
+    "@types/three": "^0.185.1",
+    "playwright": "^1.61.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.1.5"
+  }
+}

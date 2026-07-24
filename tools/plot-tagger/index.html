@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DAMAC Lagoons — Plot Tagger</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: #0b0b0d; color: #eee;
+    display: grid; grid-template-columns: 260px 1fr 340px; grid-template-rows: 100vh; overflow: hidden;
+  }
+  h1 { font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 12px; color: #ff5577; }
+  h2 { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #999; margin: 18px 0 6px; }
+  .panel { padding: 16px; overflow-y: auto; background: #111114; border-right: 1px solid #232327; }
+  .panel.right { border-right: none; border-left: 1px solid #232327; }
+  label { display: block; font-size: 11px; color: #aaa; margin: 8px 0 3px; }
+  input, select, button, textarea {
+    width: 100%; background: #1a1a1e; border: 1px solid #333; color: #eee; padding: 6px 8px;
+    border-radius: 4px; font-size: 12.5px;
+  }
+  button { cursor: pointer; margin-top: 8px; }
+  button.primary { background: #ff0033; border-color: #ff0033; color: #fff; font-weight: 600; }
+  button.secondary { background: #232327; }
+  button:hover { filter: brightness(1.2); }
+  .row { display: flex; gap: 6px; }
+  .row > * { flex: 1; }
+  #canvas-wrap { position: relative; overflow: hidden; background: #050505; cursor: crosshair; }
+  #canvas-wrap.panning { cursor: grabbing; }
+  canvas { position: absolute; top: 0; left: 0; }
+  #hint {
+    position: absolute; bottom: 10px; left: 10px; font-size: 11px; color: #888; background: rgba(0,0,0,0.6);
+    padding: 6px 10px; border-radius: 4px; max-width: 480px; line-height: 1.5; z-index: 5;
+  }
+  #zoom-indicator {
+    position: absolute; top: 10px; left: 10px; font-size: 11px; color: #ccc; background: rgba(0,0,0,0.6);
+    padding: 4px 8px; border-radius: 4px; z-index: 5;
+  }
+  #pin-form {
+    position: absolute; z-index: 10; background: #16161a; border: 1px solid #ff0033; border-radius: 6px;
+    padding: 10px; width: 220px; box-shadow: 0 0 20px rgba(255,0,40,0.3); display: none;
+  }
+  #pin-form.visible { display: block; }
+  table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+  th, td { text-align: left; padding: 4px 4px; border-bottom: 1px solid #232327; }
+  th { color: #888; font-weight: 500; }
+  tr.unit-row { cursor: pointer; }
+  tr.unit-row:hover { background: #1a1a1e; }
+  tr.unverified { color: #ffb347; }
+  .small-btn { width: auto; display: inline-block; padding: 2px 6px; font-size: 10.5px; margin: 0 0 0 4px; }
+  #status-line { font-size: 11px; color: #6a6; min-height: 14px; margin-top: 8px; }
+  .legend-entry { display: flex; align-items: center; gap: 6px; font-size: 11.5px; padding: 3px 0; }
+  .swatch { width: 12px; height: 12px; border-radius: 2px; flex: none; }
+  #count-badge { color: #ff5577; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="panel">
+  <h1>Plot Tagger</h1>
+
+  <label>Cluster id (lowercase, e.g. "portofino")</label>
+  <input id="cluster-id" value="portofino" />
+
+  <label>Base image (master-plan crop)</label>
+  <input id="image-input" type="file" accept="image/*" />
+
+  <label>Load existing cluster JSON (optional, to continue tagging)</label>
+  <input id="json-input" type="file" accept="application/json" />
+
+  <h2>Legend / unit types</h2>
+  <div id="legend-list"></div>
+  <div class="row">
+    <input id="legend-code" placeholder="code e.g. BL-3-M" />
+    <input id="legend-color" type="color" value="#ff0033" style="padding:2px;" />
+  </div>
+  <input id="legend-label" placeholder="label e.g. 3BR Townhouse" style="margin-top:6px;" />
+  <button class="secondary" id="add-legend">Add type</button>
+
+  <h2>View</h2>
+  <div class="row">
+    <button class="secondary" id="zoom-in">Zoom +</button>
+    <button class="secondary" id="zoom-out">Zoom −</button>
+  </div>
+  <button class="secondary" id="zoom-fit">Fit to window</button>
+
+  <h2>Export</h2>
+  <button class="primary" id="export-json">Download cluster JSON</button>
+  <div id="status-line"></div>
+</div>
+
+<div id="canvas-wrap">
+  <canvas id="canvas"></canvas>
+  <div id="zoom-indicator">no image loaded</div>
+  <div id="hint">
+    Load a base image, then <b>left-click</b> to drop a plot pin (fill in the form that appears).
+    <b>Scroll</b> to zoom, <b>right-click drag</b> to pan. Click an existing pin (or a table row) to edit/delete it.
+  </div>
+  <div id="pin-form">
+    <label>Plot ID</label>
+    <input id="pin-id" placeholder="BL160" />
+    <label>Type code</label>
+    <input id="pin-type" list="type-options" placeholder="BL-3-M" />
+    <datalist id="type-options"></datalist>
+    <label>Tier (1=smallest … 4=signature)</label>
+    <select id="pin-tier">
+      <option value="1">1 — 3BR townhouse</option>
+      <option value="2">2 — 5BR villa</option>
+      <option value="3">3 — 6BR villa</option>
+      <option value="4">4 — 7BR signature villa</option>
+    </select>
+    <label>Row group (id shared by units in the same row)</label>
+    <input id="pin-rowgroup" placeholder="e.g. lagoon-row-south" />
+    <label>Bedrooms (leave blank if unconfirmed)</label>
+    <input id="pin-bedrooms" type="number" min="1" max="12" />
+    <div class="row">
+      <button class="primary" id="pin-save">Save</button>
+      <button class="secondary" id="pin-cancel">Cancel</button>
+    </div>
+    <button class="secondary" id="pin-delete" style="display:none; margin-top:4px;">Delete pin</button>
+  </div>
+</div>
+
+<div class="panel right">
+  <h1>Tagged units — <span id="count-badge">0</span></h1>
+  <label>Filter</label>
+  <input id="filter-input" placeholder="type to filter by id / rowGroup" />
+  <table>
+    <thead><tr><th>ID</th><th>Type</th><th>Tier</th><th>Row grp</th><th></th></tr></thead>
+    <tbody id="units-table"></tbody>
+  </table>
+</div>
+
+<script type="module" src="./tagger.js"></script>
+</body>
+</html>

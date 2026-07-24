@@ -1,0 +1,919 @@
+{
+  "cluster": "portofino",
+  "source": {
+    "document": "Damac_Lagoons_Community_Master_Plan_2023.pdf",
+    "digitizedBy": "visual-inspection",
+    "digitizedOn": "2026-07-24",
+    "method": "Full-resolution raster (10367x7333px) viewed in zoomed sub-regions with a 25px reference grid overlay; plot numbers and unit-type colors read directly off the drawing. planPx values are raw source-image pixel coordinates.",
+    "coverage": "Partial: only the lagoon-front 'hero' ring (2 signature-villa fan clusters + 2 large-villa rows flanking the central lagoon feature). The townhouse grid (BL160-BL424+ etc, ~250+ units) is NOT yet digitized."
+  },
+  "legend": {
+    "BL-5-E": {
+      "color": "#7B3FA0",
+      "label": "5BR Townhouse (End)"
+    },
+    "BL-3-M": {
+      "color": "#7FD4E8",
+      "label": "3BR Townhouse (Middle)"
+    },
+    "BL-4-M": {
+      "color": "#D9B98A",
+      "label": "4BR Townhouse (Middle)"
+    },
+    "BL-VD1": {
+      "color": "#F0A94E",
+      "label": "Large Villa (bedroom count unconfirmed)"
+    },
+    "BL-V75": {
+      "color": "#F2B4D6",
+      "label": "Signature Villa (bedroom count unconfirmed)"
+    }
+  },
+  "units": [
+    {
+      "id": "BL101",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-fan-west",
+      "typeCode": "BL-V75",
+      "tier": 4,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7427,
+        5578
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL102",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-fan-west",
+      "typeCode": "BL-V75",
+      "tier": 4,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7460,
+        5660
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL103",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-fan-west",
+      "typeCode": "BL-V75",
+      "tier": 4,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7475,
+        5745
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL104",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-fan-west",
+      "typeCode": "BL-V75",
+      "tier": 4,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7485,
+        5835
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL105",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-fan-west",
+      "typeCode": "BL-V75",
+      "tier": 4,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7510,
+        5920
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL106",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-fan-west",
+      "typeCode": "BL-V75",
+      "tier": 4,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7610,
+        5880
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL107",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-fan-west",
+      "typeCode": "BL-V75",
+      "tier": 4,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7690,
+        5865
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL108",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-fan-west",
+      "typeCode": "BL-V75",
+      "tier": 4,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7750,
+        5845
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL132",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-fan-east",
+      "typeCode": "BL-V75",
+      "tier": 4,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8800,
+        5735
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL133",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-fan-east",
+      "typeCode": "BL-V75",
+      "tier": 4,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8795,
+        5655
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL134",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-fan-east",
+      "typeCode": "BL-V75",
+      "tier": 4,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8750,
+        5585
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL135",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-fan-east",
+      "typeCode": "BL-V75",
+      "tier": 4,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8655,
+        5562
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL136",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-fan-east",
+      "typeCode": "BL-V75",
+      "tier": 4,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8590,
+        5575
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL137",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-fan-east",
+      "typeCode": "BL-V75",
+      "tier": 4,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8530,
+        5595
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL138",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-fan-east",
+      "typeCode": "BL-V75",
+      "tier": 4,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8475,
+        5600
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL139",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-fan-east",
+      "typeCode": "BL-V75",
+      "tier": 4,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8420,
+        5595
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL109",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7805,
+        5840
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL110",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7855,
+        5835
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL111",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7903,
+        5828
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL112",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7945,
+        5828
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL113",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7995,
+        5819
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL114",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8045,
+        5810
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL115",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8100,
+        5828
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL116",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8148,
+        5845
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL117",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8193,
+        5863
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL118",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8273,
+        5893
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL119",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8308,
+        5910
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL120",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8365,
+        5923
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL121",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8413,
+        5928
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL122",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8473,
+        5928
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL123",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8515,
+        5920
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL124",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8555,
+        5913
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL125",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8600,
+        5905
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL126",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8650,
+        5898
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL127",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8695,
+        5890
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL128",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8735,
+        5883
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL129",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8780,
+        5875
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL130",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8825,
+        5868
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL131",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-south",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8868,
+        5861
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL140",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-north",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8350,
+        5615
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL141",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-north",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8300,
+        5610
+      ],
+      "verified": false,
+      "notes": "Label partially occluded by adjacent shape on source raster; position interpolated between verified neighbours BL140 and BL142, plot existence/number not directly legible."
+    },
+    {
+      "id": "BL142",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-north",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8240,
+        5600
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL143",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-north",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8185,
+        5595
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL144",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-north",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8150,
+        5585
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL145",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-north",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8090,
+        5573
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL146",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-north",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8045,
+        5558
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL147",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-north",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        8000,
+        5555
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL148",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-north",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7955,
+        5540
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL149",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-north",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7920,
+        5535
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL150",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-north",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7860,
+        5515
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL151",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-north",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7810,
+        5500
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL152",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-north",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7770,
+        5488
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL153",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-north",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7720,
+        5475
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL154",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-north",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7700,
+        5475
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL155",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-north",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7665,
+        5465
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL156",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-north",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7605,
+        5445
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL157",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-north",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7555,
+        5435
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL158",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-north",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7518,
+        5418
+      ],
+      "verified": true,
+      "notes": null
+    },
+    {
+      "id": "BL159",
+      "cluster": "portofino",
+      "rowGroup": "lagoon-row-north",
+      "typeCode": "BL-VD1",
+      "tier": 3,
+      "bedrooms": null,
+      "bedroomsConfirmed": false,
+      "planPx": [
+        7465,
+        5413
+      ],
+      "verified": true,
+      "notes": null
+    }
+  ]
+}
