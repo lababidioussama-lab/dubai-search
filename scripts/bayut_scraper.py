@@ -2380,6 +2380,13 @@ def run_scrape_params(
     if chrome_path:
         co.set_browser_path(chrome_path)
     page = ChromiumPage(co)
+    try:
+        # Without this, a page that never finishes loading (e.g. a site
+        # silently blackholing this server's IP instead of returning an
+        # error) hangs page.get() forever with nothing to catch.
+        page.set.timeouts(base=25, page_load=25)
+    except Exception:
+        pass
 
     try:
         loc_path, resolved_name = resolve_location(location, page=page)

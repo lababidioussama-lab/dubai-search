@@ -16,6 +16,7 @@ Configuration (environment variables / server secrets):
 import os
 import sys
 import threading
+import time
 import traceback
 import uuid
 from functools import wraps
@@ -101,6 +102,29 @@ def _log(job_id: str, message: str) -> None:
     print(f"[{job_id}] {message}", flush=True)
 
 
+def _start_watchdog(job_id: str, timeout_seconds: int) -> None:
+    """If a job is still 'running' after timeout_seconds, mark it as failed.
+    Browser automation can hang indefinitely (e.g. a site silently blackholes
+    this server's IP instead of returning an error) with nothing to catch —
+    this guarantees the UI always resolves instead of polling forever."""
+
+    def watch():
+        time.sleep(timeout_seconds)
+        with JOBS_LOCK:
+            job = JOBS.get(job_id)
+            if job and job["status"] == "running":
+                job["status"] = "error"
+                job["error"] = (
+                    f"No progress after {timeout_seconds}s, so this job was marked as failed. "
+                    "This usually means the target site never responded to the server at all "
+                    "(e.g. it silently blocks this server's IP) rather than a bug in the job — "
+                    "there was nothing to catch as an error."
+                )
+        _log(job_id, f"Watchdog: no progress after {timeout_seconds}s, marking as failed.")
+
+    threading.Thread(target=watch, daemon=True).start()
+
+
 @app.route("/scrape", methods=["POST"])
 @login_required
 def start_scrape():
@@ -133,6 +157,7 @@ def start_scrape():
             traceback.print_exc()
 
     threading.Thread(target=worker, daemon=True).start()
+    _start_watchdog(job_id, timeout_seconds=180)
     return redirect(url_for("job_status", job_id=job_id))
 
 
@@ -176,6 +201,7 @@ def start_lookup():
             traceback.print_exc()
 
     threading.Thread(target=worker, daemon=True).start()
+    _start_watchdog(job_id, timeout_seconds=120)
     return redirect(url_for("job_status", job_id=job_id))
 
 
