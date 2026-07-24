@@ -1209,17 +1209,25 @@ def resolve_location_via_site_search(page: "ChromiumPage", user_input: str) -> O
 
         # Suggestion rows aren't always <a href>: on the classic filter
         # form they're plain <li> text that just fills the field, so an
-        # explicit "Search" click is needed afterwards to navigate.
+        # explicit "Search" click is needed afterwards to navigate. Compare
+        # against the URL captured right before clicking -- not a hardcoded
+        # "https://www.bayut.com" string, which can silently never match if
+        # Bayut appends a locale/region prefix or query string to the
+        # homepage URL, permanently skipping the Search-button fallback.
         href = suggestion.attr("href") or ""
+        url_before_click = page.url
         suggestion.click()
         time.sleep(1.2)
 
-        if not href and page.url.rstrip("/") == "https://www.bayut.com":
+        if not href and page.url == url_before_click:
             for selector in SEARCH_SUBMIT_SELECTORS:
                 submit_btn = page.ele(selector, timeout=1)
                 if submit_btn:
                     submit_btn.click()
-                    time.sleep(1.8)
+                    for _ in range(10):  # poll up to ~5s for navigation
+                        time.sleep(0.5)
+                        if page.url != url_before_click:
+                            break
                     break
 
         href = href or page.url
