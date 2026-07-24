@@ -31,7 +31,7 @@ against the original build spec's "Definition of done."
   **not-found** state, and a distinct **location-not-yet-available** state for
   plots that are in the database but not yet position-verified.
 
-**666 real Portofino plots in the database, 665 of them position-verified** —
+**779 real Portofino plots in the database, 778 of them position-verified** —
 not fabricated, not raw OCR. Every plot number in
 `src/data/clusters/portofino.json` was read directly
 off the source master plan raster at high zoom by a human-equivalent visual
@@ -59,16 +59,21 @@ app's search correctly reports it as "location not yet available" rather than
 guessing.
 
 This pass also added most of the eastern interior block: two boundary rows
-(BL900–926), two long parallel columns (BL801–819, BL762–781), and three
-shorter interior rows (BL822–841, BL861–869, BL870–877).
+(BL900–926), four long parallel columns (BL730–761, BL699–729, BL674–698,
+BL649–673), two more columns (BL801–819, BL762–781), and three shorter
+interior rows (BL822–841, BL861–869, BL870–877). The eastern column pair
+initially flagged as "anchor readings inconsistent" was re-examined with a
+cleaner full-height crop and digitized correctly — cross-checked against the
+already-committed BL762 (adjacent to the new BL761) to confirm no conflict.
 
-Not yet digitized within Portofino: one large eastern column pair (roughly
-BL634–720, along the community's eastern edge — my anchor readings for it
-were inconsistent between crops, so it was deliberately left out rather than
-risk wrong data) and a few small sub-clusters near the entrance (BL933–942,
-BL844–853, and an inner back-row behind the north entrance row,
-BL950s–960s). Based on tile coverage during this session, that's likely
-another 100-150 units.
+**Paused mid-session (picking back up later) with these still not digitized
+in Portofino**: a small corner near BL634–648 (northeast, beyond the last
+mapped column), and small sub-clusters near the entrance — BL933–942,
+BL844–853, and an inner back-row behind the north entrance row (BL950s–960s).
+Rough estimate: another 60-100 units. `tools/plot-tagger` + the tile
+screenshots in this session's `.devtools/` are the fastest way back in — grid
+crops around x:9400-9500,y:5250-5450 (NE corner) and x:8150-8350,y:5250-5500
+(entrance sub-clusters) on the source raster are the next targets.
 
 **A plot-tagging tool** (`tools/plot-tagger/`) — a standalone, zero-build
 HTML/JS page matching the spec's §1 recommendation exactly: load a master-plan
@@ -123,10 +128,11 @@ coverage that doesn't exist.
 
 ## Definition of done — against the original spec
 
-- [ ] Plot database covers all 11 clusters — **666 of ~2,000+ units, Portofino
-      only (665 position-verified, 1 flagged unverified). Portofino itself is
-      an estimated 80-85% digitized** (one eastern column pair + a few small
-      sub-clusters still missing). Nothing beyond that is claimed.
+- [ ] Plot database covers all 11 clusters — **779 of ~2,000+ units, Portofino
+      only (778 position-verified, 1 flagged unverified). Portofino itself is
+      an estimated 90%+ digitized** (a small NE corner + a few small
+      sub-clusters still missing — see "paused mid-session" note above).
+      Nothing beyond that is claimed.
 - [~] Renders at 60fps with instancing — **architecture validated, actual fps
       not confirmed.** The instancing design gives 2 draw calls total
       regardless of plot count (verified: 58 units currently render in 2
