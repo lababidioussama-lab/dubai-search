@@ -176,6 +176,8 @@ LOCATION_DATABASE: Dict[str, str] = {
     # ---- Jumeirah Village Circle (JVC) ----
     "jumeirah village circle": "dubai/jumeirah-village-circle",
     "jvc": "dubai/jumeirah-village-circle",
+    "damac tower 108": "dubai/jumeirah-village-circle/damac-tower-108",
+    "tower 108": "dubai/jumeirah-village-circle/damac-tower-108",
     "jumeirah village triangle": "dubai/jumeirah-village-triangle",
     "jvt": "dubai/jumeirah-village-triangle",
 
@@ -459,7 +461,81 @@ def format_slug(text: str) -> str:
     return text
 
 
-def resolve_location(user_input: str) -> Tuple[str, str]:
+# Bayut's homepage location search box, and its autocomplete dropdown, are
+# what actually knows about every project/building/cluster on the site —
+# a hardcoded dictionary never can. These selector lists are best-effort
+# (this environment has no live access to bayut.com to verify them
+# against the real markup) and tried in order until one works.
+LOCATION_SEARCH_INPUT_SELECTORS = [
+    "css:input[placeholder*='location' i]",
+    "css:input[placeholder*='area' i]",
+    "css:input[placeholder*='project' i]",
+    "css:input[placeholder*='search' i]",
+    "css:input[name*='location' i]",
+    "css:input[aria-label*='location' i]",
+    "css:[data-testid*='location'] input",
+    "css:[class*='LocationSearch'] input",
+    "css:[class*='location-search'] input",
+]
+
+LOCATION_SUGGESTION_SELECTORS = [
+    "css:[role='listbox'] [role='option']",
+    "css:[class*='suggestion'] a",
+    "css:[class*='Suggestion'] a",
+    "css:[class*='autocomplete'] li a",
+    "css:[class*='dropdown'] a[href*='/dubai/']",
+    "css:ul li a[href*='/dubai/']",
+]
+
+
+def resolve_location_via_site_search(page: "ChromiumPage", user_input: str) -> Optional[str]:
+    """Type the free-text project/building/area name into Bayut's own
+    search box and follow its first autocomplete suggestion, so lookups
+    aren't limited to our local shortcut dictionary. Returns the resolved
+    'dubai/...' path, or None if the search UI couldn't be driven."""
+    try:
+        page.get("https://www.bayut.com/")
+        time.sleep(1.5)
+        handle_captcha(page)
+
+        search_input = None
+        for selector in LOCATION_SEARCH_INPUT_SELECTORS:
+            search_input = page.ele(selector, timeout=1)
+            if search_input:
+                break
+        if not search_input:
+            logger.debug("Could not find Bayut's location search box.")
+            return None
+
+        search_input.click()
+        search_input.input(user_input)
+        time.sleep(1.8)  # let autocomplete suggestions load
+
+        suggestion = None
+        for selector in LOCATION_SUGGESTION_SELECTORS:
+            suggestion = page.ele(selector, timeout=1)
+            if suggestion:
+                break
+        if not suggestion:
+            logger.debug("No autocomplete suggestion found for '%s'.", user_input)
+            return None
+
+        href = suggestion.attr("href") or ""
+        if not href:
+            suggestion.click()
+            time.sleep(1.5)
+            href = page.url
+
+        match = re.search(r"bayut\.com/(?:(?:for-sale|to-rent)/(?:[\w-]+-property/)?)?(dubai/[\w/-]+?)/?(?:$|\?)", href)
+        if match:
+            return match.group(1)
+        return None
+    except Exception as exc:
+        logger.debug("Site-search location resolution failed for '%s': %s", user_input, exc)
+        return None
+
+
+def resolve_location(user_input: str, page: Optional["ChromiumPage"] = None) -> Tuple[str, str]:
     clean_input = user_input.lower().strip()
     if clean_input in LOCATION_DATABASE:
         return LOCATION_DATABASE[clean_input], clean_input.title()
@@ -471,6 +547,15 @@ def resolve_location(user_input: str) -> Tuple[str, str]:
         best_match = matches[0]
         cprint(f"💡 Auto-corrected spelling '{user_input}' ---> Matched to: '{best_match.title()}'")
         return LOCATION_DATABASE[best_match], best_match.title()
+
+    if page is not None:
+        live_path = resolve_location_via_site_search(page, user_input)
+        if live_path:
+            cprint(f"🔎 Not in local database — found '{user_input}' via Bayut's own search ---> {live_path}")
+            return live_path, user_input.title()
+        cprint(f"⚠️  Bayut's search couldn't resolve '{user_input}' either — falling back to a guessed URL.")
+        cprint("    Results may be off-target; check the 'Location Match' column afterwards.")
+
     formatted_slug = format_slug(user_input)
     if formatted_slug and formatted_slug != "uae":
         return f"dubai/{formatted_slug}", user_input.title()
@@ -815,46 +900,45 @@ def extract_from_regex_fallback(page: ChromiumPage, full_html: str, prop_url: st
 # TRAKHEESI / DLD PERMIT VERIFICATION
 # ------------------------------------------
 # Every Bayut listing shows a Trakheesi (Dubai Land Department) permit
-# number next to a QR code. The QR encodes a link to DLD's own permit
-# verification page, which lists the officially registered agent name,
-# phone, brokerage, license number and permit status — more trustworthy
-# than whatever Bayut's own listing page displays for "agent".
-#
-# NOTE: this environment has no live internet access to bayut.com or
-# dubailand.gov.ae, so the label patterns below are best-effort and
-# UNVERIFIED against the real DLD page markup. They're written to fail
-# safely (never raise, always return "N/A" on a miss) so a wrong guess
-# here can't break the rest of the scrape — but they may need a tweak
-# once you run this for real and see what the DLD page actually contains.
+# number next to a QR code. The QR encodes a link to DLD's own "Real
+# Estate Permit Card" verification page. Confirmed from a live screenshot,
+# that card is a fixed set of label/value rows — NOT an individual agent's
+# name or phone number (DLD doesn't publish that), just the licensed
+# brokerage company and its RERA license number, plus the permit/property
+# details:
+#   Listing Details:      Transaction Number, Listing Number, End Date
+#   Authority Information: License #, Authority Name  (= the brokerage)
+#   Property Details:     Property Name, Property Type, Property Size(Sqm),
+#                          Zone Name, Property Value(AED), Permit Type
+# Extraction works by finding each known label in the flattened page text
+# and taking everything up to whichever other known label comes next —
+# robust to blank values (e.g. "Property Name" often has no value).
 # ==========================================
-TRAKHEESI_LABEL_PATTERNS: Dict[str, List[str]] = {
-    "Verified Agent Name": [
-        r"(?:Agent|Broker)\s*Name\s*[:\-]?\s*([A-Za-z؀-ۿ][A-Za-z؀-ۿ .'\-]{2,59})",
-    ],
-    "Verified Agent Phone": [
-        r"(?:Phone|Mobile|Contact)\s*(?:No\.?|Number)?\s*[:\-]?\s*(\+?\d[\d\s\-]{7,15}\d)",
-    ],
-    "Verified Brokerage": [
-        r"(?:Company|Brokerage|Real\s*Estate)\s*Name\s*[:\-]?\s*([A-Za-z0-9؀-ۿ][A-Za-z0-9؀-ۿ &.'\-]{2,79})",
-    ],
-    "Verified License No.": [
-        r"License\s*(?:No\.?|Number)\s*[:\-]?\s*([A-Za-z0-9\-]{2,20})",
-    ],
-    "Permit Status": [
-        r"Status\s*[:\-]?\s*(Active|Expired|Valid|Invalid|Cancelled)",
-    ],
-}
+TRAKHEESI_FIELD_LABELS: List[Tuple[str, str]] = [
+    ("Transaction Number", "Trakheesi Transaction No."),
+    ("Listing Number", "Trakheesi Listing No."),
+    ("End Date", "Trakheesi Permit End Date"),
+    ("License #", "Trakheesi License No."),
+    ("Authority Name", "Trakheesi Authority Name"),
+    ("Property Name", "Trakheesi Property Name"),
+    ("Property Type", "Trakheesi Property Type"),
+    ("Property Size(Sqm)", "Trakheesi Property Size (Sqm)"),
+    ("Zone Name", "Trakheesi Zone Name"),
+    ("Property Value(AED)", "Trakheesi Property Value (AED)"),
+    ("Permit Type", "Trakheesi Permit Type"),
+]
+TRAKHEESI_NUMERIC_FIELDS = {"Trakheesi Property Size (Sqm)", "Trakheesi Property Value (AED)"}
+# Section headings on the card aren't fields themselves, but they must also
+# act as stop-boundaries so e.g. "Authority Name" doesn't swallow the next
+# section's heading ("Property Details") into its value.
+TRAKHEESI_SECTION_HEADERS = ["Listing Details", "Authority Information", "Property Details"]
 
 
-def _blank_trakheesi_fields() -> Dict[str, str]:
-    return {
-        "Trakheesi URL": "N/A",
-        "Verified Agent Name": "N/A",
-        "Verified Agent Phone": "N/A",
-        "Verified Brokerage": "N/A",
-        "Verified License No.": "N/A",
-        "Permit Status": "N/A",
-    }
+def _blank_trakheesi_fields() -> Dict[str, Any]:
+    fields: Dict[str, Any] = {"Trakheesi URL": "N/A", "Trakheesi Verified": "N/A"}
+    for _, out_label in TRAKHEESI_FIELD_LABELS:
+        fields[out_label] = "N/A"
+    return fields
 
 
 def find_trakheesi_url(prop_json: Optional[Dict[str, Any]], full_html: str) -> Optional[str]:
@@ -931,7 +1015,7 @@ def dismiss_popups(page: ChromiumPage, attempts: int = 2) -> None:
             break
 
 
-def extract_trakheesi_details(page: ChromiumPage, trakheesi_url: str) -> Dict[str, str]:
+def extract_trakheesi_details(page: ChromiumPage, trakheesi_url: str) -> Dict[str, Any]:
     result = _blank_trakheesi_fields()
     result["Trakheesi URL"] = trakheesi_url
     try:
@@ -939,13 +1023,30 @@ def extract_trakheesi_details(page: ChromiumPage, trakheesi_url: str) -> Dict[st
         time.sleep(1.5)
         dismiss_popups(page)
         text = re.sub(r"<[^>]+>", " ", page.html)
-        text = re.sub(r"\s+", " ", text)
-        for field, patterns in TRAKHEESI_LABEL_PATTERNS.items():
-            for pattern in patterns:
-                m = re.search(pattern, text, re.IGNORECASE)
-                if m:
-                    result[field] = m.group(1).strip()
-                    break
+        text = re.sub(r"\s+", " ", text).strip()
+
+        if "verified by dubai land department" in text.lower():
+            result["Trakheesi Verified"] = "✅ Verified by DLD"
+
+        raw_labels = [raw for raw, _ in TRAKHEESI_FIELD_LABELS] + TRAKHEESI_SECTION_HEADERS
+        for raw_label, out_label in TRAKHEESI_FIELD_LABELS:
+            start_match = re.search(re.escape(raw_label), text, re.IGNORECASE)
+            if not start_match:
+                continue
+            start = start_match.end()
+
+            next_positions = []
+            for other_label in raw_labels:
+                if other_label == raw_label:
+                    continue
+                m2 = re.search(re.escape(other_label), text[start:], re.IGNORECASE)
+                if m2:
+                    next_positions.append(start + m2.start())
+            end = min(next_positions) if next_positions else min(start + 120, len(text))
+
+            value = text[start:end].strip(" :.- ")
+            if value:
+                result[out_label] = clean_number(value) if out_label in TRAKHEESI_NUMERIC_FIELDS and re.match(r"^[\d,.]+$", value) else value
     except Exception as exc:
         logger.debug("Trakheesi lookup failed for %s: %s", trakheesi_url, exc)
     return result
@@ -1250,8 +1351,8 @@ def _write_listings_sheet(wb, df: pd.DataFrame, config: ScrapeConfig):
     # --- Data rows: values, banding, borders, number formats, hyperlinks ---
     thin_border = Border(*(Side(style="thin", color="B7B7B7"),) * 4)
     band_fill = PatternFill("solid", fgColor=BRAND_LIGHT)
-    currency_cols = {"Price (AED)", "Price / sqft (AED)"}
-    number_cols = {"Area (sqft)", "Bathrooms", "Bedrooms", "Latitude", "Longitude"}
+    currency_cols = {"Price (AED)", "Price / sqft (AED)", "Trakheesi Property Value (AED)"}
+    number_cols = {"Area (sqft)", "Bathrooms", "Bedrooms", "Latitude", "Longitude", "Trakheesi Property Size (Sqm)"}
 
     for r, (_, row) in enumerate(df.iterrows()):
         excel_row = header_row + 1 + r
@@ -1328,9 +1429,10 @@ def run_search(page: ChromiumPage, args: argparse.Namespace) -> None:
         if record:
             all_properties.append(record)
             logger.info(
-                "[%d/%d] Extracted -> Permit: %s | Price: %s | Location: %s (%s) | Verified Agent: %s",
+                "[%d/%d] Extracted -> Permit: %s | Price: %s | Location: %s (%s) | DLD: %s | Brokerage: %s",
                 idx, len(all_property_urls), record["Permit Number"], record["Price (AED)"],
-                record["Full Location"], record["Location Match"], record["Verified Agent Name"],
+                record["Full Location"], record["Location Match"],
+                record["Trakheesi Verified"], record["Trakheesi Authority Name"],
             )
         else:
             logger.warning("[%d/%d] Failed after retries, skipped.", idx, len(all_property_urls))
