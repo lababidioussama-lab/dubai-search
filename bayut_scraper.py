@@ -355,6 +355,97 @@ LOCATION_DATABASE: Dict[str, str] = {
     "jebel ali": "dubai/jebel-ali-1",
     "jebel ali village": "dubai/jebel-ali-village",
     "remraam": "dubai/remraam",
+
+    # ---- Sobha (developer) ----
+    "sobha one": "dubai/sobha-one",
+    "sobha seahaven": "dubai/dubai-harbour/sobha-seahaven",
+    "sobha creek vistas": "dubai/sobha-hartland/sobha-creek-vistas",
+
+    # ---- Azizi (developer) ----
+    "azizi riviera": "dubai/mohammed-bin-rashid-city/azizi-riviera",
+    "azizi venice": "dubai/dubai-south/azizi-venice",
+
+    # ---- Danube Properties (developer) ----
+    "danube bayz": "dubai/business-bay/bayz-by-danube",
+    "danube elitz": "dubai/jumeirah-village-circle/elitz-by-danube",
+    "danube oceanz": "dubai/dubai-maritime-city/oceanz-by-danube",
+    "danube skyz": "dubai/arjan/skyz-by-danube",
+    "arjan": "dubai/arjan",
+
+    # ---- Binghatti (developer) ----
+    "binghatti canal": "dubai/business-bay/binghatti-canal",
+    "binghatti stars": "dubai/al-jaddaf/binghatti-stars",
+    "binghatti amber": "dubai/al-jaddaf/binghatti-amber",
+    "binghatti jacob and co": "dubai/business-bay/binghatti-jacob-and-co",
+
+    # ---- Ellington (developer) ----
+    "ellington belgravia": "dubai/mudon/belgravia",
+    "wilton terraces": "dubai/mohammed-bin-rashid-city/wilton-terraces",
+    "ellington beach house": "dubai/palm-jumeirah/ellington-beach-house",
+
+    # ---- Meraas (developer) ----
+    "port de la mer": "dubai/jumeirah-1/port-de-la-mer",
+    "bluewaters island": "dubai/bluewaters-island",
+    "bluewaters": "dubai/bluewaters-island",
+    "la mer": "dubai/jumeirah-1/la-mer",
+    "pearl jumeirah": "dubai/pearl-jumeirah",
+    "madinat jumeirah living": "dubai/umm-suqeim/madinat-jumeirah-living",
+    "mjl": "dubai/umm-suqeim/madinat-jumeirah-living",
+    "citywalk": "dubai/city-walk",
+
+    # ---- Nakheel (developer, non-Palm) ----
+    "jumeirah islands": "dubai/jumeirah-islands",
+    "jumeirah park": "dubai/jumeirah-park",
+    "the world islands": "dubai/the-world-islands",
+    "deira islands": "dubai/deira-islands",
+    "dragon city": "dubai/international-city/dragon-city",
+    "warsan village": "dubai/warsan",
+    "warsan": "dubai/warsan",
+
+    # ---- Dubai Properties (developer) ----
+    "villa lantana": "dubai/arabian-ranches/villa-lantana",
+    "mudon views": "dubai/mudon/mudon-views",
+    "manazel al khor": "dubai/al-khor",
+    "1/JBR": "dubai/jumeirah-beach-residence-jbr/1-jbr",
+
+    # ---- Deyaar / Select Group / Damac Properties (misc) ----
+    "midtown": "dubai/dubailand/midtown",
+    "dubailand": "dubai/dubailand",
+    "the sustainable city": "dubai/the-sustainable-city",
+    "wasl gate": "dubai/al-quoz/wasl-gate",
+    "the oasis": "dubai/the-oasis",
+    "the valley": "dubai/the-valley",
+    "damac riverside": "dubai/damac-riverside",
+    "damac islands": "dubai/damac-islands",
+
+    # ---- Nshama (developer, beyond Town Square) ----
+    "hayat boulevard": "dubai/town-square/hayat-boulevard",
+    "syann park": "dubai/town-square/syann-park",
+
+    # ---- Emaar (broader catalogue beyond Downtown/Hills) ----
+    "emaar beachfront": "dubai/dubai-harbour/emaar-beachfront",
+    "dubai harbour": "dubai/dubai-harbour",
+    "rashid yachts and marina": "dubai/dubai-maritime-city/rashid-yachts-and-marina",
+    "the valley by emaar": "dubai/the-valley",
+    "arabian ranches iii": "dubai/arabian-ranches-3",
+    "grand polo club and resort": "dubai/dubailand/grand-polo-club-and-resort",
+    "the oasis by emaar": "dubai/the-oasis",
+
+    # ---- Union Properties / Al Quoz / Motor City neighbors ----
+    "green community": "dubai/green-community",
+    "green community dip": "dubai/green-community/green-community-dip",
+    "al quoz": "dubai/al-quoz",
+
+    # ---- Wasl / Al Habtoor / misc luxury ----
+    "habtoor city": "dubai/business-bay/habtoor-city",
+    "al habtoor city": "dubai/business-bay/habtoor-city",
+    "the lofts": "dubai/downtown-dubai/the-lofts",
+
+    # ---- Layan / Reportage / Ghantoot / other smaller developers ----
+    "reportage hills": "dubai/wadi-al-safa-5/reportage-hills",
+    "ghantoot": "dubai/ghantoot",
+    "layan community": "dubai/reem/layan-community",
+    "reem": "dubai/reem",
 }
 
 BEDROOM_LABELS: Dict[str, str] = {
@@ -386,6 +477,27 @@ def resolve_location(user_input: str) -> Tuple[str, str]:
     if formatted_slug and formatted_slug != "uae":
         return f"dubai/{formatted_slug}", user_input.title()
     return "dubai", "Dubai"
+
+
+GENERIC_LOCATION_WORDS = {
+    "dubai", "uae", "villa", "villas", "townhouse", "townhouses", "apartment",
+    "apartments", "for", "sale", "rent", "the", "by", "at", "and", "property",
+}
+
+
+def location_matches(extracted: str, expected: str) -> bool:
+    """Best-effort sanity check: does the location Bayut actually returned
+    share any meaningful word with what the user searched for? Used to flag
+    (not silently trust) listings that come back from a mismatched/guessed
+    URL slug — see the 'Location Match' column."""
+    def tokens(s: str):
+        return {w for w in re.findall(r"[a-z0-9]+", s.lower()) if w not in GENERIC_LOCATION_WORDS and len(w) > 2}
+
+    exp_tokens = tokens(expected)
+    ext_tokens = tokens(extracted)
+    if not exp_tokens or not ext_tokens:
+        return True  # not enough signal either way — don't flag a false positive
+    return bool(exp_tokens & ext_tokens)
 
 
 def build_bayut_url(purpose_choice: str, bed_choice: str, location_path: str) -> str:
@@ -421,6 +533,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--out", help="Output .xlsx path (default: Desktop, auto-named)")
     parser.add_argument("--verbose", action="store_true", help="Enable debug-level logging")
     parser.add_argument("--log-file", help="Also write logs to this file")
+    parser.add_argument(
+        "--no-trakheesi", dest="verify_trakheesi", action="store_false",
+        help="Skip following the Trakheesi/DLD permit QR link for verified agent details (faster)",
+    )
+    parser.set_defaults(verify_trakheesi=True)
     return parser.parse_args()
 
 
@@ -589,6 +706,7 @@ def extract_from_json(prop: Dict[str, Any], prop_url: str, config: ScrapeConfig)
 
     full_loc, city, community, sub_community, tower = build_location_hierarchy(prop)
     price_per_sqft = round(price / area, 2) if price and area else None
+    resolved_location = full_loc if full_loc != "N/A" else config.location
 
     return {
         "Property URL": prop_url,
@@ -600,7 +718,8 @@ def extract_from_json(prop: Dict[str, Any], prop_url: str, config: ScrapeConfig)
         "Area (sqft)": area,
         "Permit Number": permit,
         "Reference No.": reference,
-        "Full Location": full_loc if full_loc != "N/A" else config.location,
+        "Full Location": resolved_location,
+        "Location Match": "✅ Match" if location_matches(resolved_location, config.location) else "⚠️ Mismatch",
         "City": city,
         "Community": community,
         "Sub-Community": sub_community,
@@ -677,6 +796,7 @@ def extract_from_regex_fallback(page: ChromiumPage, full_html: str, prop_url: st
         "Permit Number": permit,
         "Reference No.": "N/A",
         "Full Location": location,
+        "Location Match": "✅ Match" if location_matches(location, config.location) else "⚠️ Mismatch",
         "City": "N/A",
         "Community": location,
         "Sub-Community": "N/A",
@@ -691,6 +811,112 @@ def extract_from_regex_fallback(page: ChromiumPage, full_html: str, prop_url: st
         "Cover Photo": "N/A",
         "Purpose": config.purpose_str,
     }
+
+
+# ==========================================
+# TRAKHEESI / DLD PERMIT VERIFICATION
+# ------------------------------------------
+# Every Bayut listing shows a Trakheesi (Dubai Land Department) permit
+# number next to a QR code. The QR encodes a link to DLD's own permit
+# verification page, which lists the officially registered agent name,
+# phone, brokerage, license number and permit status — more trustworthy
+# than whatever Bayut's own listing page displays for "agent".
+#
+# NOTE: this environment has no live internet access to bayut.com or
+# dubailand.gov.ae, so the label patterns below are best-effort and
+# UNVERIFIED against the real DLD page markup. They're written to fail
+# safely (never raise, always return "N/A" on a miss) so a wrong guess
+# here can't break the rest of the scrape — but they may need a tweak
+# once you run this for real and see what the DLD page actually contains.
+# ==========================================
+TRAKHEESI_LABEL_PATTERNS: Dict[str, List[str]] = {
+    "Verified Agent Name": [
+        r"(?:Agent|Broker)\s*Name\s*[:\-]?\s*([A-Za-z؀-ۿ][A-Za-z؀-ۿ .'\-]{2,59})",
+    ],
+    "Verified Agent Phone": [
+        r"(?:Phone|Mobile|Contact)\s*(?:No\.?|Number)?\s*[:\-]?\s*(\+?\d[\d\s\-]{7,15}\d)",
+    ],
+    "Verified Brokerage": [
+        r"(?:Company|Brokerage|Real\s*Estate)\s*Name\s*[:\-]?\s*([A-Za-z0-9؀-ۿ][A-Za-z0-9؀-ۿ &.'\-]{2,79})",
+    ],
+    "Verified License No.": [
+        r"License\s*(?:No\.?|Number)\s*[:\-]?\s*([A-Za-z0-9\-]{2,20})",
+    ],
+    "Permit Status": [
+        r"Status\s*[:\-]?\s*(Active|Expired|Valid|Invalid|Cancelled)",
+    ],
+}
+
+
+def _blank_trakheesi_fields() -> Dict[str, str]:
+    return {
+        "Trakheesi URL": "N/A",
+        "Verified Agent Name": "N/A",
+        "Verified Agent Phone": "N/A",
+        "Verified Brokerage": "N/A",
+        "Verified License No.": "N/A",
+        "Permit Status": "N/A",
+    }
+
+
+def find_trakheesi_url(prop_json: Optional[Dict[str, Any]], full_html: str) -> Optional[str]:
+    """Look for a DLD/Trakheesi verification link, first inside the
+    structured JSON payload (any string field that points at
+    dubailand.gov.ae or mentions trakheesi), then as a fallback scan the
+    raw HTML for the same thing near the QR/permit badge."""
+    def scan(obj: Any) -> Optional[str]:
+        if isinstance(obj, dict):
+            for v in obj.values():
+                found = scan(v)
+                if found:
+                    return found
+        elif isinstance(obj, list):
+            for item in obj:
+                found = scan(item)
+                if found:
+                    return found
+        elif isinstance(obj, str):
+            low = obj.lower()
+            if obj.startswith("http") and ("dubailand.gov.ae" in low or "trakheesi" in low):
+                return obj
+        return None
+
+    if prop_json:
+        url = scan(prop_json)
+        if url:
+            return url
+
+    match = re.search(
+        r'href=["\'](https?://[^"\']*(?:dubailand\.gov\.ae|trakheesi)[^"\']*)["\']',
+        full_html, re.IGNORECASE,
+    )
+    if match:
+        return match.group(1)
+
+    match = re.search(r'(https?://dubailand\.gov\.ae/[^"\'\s<>]+)', full_html, re.IGNORECASE)
+    if match:
+        return match.group(1)
+
+    return None
+
+
+def extract_trakheesi_details(page: ChromiumPage, trakheesi_url: str) -> Dict[str, str]:
+    result = _blank_trakheesi_fields()
+    result["Trakheesi URL"] = trakheesi_url
+    try:
+        page.get(trakheesi_url)
+        time.sleep(1.5)
+        text = re.sub(r"<[^>]+>", " ", page.html)
+        text = re.sub(r"\s+", " ", text)
+        for field, patterns in TRAKHEESI_LABEL_PATTERNS.items():
+            for pattern in patterns:
+                m = re.search(pattern, text, re.IGNORECASE)
+                if m:
+                    result[field] = m.group(1).strip()
+                    break
+    except Exception as exc:
+        logger.debug("Trakheesi lookup failed for %s: %s", trakheesi_url, exc)
+    return result
 
 
 def collect_property_urls(page: ChromiumPage, config: ScrapeConfig) -> List[str]:
@@ -744,7 +970,10 @@ def collect_property_urls(page: ChromiumPage, config: ScrapeConfig) -> List[str]
     return all_property_urls
 
 
-def extract_property(page: ChromiumPage, prop_url: str, config: ScrapeConfig, retries: int = 2) -> Optional[Dict[str, Any]]:
+def extract_property(
+    page: ChromiumPage, prop_url: str, config: ScrapeConfig,
+    retries: int = 2, verify_trakheesi: bool = True,
+) -> Optional[Dict[str, Any]]:
     last_exc: Optional[Exception] = None
     for attempt in range(retries + 1):
         try:
@@ -757,8 +986,20 @@ def extract_property(page: ChromiumPage, prop_url: str, config: ScrapeConfig, re
 
             prop_json = extract_next_data(full_html)
             if prop_json:
-                return extract_from_json(prop_json, prop_url, config)
-            return extract_from_regex_fallback(page, full_html, prop_url, config)
+                record = extract_from_json(prop_json, prop_url, config)
+            else:
+                record = extract_from_regex_fallback(page, full_html, prop_url, config)
+
+            if verify_trakheesi:
+                trakheesi_url = find_trakheesi_url(prop_json, full_html)
+                if trakheesi_url:
+                    record.update(extract_trakheesi_details(page, trakheesi_url))
+                else:
+                    record.update(_blank_trakheesi_fields())
+            else:
+                record.update(_blank_trakheesi_fields())
+
+            return record
         except Exception as exc:
             last_exc = exc
             if attempt < retries:
@@ -1051,12 +1292,13 @@ def run_search(page: ChromiumPage, args: argparse.Namespace) -> None:
 
     all_properties: List[Dict[str, Any]] = []
     for idx, prop_url in enumerate(all_property_urls, 1):
-        record = extract_property(page, prop_url, config)
+        record = extract_property(page, prop_url, config, verify_trakheesi=args.verify_trakheesi)
         if record:
             all_properties.append(record)
             logger.info(
-                "[%d/%d] Extracted -> Permit: %s | Price: %s | Location: %s",
-                idx, len(all_property_urls), record["Permit Number"], record["Price (AED)"], record["Full Location"],
+                "[%d/%d] Extracted -> Permit: %s | Price: %s | Location: %s (%s) | Verified Agent: %s",
+                idx, len(all_property_urls), record["Permit Number"], record["Price (AED)"],
+                record["Full Location"], record["Location Match"], record["Verified Agent Name"],
             )
         else:
             logger.warning("[%d/%d] Failed after retries, skipped.", idx, len(all_property_urls))
@@ -1067,6 +1309,18 @@ def run_search(page: ChromiumPage, args: argparse.Namespace) -> None:
 
     df = pd.DataFrame(all_properties)
     df.drop_duplicates(subset=["Property URL"], inplace=True)
+
+    mismatches = int((df["Location Match"] == "⚠️ Mismatch").sum())
+    if len(df) and mismatches / len(df) > 0.5:
+        logger.warning("=" * 70)
+        logger.warning(
+            "⚠️  %d of %d listings do NOT match the requested location '%s'.",
+            mismatches, len(df), config.location,
+        )
+        logger.warning("    The Bayut URL slug guessed for this project may be wrong: %s", config.target_url)
+        logger.warning("    Open that URL in your browser — if it 404s or redirects, try a broader")
+        logger.warning("    area name (e.g. the parent community) instead of this specific project.")
+        logger.warning("=" * 70)
 
     if args.out:
         full_path = args.out
@@ -1080,12 +1334,13 @@ def run_search(page: ChromiumPage, args: argparse.Namespace) -> None:
     logger.info("[3/3] DONE! Saved %d listings to: %s", len(df), full_path)
 
 
-def blank_args(headless: bool) -> argparse.Namespace:
+def blank_args(headless: bool, verify_trakheesi: bool) -> argparse.Namespace:
     """Fresh, unset args for subsequent loop runs so the user is re-prompted
-    for every field instead of the first run's CLI flags sticking around."""
+    for every field instead of the first run's CLI flags sticking around.
+    headless/verify_trakheesi are session-level settings, so they persist."""
     return argparse.Namespace(
-        purpose=None, location=None, bedrooms=None,
-        max_listings=None, headless=headless, out=None,
+        purpose=None, location=None, bedrooms=None, max_listings=None,
+        headless=headless, out=None, verify_trakheesi=verify_trakheesi,
     )
 
 
@@ -1111,7 +1366,7 @@ def scrape_bayut() -> None:
             if choice == "2":
                 cprint("\n👋 Closing. Goodbye!")
                 break
-            run_args = blank_args(args.headless)
+            run_args = blank_args(args.headless, args.verify_trakheesi)
     finally:
         page.quit()
 
