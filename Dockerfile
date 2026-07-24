@@ -19,7 +19,7 @@ WORKDIR /app
 
 COPY webapp/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
-RUN python -m playwright install chromium
+RUN python -m playwright install --with-deps chromium
 
 COPY scripts/ ./scripts/
 COPY webapp/ ./webapp/

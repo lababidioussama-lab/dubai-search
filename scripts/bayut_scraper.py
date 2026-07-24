@@ -2374,6 +2374,8 @@ def run_scrape_params(
     co = ChromiumOptions()
     co.no_imgs(True)
     co.headless(True)
+    co.set_argument("--no-sandbox")
+    co.set_argument("--disable-dev-shm-usage")
     chrome_path = os.environ.get("CHROME_PATH")
     if chrome_path:
         co.set_browser_path(chrome_path)
