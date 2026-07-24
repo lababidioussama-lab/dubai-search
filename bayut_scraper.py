@@ -120,6 +120,8 @@ LOCATION_DATABASE = {
     # ---- Jumeirah Village Circle (JVC) ----
     "jumeirah village circle": "dubai/jumeirah-village-circle",
     "jvc": "dubai/jumeirah-village-circle",
+    "westwood grande": "dubai/jumeirah-village-circle/westwood-grande",
+    "westwood grande by imtiaz": "dubai/jumeirah-village-circle/westwood-grande",
     "jumeirah village triangle": "dubai/jumeirah-village-triangle",
     "jvt": "dubai/jumeirah-village-triangle",
 
@@ -312,7 +314,7 @@ def resolve_location(user_input):
     if clean_input in LOCATION_DATABASE:
         return LOCATION_DATABASE[clean_input], clean_input.title()
     keys = list(LOCATION_DATABASE.keys())
-    matches = difflib.get_close_matches(clean_input, keys, n=1, cutoff=0.30)
+    matches = difflib.get_close_matches(clean_input, keys, n=1, cutoff=0.60)
     if matches:
         best_match = matches[0]
         cprint(f"💡 Auto-corrected spelling '{user_input}' ---> Matched to: '{best_match.title()}'")
