@@ -176,8 +176,6 @@ LOCATION_DATABASE: Dict[str, str] = {
     # ---- Jumeirah Village Circle (JVC) ----
     "jumeirah village circle": "dubai/jumeirah-village-circle",
     "jvc": "dubai/jumeirah-village-circle",
-    "westwood grande": "dubai/jumeirah-village-circle/westwood-grande",
-    "westwood grande by imtiaz": "dubai/jumeirah-village-circle/westwood-grande",
     "jumeirah village triangle": "dubai/jumeirah-village-triangle",
     "jvt": "dubai/jumeirah-village-triangle",
 
@@ -900,12 +898,46 @@ def find_trakheesi_url(prop_json: Optional[Dict[str, Any]], full_html: str) -> O
     return None
 
 
+# The DLD/Dubai Now site shows a promo modal ("The Digital Sale service is
+# now available on the Dubai Now app...") over the permit page that has to
+# be dismissed before the real content is reachable. We don't know its
+# exact markup (no live access to test against), so try a broad set of
+# common close-button patterns rather than one fixed selector.
+POPUP_CLOSE_SELECTORS = [
+    "css:[aria-label='Close']",
+    "css:[aria-label='close']",
+    "css:button.close",
+    "css:[class*='close-icon']",
+    "css:[class*='CloseIcon']",
+    "css:[class*='modal'] [class*='close']",
+    "xpath://button[normalize-space(text())='×' or normalize-space(text())='✕' or normalize-space(text())='X']",
+    "xpath://*[@role='dialog']//button[1]",
+]
+
+
+def dismiss_popups(page: ChromiumPage, attempts: int = 2) -> None:
+    for _ in range(attempts):
+        closed_any = False
+        for selector in POPUP_CLOSE_SELECTORS:
+            try:
+                el = page.ele(selector, timeout=0.4)
+                if el:
+                    el.click()
+                    time.sleep(0.5)
+                    closed_any = True
+            except Exception:
+                continue
+        if not closed_any:
+            break
+
+
 def extract_trakheesi_details(page: ChromiumPage, trakheesi_url: str) -> Dict[str, str]:
     result = _blank_trakheesi_fields()
     result["Trakheesi URL"] = trakheesi_url
     try:
         page.get(trakheesi_url)
         time.sleep(1.5)
+        dismiss_popups(page)
         text = re.sub(r"<[^>]+>", " ", page.html)
         text = re.sub(r"\s+", " ", text)
         for field, patterns in TRAKHEESI_LABEL_PATTERNS.items():
