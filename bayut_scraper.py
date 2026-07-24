@@ -444,7 +444,667 @@ LOCATION_DATABASE: Dict[str, str] = {
     "ghantoot": "dubai/ghantoot",
     "layan community": "dubai/reem/layan-community",
     "reem": "dubai/reem",
+
+    # ==========================================================
+    # Hierarchical expansion: Master Project -> Sub-District/Cluster ->
+    # Landmark Building, organized the way Dubai real estate actually is.
+    # ==========================================================
+
+    # ---- 1. Downtown Dubai & Sheikh Zayed Road Core ----
+    "difc": "dubai/difc",
+    "dubai international financial centre": "dubai/difc",
+    "yansoon": "dubai/downtown-dubai/old-town/yansoon",
+    "zaafaran": "dubai/downtown-dubai/old-town/zaafaran",
+    "miska": "dubai/downtown-dubai/old-town/miska",
+    "reehan": "dubai/downtown-dubai/old-town/reehan",
+    "kamoon": "dubai/downtown-dubai/old-town/kamoon",
+    "the residences downtown": "dubai/downtown-dubai/the-residences",
+    "museum of the future": "dubai/trade-center/museum-of-the-future",
+    "the index tower": "dubai/difc/the-index-tower",
+    "jumeirah emirates towers": "dubai/trade-center/jumeirah-emirates-towers",
+    "burj crown": "dubai/downtown-dubai/burj-crown",
+    "il primo": "dubai/downtown-dubai/il-primo",
+    "rp heights": "dubai/downtown-dubai/rp-heights",
+    "opera grand": "dubai/downtown-dubai/opera-grand",
+    "burj royale": "dubai/downtown-dubai/burj-royale",
+
+    # ---- 2A. Dubai Marina & JBR ----
+    "murjan": "dubai/jumeirah-beach-residence-jbr/murjan",
+    "sadaf": "dubai/jumeirah-beach-residence-jbr/sadaf",
+    "bahar": "dubai/jumeirah-beach-residence-jbr/bahar",
+    "rimal": "dubai/jumeirah-beach-residence-jbr/rimal",
+    "amwaj": "dubai/jumeirah-beach-residence-jbr/amwaj",
+    "shams": "dubai/jumeirah-beach-residence-jbr/shams",
+    "marina promenade": "dubai/dubai-marina/marina-promenade",
+    "paloma": "dubai/dubai-marina/marina-promenade/paloma",
+    "beauport": "dubai/dubai-marina/marina-promenade/beauport",
+    "delphine": "dubai/dubai-marina/marina-promenade/delphine",
+    "shemara": "dubai/dubai-marina/marina-promenade/shemara",
+    "attessa": "dubai/dubai-marina/marina-promenade/attessa",
+    "aurora": "dubai/dubai-marina/marina-promenade/aurora",
+    "marina quays north": "dubai/dubai-marina/marina-quays/north",
+    "marina quays east": "dubai/dubai-marina/marina-quays/east",
+    "marina quays west": "dubai/dubai-marina/marina-quays/west",
+    "marina 101": "dubai/dubai-marina/marina-101",
+    "stella maris": "dubai/dubai-marina/stella-maris",
+    "address beach resort": "dubai/emaar-beachfront/address-beach-resort",
+
+    # ---- 2B. Jumeirah Lake Towers (JLT) — 26 lettered clusters + landmarks ----
+    "lake plaza": "dubai/jumeirah-lake-towers-jlt/cluster-t/lake-plaza",
+    "green lakes towers": "dubai/jumeirah-lake-towers-jlt/cluster-t/green-lakes-towers",
+    "platinum tower": "dubai/jumeirah-lake-towers-jlt/cluster-i/platinum-tower",
+    "gold tower": "dubai/jumeirah-lake-towers-jlt/cluster-i/gold-tower",
+    "silver tower": "dubai/jumeirah-lake-towers-jlt/cluster-i/silver-tower",
+    "goldcrest views": "dubai/jumeirah-lake-towers-jlt/cluster-j/goldcrest-views",
+    "bonnington tower": "dubai/jumeirah-lake-towers-jlt/cluster-j/bonnington-tower",
+    "uptown dubai": "dubai/jumeirah-lake-towers-jlt/uptown-dubai",
+    "uptown tower": "dubai/jumeirah-lake-towers-jlt/uptown-dubai/uptown-tower",
+    "saba towers": "dubai/jumeirah-lake-towers-jlt/saba-towers",
+    "jumeirah business centre": "dubai/jumeirah-lake-towers-jlt/jumeirah-business-centre",
+    "jbc towers": "dubai/jumeirah-lake-towers-jlt/jumeirah-business-centre",
+
+    # ---- 3. Palm Jumeirah & Island Developments ----
+    "palm jebel ali": "dubai/palm-jebel-ali",
+    "dubai islands": "dubai/dubai-islands",
+    "deira islands": "dubai/dubai-islands",
+    "golden mile": "dubai/palm-jumeirah/golden-mile",
+    "marina residences": "dubai/palm-jumeirah/marina-residences",
+    "atlantis the palm": "dubai/palm-jumeirah/atlantis-the-palm",
+    "atlantis the royal": "dubai/palm-jumeirah/atlantis-the-royal-residences",
+    "the palm tower": "dubai/palm-jumeirah/the-palm-tower",
+    "one za'abeel": "dubai/zabeel/one-zaabeel",
+    "one zabeel": "dubai/zabeel/one-zaabeel",
+    "the linx": "dubai/zabeel/one-zaabeel/the-linx",
+    "five palm jumeirah": "dubai/palm-jumeirah/five-palm-jumeirah",
+
+    # ---- 4. Inland Mega-Communities & Villa Suburbia ----
+    "executive residences": "dubai/dubai-hills-estate/executive-residences",
+    "hills park": "dubai/dubai-hills-estate/hills-park",
+    "park field": "dubai/dubai-hills-estate/park-field",
+    "lime gardens": "dubai/dubai-hills-estate/lime-gardens",
+    "acacia": "dubai/dubai-hills-estate/acacia",
+    "saheel": "dubai/arabian-ranches/saheel",
+    "palmera": "dubai/arabian-ranches/palmera",
+    "mirador": "dubai/arabian-ranches/mirador",
+    "al reem arabian ranches": "dubai/arabian-ranches/al-reem",
+    "joy": "dubai/arabian-ranches-2/joy",
+    "spring arabian ranches": "dubai/arabian-ranches-2/spring",
+    "bliss": "dubai/arabian-ranches-3/bliss",
+    "golf horizon": "dubai/damac-hills/golf-horizon",
+    "golf panorama": "dubai/damac-hills/golf-panorama",
+    "venice townhouses": "dubai/damac-lagoons/venice",
+    "bloom heights": "dubai/jumeirah-village-circle/bloom-heights",
+    "signature livings": "dubai/jumeirah-village-circle/signature-livings",
+    "diamond views": "dubai/jumeirah-village-circle/diamond-views",
+    "sobha hartland greens": "dubai/sobha-hartland/greens",
+    "sobha hartland waves": "dubai/sobha-hartland/waves",
+    "waves grande": "dubai/sobha-hartland/waves-grande",
+    "crest grande": "dubai/sobha-hartland/crest-grande",
+    "hartland estates": "dubai/sobha-hartland/hartland-estates",
+
+    # ---- 5. Heritage & Cultural Waterfronts ----
+    "al fahidi historical district": "dubai/al-fahidi",
+    "al fahidi": "dubai/al-fahidi",
+    "gold souk extension": "dubai/deira/gold-souk-extension",
+    "deira waterfront": "dubai/deira/deira-waterfront-development",
+    "creek horizons": "dubai/dubai-creek-harbour/creek-horizons",
+    "creek gate": "dubai/dubai-creek-harbour/creek-gate",
+    "island district": "dubai/dubai-creek-harbour/island-district",
+    "lotus dubai creek harbour": "dubai/dubai-creek-harbour/lotus",
+    "creek palace": "dubai/dubai-creek-harbour/creek-palace",
+    "mina rashid": "dubai/mina-rashid",
+    "rashid yachts and marina": "dubai/mina-rashid/rashid-yachts-and-marina",
+    "seascape": "dubai/mina-rashid/seascape",
+    "sunridge": "dubai/mina-rashid/sunridge",
+    "clearpoint": "dubai/mina-rashid/clearpoint",
 }
+
+# JLT's 26 lettered clusters (A-Z), each holding ~3 towers — added
+# programmatically rather than by hand to stay readable.
+for _cluster_letter in "abcdefghijklmnopqrstuvwxyz":
+    LOCATION_DATABASE[f"jlt cluster {_cluster_letter}"] = f"dubai/jumeirah-lake-towers-jlt/cluster-{_cluster_letter}"
+
+# Palm Jumeirah's private villa Fronds (A-N).
+for _frond_letter in "abcdefghijklmn":
+    LOCATION_DATABASE[f"frond {_frond_letter}"] = f"dubai/palm-jumeirah/frond-{_frond_letter}"
+
+# Palm Jumeirah's Shoreline Apartments (Buildings 1-20).
+for _n in range(1, 21):
+    LOCATION_DATABASE[f"shoreline apartments {_n}"] = f"dubai/palm-jumeirah/shoreline-apartments/building-{_n}"
+
+# Palm Jumeirah's Marina Residences (Buildings 1-6).
+for _n in range(1, 7):
+    LOCATION_DATABASE[f"marina residences {_n}"] = f"dubai/palm-jumeirah/marina-residences/building-{_n}"
+
+# Palm Jumeirah's Golden Mile (Buildings 1-10).
+for _n in range(1, 11):
+    LOCATION_DATABASE[f"golden mile {_n}"] = f"dubai/palm-jumeirah/golden-mile/building-{_n}"
+
+# JVC Districts 10-19.
+for _n in range(10, 20):
+    LOCATION_DATABASE[f"jvc district {_n}"] = f"dubai/jumeirah-village-circle/district-{_n}"
+
+# ==========================================================
+# 7. Exclusive Villa Enclaves & Golf Estates
+# ==========================================================
+_EMIRATES_LIVING_NAMED = {
+    "montgomerie maison": "dubai/emirates-hills/montgomerie-maison",
+    "al sidra": "dubai/the-greens/al-sidra",
+    "al jasoor": "dubai/the-greens/al-jasoor",
+    "al nakheel greens": "dubai/the-greens/al-nakheel",
+    "al ghaf": "dubai/the-greens/al-ghaf",
+    "al ghozlan": "dubai/the-greens/al-ghozlan",
+    "al samar": "dubai/the-greens/al-samar",
+    "al arta": "dubai/the-greens/al-arta",
+    "al dhafrah greens": "dubai/the-greens/al-dhafrah",
+    "fairways": "dubai/the-views/fairways",
+    "golf towers": "dubai/the-views/golf-towers",
+    "mosela": "dubai/the-views/mosela",
+    "tanaro": "dubai/the-views/tanaro",
+    "travo": "dubai/the-views/travo",
+    "arno": "dubai/the-views/arno",
+    "onaiza": "dubai/the-views/onaiza",
+    "the links": "dubai/the-views/the-links",
+}
+LOCATION_DATABASE.update(_EMIRATES_LIVING_NAMED)
+for _sector in "ehlprvw":
+    LOCATION_DATABASE[f"emirates hills sector {_sector}"] = f"dubai/emirates-hills/sector-{_sector}"
+for _n in range(1, 10):
+    LOCATION_DATABASE[f"meadows {_n}"] = f"dubai/the-meadows/meadows-{_n}"
+for _n in range(1, 16):
+    LOCATION_DATABASE[f"springs {_n}"] = f"dubai/the-springs/springs-{_n}"
+for _n in range(1, 5):
+    LOCATION_DATABASE[f"deema {_n}"] = f"dubai/the-lakes/deema-{_n}"
+for _n in range(1, 3):
+    LOCATION_DATABASE[f"ghadeer {_n}"] = f"dubai/the-lakes/ghadeer-{_n}"
+    LOCATION_DATABASE[f"zulal {_n}"] = f"dubai/the-lakes/zulal-{_n}"
+for _n in range(1, 4):
+    LOCATION_DATABASE[f"hattan {_n}"] = f"dubai/the-lakes/hattan-{_n}"
+
+_JGE_ENCLAVES = [
+    "whispering pines", "flame tree ridge", "fire side", "redwood avenue", "redwood park",
+    "olive tree grove", "lime tree valley", "orange lake", "jumeirah luxury", "al andalus",
+    "sanctuary falls", "sienna lakes", "wildflower", "hillside jumeirah golf estates", "valencia",
+]
+for _name in _JGE_ENCLAVES:
+    LOCATION_DATABASE[_name] = f"dubai/jumeirah-golf-estates/{_name.replace(' ', '-')}"
+
+for _n in range(1, 4):
+    LOCATION_DATABASE[f"elan {_n}"] = f"dubai/tilal-al-ghaf/elan-{_n}"
+    LOCATION_DATABASE[f"harmony {_n}"] = f"dubai/tilal-al-ghaf/harmony-{_n}"
+LOCATION_DATABASE.update({
+    "aura tilal al ghaf": "dubai/tilal-al-ghaf/aura",
+    "aura gardens": "dubai/tilal-al-ghaf/aura-gardens",
+    "alaya gardens": "dubai/tilal-al-ghaf/alaya-gardens",
+    "elysian mansions": "dubai/tilal-al-ghaf/elysian-mansions",
+    "waterfields": "dubai/tilal-al-ghaf/waterfields",
+    "serenity mansions": "dubai/tilal-al-ghaf/serenity-mansions",
+    "lanai islands shore estates": "dubai/tilal-al-ghaf/lanai-islands/shore-estates",
+    "lanai islands edge estates": "dubai/tilal-al-ghaf/lanai-islands/edge-estates",
+    "amara twin villas": "dubai/tilal-al-ghaf/amara",
+
+    "the nest": "dubai/al-barari/the-nest",
+    "ashjar": "dubai/al-barari/ashjar",
+    "seventh heaven": "dubai/al-barari/seventh-heaven",
+    "chorisia 1": "dubai/al-barari/chorisia-1",
+    "chorisia 2": "dubai/al-barari/chorisia-2",
+    "bromellia": "dubai/al-barari/bromellia",
+    "camellia": "dubai/al-barari/camellia",
+    "dahlia": "dubai/al-barari/dahlia",
+    "acacia al barari": "dubai/al-barari/acacia",
+    "jasmine al barari": "dubai/al-barari/jasmine",
+    "al barari reserve": "dubai/al-barari/reserve",
+
+    "jumeirah islands european cluster": "dubai/jumeirah-islands/european-cluster",
+    "jumeirah islands islamic cluster": "dubai/jumeirah-islands/islamic-cluster",
+    "jumeirah islands mediterranean cluster": "dubai/jumeirah-islands/mediterranean-cluster",
+    "jumeirah islands oasis cluster": "dubai/jumeirah-islands/oasis-cluster",
+    "jumeirah islands tropical cluster": "dubai/jumeirah-islands/tropical-cluster",
+    "jumeirah islands contemporary cluster": "dubai/jumeirah-islands/contemporary-cluster",
+    "jumeirah islands mansions": "dubai/jumeirah-islands/mansions-enclave",
+    "jumeirah islands townhouses": "dubai/jumeirah-islands/townhouses",
+    "jumeirah park regional": "dubai/jumeirah-park/regional",
+    "jumeirah park legacy": "dubai/jumeirah-park/legacy",
+    "jumeirah park heritage": "dubai/jumeirah-park/heritage",
+    "jumeirah park nova villas": "dubai/jumeirah-park/nova-villas",
+    "jumeirah park homes": "dubai/jumeirah-park/jumeirah-park-homes",
+})
+
+# ==========================================================
+# 8. MBR City, Meydan & Dubailand Corridor
+# ==========================================================
+for _n in range(1, 17):
+    LOCATION_DATABASE[f"residences at district one {_n}"] = f"dubai/mohammed-bin-rashid-city/district-one/residences-{_n}"
+for _n in range(1, 7):
+    LOCATION_DATABASE[f"hartland greens {_n}"] = f"dubai/sobha-hartland/hartland-greens-{_n}"
+for _n in (320, 330, 340, 350):
+    LOCATION_DATABASE[f"{_n} riverside crescent"] = f"dubai/sobha-hartland-2/{_n}-riverside-crescent"
+for _n in range(1, 5):
+    LOCATION_DATABASE[f"amaranta {_n}"] = f"dubai/villanova/amaranta-{_n}"
+for _n in range(1, 7):
+    LOCATION_DATABASE[f"la rosa {_n}"] = f"dubai/villanova/la-rosa-{_n}"
+for _n in range(1, 4):
+    LOCATION_DATABASE[f"arabella {_n}"] = f"dubai/mudon/arabella-{_n}"
+LOCATION_DATABASE.update({
+    "creek vistas tower a": "dubai/sobha-hartland/creek-vistas/tower-a",
+    "creek vistas tower b": "dubai/sobha-hartland/creek-vistas/tower-b",
+    "creek vistas reserve": "dubai/sobha-hartland/creek-vistas-reserve",
+    "the crest sobha hartland": "dubai/sobha-hartland/the-crest",
+    "sobha estates": "dubai/sobha-hartland/sobha-estates",
+    "riviera azure": "dubai/mohammed-bin-rashid-city/azizi-riviera/riviera-azure",
+    "riviera beachfront": "dubai/mohammed-bin-rashid-city/azizi-riviera/riviera-beachfront",
+    "la quinta": "dubai/villanova/la-quinta",
+    "rahat": "dubai/mudon/rahat",
+    "naseem mudon": "dubai/mudon/naseem",
+    "al salam mudon": "dubai/mudon/al-salam",
+    "mudon al ranim": "dubai/mudon/al-ranim",
+    "casa dora": "dubai/serena/casa-dora",
+    "bella casa": "dubai/serena/bella-casa",
+    "casa viva": "dubai/serena/casa-viva",
+    "falcon city western residence": "dubai/falcon-city-of-wonders/western-residence",
+    "falcon city eastern residence": "dubai/falcon-city-of-wonders/eastern-residence",
+    "taj arabia": "dubai/falcon-city-of-wonders/taj-arabia",
+    "hacienda the villa": "dubai/the-villa/hacienda",
+    "ponderosa": "dubai/the-villa/ponderosa",
+    "aldea": "dubai/the-villa/aldea",
+    "centro the villa": "dubai/the-villa/centro",
+})
+
+# ==========================================================
+# 9. Urban Regeneration & Central Districts
+# ==========================================================
+for _n in range(1, 22):
+    LOCATION_DATABASE[f"city walk residences {_n}"] = f"dubai/city-walk/city-walk-residences-{_n}"
+for _n in range(1, 6):
+    LOCATION_DATABASE[f"la cote {_n}"] = f"dubai/jumeirah-1/port-de-la-mer/la-cote-{_n}"
+for _n in range(1, 5):
+    LOCATION_DATABASE[f"la rive {_n}"] = f"dubai/jumeirah-1/port-de-la-mer/la-rive-{_n}"
+    LOCATION_DATABASE[f"le pont {_n}"] = f"dubai/jumeirah-1/port-de-la-mer/le-pont-{_n}"
+for _n in range(1, 4):
+    LOCATION_DATABASE[f"la voile {_n}"] = f"dubai/jumeirah-1/port-de-la-mer/la-voile-{_n}"
+    LOCATION_DATABASE[f"la sirene {_n}"] = f"dubai/jumeirah-1/port-de-la-mer/la-sirene-{_n}"
+for _n in range(1, 7):
+    LOCATION_DATABASE[f"bulgari resort building {_n}"] = f"dubai/jumeirah-bay-island/bulgari-resort-and-residences/building-{_n}"
+LOCATION_DATABASE.update({
+    "central park laurel": "dubai/city-walk/central-park/laurel",
+    "central park fern": "dubai/city-walk/central-park/fern",
+    "central park myrtle": "dubai/city-walk/central-park/myrtle",
+    "central park castleton": "dubai/city-walk/central-park/castleton",
+    "central park celadon": "dubai/city-walk/central-park/celadon",
+    "central park viridian": "dubai/city-walk/central-park/viridian",
+    "central park erin": "dubai/city-walk/central-park/erin",
+    "wasl1": "dubai/zabeel/wasl1",
+    "park heights wasl1": "dubai/zabeel/wasl1/park-heights",
+    "1 residences north tower": "dubai/zabeel/wasl1/1-residences-north-tower",
+    "1 residences south tower": "dubai/zabeel/wasl1/1-residences-south-tower",
+    "boxpark": "dubai/al-wasl/boxpark",
+    "galleria residences": "dubai/al-wasl/galleria-residences",
+    "al badia hillside village": "dubai/dubai-festival-city/al-badia-hillside-village",
+    "al badia residences": "dubai/dubai-festival-city/al-badia-residences",
+    "marsa plaza": "dubai/dubai-festival-city/marsa-plaza",
+    "festival tower": "dubai/dubai-festival-city/festival-tower",
+    "royal residence dfc": "dubai/dubai-festival-city/royal-residence",
+    "sur la mer": "dubai/jumeirah-1/la-mer/sur-la-mer",
+    "bulgari mansions": "dubai/jumeirah-bay-island/bulgari-mansions",
+    "bulgari lighthouse": "dubai/jumeirah-bay-island/bulgari-lighthouse",
+    "bulgari resort and residences": "dubai/jumeirah-bay-island/bulgari-resort-and-residences",
+    "jumeirah bay island": "dubai/jumeirah-bay-island",
+    "jardin astral": "dubai/al-satwa/jardin-astral",
+    "villa amalfi": "dubai/jumeirah-bay-island/villa-amalfi",
+})
+
+# ==========================================================
+# 10. Emerging Mega-Projects & Coastal Fronts
+# ==========================================================
+LOCATION_DATABASE.update({
+    "ocean point": "dubai/mina-rashid/ocean-point",
+    "marina views mina rashid": "dubai/mina-rashid/marina-views",
+    "bayline": "dubai/mina-rashid/bayline",
+    "avonlea": "dubai/mina-rashid/avonlea",
+    "eden the valley": "dubai/the-valley/eden",
+    "nara the valley": "dubai/the-valley/nara",
+    "talia": "dubai/the-valley/talia",
+    "orania": "dubai/the-valley/orania",
+    "farm gardens": "dubai/the-valley/farm-gardens",
+    "elora": "dubai/the-valley/elora",
+    "rivana": "dubai/the-valley/rivana",
+    "alana": "dubai/the-valley/alana",
+    "neva": "dubai/the-valley/neva",
+    "expo valley": "dubai/expo-city/expo-valley",
+    "mangrove residences": "dubai/expo-city/mangrove-residences",
+    "sky residences expo city": "dubai/expo-city/sky-residences",
+    "yasmina villas": "dubai/expo-city/yasmina-villas",
+    "golf views emaar south": "dubai/emaar-south/golf-views",
+    "golf links emaar south": "dubai/emaar-south/golf-links",
+    "fairway villas": "dubai/emaar-south/fairway-villas",
+})
+for _n in range(1, 4):
+    LOCATION_DATABASE[f"urbana {_n}"] = f"dubai/emaar-south/urbana-{_n}"
+for _n in range(1, 7):
+    LOCATION_DATABASE[f"expo golf villas {_n}"] = f"dubai/emaar-south/expo-golf-villas-{_n}"
+
+# ==========================================================
+# 11. Mega-Villa Masters & Newly Launched Communities
+# ==========================================================
+for _letter in "abcdefghijklmnop":
+    LOCATION_DATABASE[f"palm jebel ali frond {_letter}"] = f"dubai/palm-jebel-ali/frond-{_letter}"
+for _n in range(1, 4):
+    LOCATION_DATABASE[f"palmiera {_n}"] = f"dubai/the-oasis/palmiera-{_n}"
+    LOCATION_DATABASE[f"serra {_n}"] = f"dubai/ghaf-woods/serra-{_n}"
+LOCATION_DATABASE.update({
+    "the crown palm jebel ali": "dubai/palm-jebel-ali/the-crown",
+    "crescent enclaves": "dubai/palm-jebel-ali/crescent-enclaves",
+    "mirage at the oasis": "dubai/the-oasis/mirage",
+    "strand the oasis": "dubai/the-oasis/strand",
+    "ghaf woods": "dubai/ghaf-woods",
+    "evergreen enclaves": "dubai/ghaf-woods/evergreen-enclaves",
+    "forest residences": "dubai/ghaf-woods/forest-residences",
+    "the acres": "dubai/the-acres",
+    "the acres phase 1": "dubai/the-acres/phase-1",
+    "the acres phase 2": "dubai/the-acres/phase-2",
+    "the acres gardens": "dubai/the-acres/the-acres-gardens",
+    "maldives": "dubai/damac-islands/maldives",
+    "bora bora": "dubai/damac-islands/bora-bora",
+    "seychelles": "dubai/damac-islands/seychelles",
+    "hawaii": "dubai/damac-islands/hawaii",
+    "bali": "dubai/damac-islands/bali",
+    "fiji": "dubai/damac-islands/fiji",
+})
+
+# ==========================================================
+# 12. Waterfront Regeneration & Port Districts
+# ==========================================================
+for _letter in "abcde":
+    LOCATION_DATABASE[f"dubai islands island {_letter}"] = f"dubai/dubai-islands/island-{_letter}"
+LOCATION_DATABASE.update({
+    "flora bay by octa": "dubai/dubai-islands/island-a/flora-bay-by-octa",
+    "sea cliff by imtiaz": "dubai/dubai-islands/sea-cliff-by-imtiaz",
+    "mackerel tower": "dubai/dubai-islands/mackerel-tower",
+    "ocean pearl by samana": "dubai/dubai-islands/ocean-pearl-by-samana",
+    "rixos dubai islands": "dubai/dubai-islands/rixos-hotel-and-residences",
+    "centara mirage beach resort": "dubai/dubai-islands/centara-mirage-beach-resort",
+    "dubai maritime city": "dubai/dubai-maritime-city",
+    "nautica one": "dubai/dubai-maritime-city/nautica-one",
+    "nautica two": "dubai/dubai-maritime-city/nautica-two",
+    "anwa by omniyat": "dubai/dubai-maritime-city/anwa",
+    "anwa aria": "dubai/dubai-maritime-city/anwa-aria",
+    "mar casa by deyaar": "dubai/dubai-maritime-city/mar-casa",
+    "harbour lights by damac": "dubai/dubai-maritime-city/harbour-lights",
+    "ocean house dmc": "dubai/dubai-maritime-city/ocean-house",
+})
+
+# ==========================================================
+# 13. Meydan Horizon & MBR City Extensions
+# ==========================================================
+for _n in range(1, 5):
+    LOCATION_DATABASE[f"nad al sheba {_n}"] = f"dubai/nad-al-sheba/nad-al-sheba-{_n}"
+for _n in range(1, 7):
+    LOCATION_DATABASE[f"nad al sheba gardens phase {_n}"] = f"dubai/nad-al-sheba/nad-al-sheba-gardens/phase-{_n}"
+LOCATION_DATABASE.update({
+    "meydan horizon": "dubai/meydan/meydan-horizon",
+    "canal promenade": "dubai/meydan/meydan-horizon/canal-promenade",
+    "lagoon front meydan": "dubai/meydan/meydan-horizon/lagoon-front",
+    "the winslow by igo": "dubai/meydan/the-winslow",
+    "meydan heights": "dubai/meydan/meydan-heights",
+    "keturah reserve": "dubai/meydan/keturah-reserve",
+    "queens garden nad al sheba": "dubai/nad-al-sheba/queens-garden",
+})
+
+# ==========================================================
+# 14. Emerging Hyper-Towers & Branded High-Rises
+# ==========================================================
+LOCATION_DATABASE.update({
+    "burj azizi": "dubai/sheikh-zayed-road/burj-azizi",
+    "burj binghatti jacob and co residences": "dubai/business-bay/burj-binghatti-jacob-and-co",
+    "ciel tower": "dubai/dubai-marina/ciel-tower",
+    "franck muller aeternitas": "dubai/dubai-marina/franck-muller-aeternitas",
+    "mercedes-benz places": "dubai/downtown-dubai/mercedes-benz-places",
+    "bugatti residences": "dubai/business-bay/bugatti-residences",
+    "aire dubai": "dubai/al-wasl/aire",
+    "one zaabeel tower a": "dubai/zabeel/one-zaabeel/tower-a",
+    "one zaabeel tower b": "dubai/zabeel/one-zaabeel/tower-b",
+})
+
+# ==========================================================
+# 15. Specialized Innovation & Creative Hubs
+# ==========================================================
+for _n in range(1, 8):
+    LOCATION_DATABASE[f"afnan {_n}"] = f"dubai/international-media-production-zone-impz/midtown/afnan-{_n}"
+for _n in range(1, 7):
+    LOCATION_DATABASE[f"dania {_n}"] = f"dubai/international-media-production-zone-impz/midtown/dania-{_n}"
+for _n in range(1, 5):
+    LOCATION_DATABASE[f"mesk {_n}"] = f"dubai/international-media-production-zone-impz/midtown/mesk-{_n}"
+    LOCATION_DATABASE[f"noor {_n}"] = f"dubai/international-media-production-zone-impz/midtown/noor-{_n}"
+    LOCATION_DATABASE[f"centrium tower {_n}"] = f"dubai/international-media-production-zone-impz/centrium-towers/tower-{_n}"
+    LOCATION_DATABASE[f"opalz by danube {_n}"] = f"dubai/dubai-science-park/opalz-by-danube-{_n}"
+for _n in range(1, 12):
+    LOCATION_DATABASE[f"d3 creative block {_n}"] = f"dubai/dubai-design-district-d3/creative-block-{_n}"
+LOCATION_DATABASE.update({
+    "crescent towers": "dubai/international-media-production-zone-impz/crescent-towers",
+    "lago vista": "dubai/international-media-production-zone-impz/lago-vista",
+    "oakley square residences": "dubai/international-media-production-zone-impz/oakley-square-residences",
+    "lago residences": "dubai/international-media-production-zone-impz/lago-residences",
+    "mont rose tower a": "dubai/dubai-science-park/mont-rose/tower-a",
+    "mont rose tower b": "dubai/dubai-science-park/mont-rose/tower-b",
+    "mont rose executive": "dubai/dubai-science-park/mont-rose-executive",
+    "bella rose": "dubai/dubai-science-park/bella-rose",
+    "sayacorp tower": "dubai/dubai-science-park/sayacorp-tower",
+    "villa lantana dsp": "dubai/barsha-south/villa-lantana",
+    "atelis at d3": "dubai/dubai-design-district-d3/atelis",
+    "the edit at d3": "dubai/dubai-design-district-d3/the-edit",
+})
+
+# ==========================================================
+# 16. Developer-Specific Mega-Portfolios & Master Enclaves
+# ==========================================================
+for _n in range(1, 4):
+    LOCATION_DATABASE[f"elitz {_n}"] = f"dubai/jumeirah-village-circle/elitz-{_n}"
+for _n in range(1, 3):
+    LOCATION_DATABASE[f"viewz {_n}"] = f"dubai/jumeirah-lake-towers-jlt/viewz-{_n}"
+for _n in range(1, 4):
+    LOCATION_DATABASE[f"oceanz {_n}"] = f"dubai/dubai-maritime-city/oceanz-{_n}"
+for _n in range(1, 3):
+    LOCATION_DATABASE[f"the nook {_n}"] = f"dubai/jebel-ali/wasl-gate/the-nook-{_n}"
+for _letter in "abcde":
+    LOCATION_DATABASE[f"south garden {_letter}"] = f"dubai/jebel-ali/wasl-gate/south-garden-{_letter}"
+for _letter in "abcd":
+    LOCATION_DATABASE[f"park gate residences tower {_letter}"] = f"dubai/zabeel/wasl1/park-gate-residences/tower-{_letter}"
+LOCATION_DATABASE.update({
+    "wasl gate": "dubai/jebel-ali/wasl-gate",
+    "bayz 101": "dubai/business-bay/bayz-101",
+    "fashionz by danube": "dubai/jumeirah-lake-towers-jlt/fashionz-by-danube",
+    "sportz by danube": "dubai/dubai-sports-city/sportz-by-danube",
+    "gemz by danube": "dubai/al-furjan/gemz-by-danube",
+    "gardenia townhomes": "dubai/jebel-ali/wasl-gate/gardenia-townhomes",
+    "hillside residences wasl": "dubai/jebel-ali/wasl-gate/hillside-residences",
+    "sola residences": "dubai/jebel-ali/wasl-gate/sola-residences",
+    "hammock park": "dubai/jebel-ali/wasl-gate/hammock-park",
+    "taiyo residences": "dubai/jebel-ali/wasl-gate/taiyo-residences",
+    "wasl tower": "dubai/zabeel/wasl-tower",
+    "binghatti trillionaire": "dubai/business-bay/binghatti-trillionaire",
+    "binghatti crest": "dubai/business-bay/binghatti-crest",
+    "binghatti rose": "dubai/jumeirah-village-circle/binghatti-rose",
+    "binghatti mirage": "dubai/jumeirah-village-triangle/binghatti-mirage",
+    "binghatti corner": "dubai/jumeirah-village-circle/binghatti-corner",
+    "binghatti phantom": "dubai/jumeirah-village-triangle/binghatti-phantom",
+    "binghatti lavender": "dubai/jumeirah-village-circle/binghatti-lavender",
+    "binghatti circle": "dubai/jumeirah-village-circle/binghatti-circle",
+    "binghatti avenue": "dubai/al-jaddaf/binghatti-avenue",
+    "binghatti gateway": "dubai/al-jaddaf/binghatti-gateway",
+    "binghatti wraith": "dubai/al-jaddaf/binghatti-wraith",
+})
+
+# ==========================================================
+# 17. Al Khail Corridor & Mirdif Expansions
+# ==========================================================
+for _n in range(1, 6):
+    LOCATION_DATABASE[f"al warqaa {_n}"] = f"dubai/al-warqa/al-warqaa-{_n}"
+LOCATION_DATABASE.update({
+    "al khail heights": "dubai/al-khail-heights",
+    "mirdif tulips": "dubai/mirdif/mirdif-tulips",
+    "shorooq mirdif": "dubai/mirdif/shorooq",
+    "ghoroob mirdif": "dubai/mirdif/ghoroob",
+    "uptim mirdif": "dubai/mirdif/uptim",
+    "mushrif village": "dubai/mirdif/mushrif-village",
+})
+
+# ==========================================================
+# 18-28. DAMAC/Ellington enclaves, Samana/Azizi portfolios, DLRC/City of
+# Arabia, Sobha extensions, luxury branded towers, healthcare/industrial
+# clusters, mega-townships, and mid-market corridors.
+# ==========================================================
+for _n in range(1, 12):
+    LOCATION_DATABASE[f"nad al sheba gardens phase {_n}"] = f"dubai/nad-al-sheba/nad-al-sheba-gardens/phase-{_n}"
+for _n in range(1, 16):
+    LOCATION_DATABASE[f"azizi venice lagoon cluster {_n}"] = f"dubai/dubai-south/azizi-venice/lagoon-cluster-{_n}"
+for _letter in "abcdef":
+    LOCATION_DATABASE[f"skycourts tower {_letter}"] = f"dubai/dubailand-residence-complex/skycourts-towers/tower-{_letter}"
+for _n in range(1, 5):
+    LOCATION_DATABASE[f"silicon gates {_n}"] = f"dubai/dubai-silicon-oasis/silicon-gates-{_n}"
+for _n in range(1, 12):
+    LOCATION_DATABASE[f"automotive residences tower {_n}"] = f"dubai/nad-al-sheba/mercedes-benz-places-binghatti-city/automotive-residences-{_n}"
+
+LOCATION_DATABASE.update({
+    "damac riverside": "dubai/damac-riverside",
+    "riverside ivy": "dubai/damac-riverside/ivy",
+    "riverside sage": "dubai/damac-riverside/sage",
+    "riverside jasmine": "dubai/damac-riverside/jasmine",
+    "riverside olive": "dubai/damac-riverside/olive",
+    "riverside willow": "dubai/damac-riverside/willow",
+    "the highgrove": "dubai/business-bay/the-highgrove",
+    "the crestmark": "dubai/business-bay/the-crestmark",
+    "bellevue walk": "dubai/business-bay/bellevue-walk",
+    "arbor view": "dubai/jumeirah-village-triangle/arbor-view",
+    "mercer house": "dubai/jumeirah-village-triangle/mercer-house",
+    "wilton park residences": "dubai/jumeirah-village-circle/wilton-park-residences",
+    "hamilton house": "dubai/jumeirah-village-circle/hamilton-house",
+    "upper house jlt": "dubai/jumeirah-lake-towers-jlt/upper-house",
+    "belgravia heights 1": "dubai/mudon/belgravia-heights-1",
+    "belgravia heights 2": "dubai/mudon/belgravia-heights-2",
+
+    "samana boulevard heights": "dubai/dubailand-residence-complex/samana-boulevard-heights",
+    "samana ivy gardens 1": "dubai/dubailand-residence-complex/samana-ivy-gardens-1",
+    "samana ivy gardens 2": "dubai/dubailand-residence-complex/samana-ivy-gardens-2",
+    "samana waves": "dubai/dubailand-residence-complex/samana-waves",
+    "samana imperial gardens": "dubai/arjan/samana-imperial-gardens",
+    "samana barari avenue": "dubai/majan/samana-barari-avenue",
+    "samana golf avenue": "dubai/majan/samana-golf-avenue",
+    "samana park views": "dubai/arjan/samana-park-views",
+    "samana hills south": "dubai/majan/samana-hills-south",
+    "samana ocean bay": "dubai/dubai-islands/samana-ocean-bay",
+    "samana portofino": "dubai/international-media-production-zone-impz/samana-portofino",
+    "samana manhattan": "dubai/jumeirah-village-circle/samana-manhattan",
+    "samana miami": "dubai/jumeirah-village-circle/samana-miami",
+    "samana skyros": "dubai/jumeirah-village-triangle/samana-skyros",
+    "azizi plaza": "dubai/al-furjan/azizi-plaza",
+    "azizi star": "dubai/al-furjan/azizi-star",
+    "azizi farishta": "dubai/al-furjan/azizi-farishta",
+    "azizi shaista": "dubai/al-furjan/azizi-shaista",
+    "azizi montrell": "dubai/al-furjan/azizi-montrell",
+    "azizi mina": "dubai/palm-jumeirah/azizi-mina",
+
+    "nuve by zoya": "dubai/dubailand-residence-complex/nuve-by-zoya",
+    "ag central": "dubai/dubailand-residence-complex/ag-central",
+    "desert sun": "dubai/dubailand-residence-complex/desert-sun",
+    "silicon oasis edges": "dubai/dubai-silicon-oasis/edges",
+    "arancia yards": "dubai/city-of-arabia/arancia-yards",
+    "wadi walk": "dubai/city-of-arabia/wadi-walk",
+    "metro tower city of arabia": "dubai/city-of-arabia/metro-tower",
+    "sakura gardens by hre": "dubai/falcon-city-of-wonders/sakura-gardens",
+    "pyramids park": "dubai/falcon-city-of-wonders/pyramids-park",
+
+    "sobha sanctuary": "dubai/wadi-al-safa-4/sobha-sanctuary",
+    "the willows at sobha sanctuary": "dubai/wadi-al-safa-4/sobha-sanctuary/the-willows",
+    "sobha central": "dubai/sheikh-zayed-road/sobha-central",
+    "the mirage at sobha central": "dubai/sheikh-zayed-road/sobha-central/the-mirage",
+    "skyvue stellar": "dubai/sobha-hartland-2/skyvue-stellar",
+    "skyvue horizon": "dubai/sheikh-zayed-road/sobha-central/skyvue-horizon",
+    "the pinnacle at sobha central": "dubai/sheikh-zayed-road/sobha-central/the-pinnacle",
+    "sobha elwood": "dubai/wadi-al-safa-4/sobha-elwood",
+    "sobha reserve": "dubai/dubailand/sobha-reserve",
+    "sobha solis": "dubai/motor-city/sobha-solis",
+    "sobha orbis": "dubai/motor-city/sobha-orbis",
+    "alton by nshama": "dubai/town-square/alton",
+    "rosewell by nshama": "dubai/town-square/rosewell",
+    "mahra town square": "dubai/town-square/mahra",
+    "symphony town square": "dubai/town-square/symphony",
+    "regora": "dubai/town-square/regora",
+    "orchid town square": "dubai/town-square/orchid",
+
+    "safa one tower a": "dubai/al-safa/safa-one/tower-a",
+    "safa one tower b": "dubai/al-safa/safa-one/tower-b",
+    "safa two": "dubai/al-safa/safa-two",
+    "safa gate": "dubai/al-safa/safa-gate",
+    "couture by cavalli": "dubai/business-bay/couture-by-cavalli",
+    "canal crown": "dubai/business-bay/canal-crown",
+    "volante tower": "dubai/business-bay/volante-tower",
+    "the sterling": "dubai/business-bay/the-sterling",
+    "marquise square tower": "dubai/business-bay/marquise-square-tower",
+    "damac bay 1": "dubai/dubai-harbour/damac-bay-1",
+    "damac bay 2": "dubai/dubai-harbour/damac-bay-2",
+    "sobha seahaven": "dubai/dubai-harbour/sobha-seahaven",
+    "chelsea residences": "dubai/business-bay/chelsea-residences",
+    "como residences": "dubai/palm-jumeirah/como-residences",
+    "palm beach towers": "dubai/palm-jumeirah/palm-beach-towers",
+    "lumiere residences": "dubai/business-bay/lumiere-residences",
+    "liora residences": "dubai/dubai-islands/liora-residences",
+    "beachgate by address": "dubai/emaar-beachfront/beachgate-by-address",
+    "bayview by address": "dubai/emaar-beachfront/bayview-by-address",
+    "south beach emaar beachfront": "dubai/emaar-beachfront/south-beach",
+    "beach mansion": "dubai/emaar-beachfront/beach-mansion",
+    "sunrise bay": "dubai/emaar-beachfront/sunrise-bay",
+    "marina vista": "dubai/emaar-beachfront/marina-vista",
+    "grand bleu tower": "dubai/emaar-beachfront/grand-bleu-tower",
+    "bay grove residences": "dubai/dubai-islands/bay-grove-residences",
+    "bay villas dubai islands": "dubai/dubai-islands/bay-villas",
+    "rixos beach residences": "dubai/dubai-islands/rixos-beach-residences",
+
+    "cedre villas": "dubai/dubai-silicon-oasis/cedre-villas",
+    "semmer villas": "dubai/dubai-silicon-oasis/semmer-villas",
+    "binghatti crystals": "dubai/dubai-silicon-oasis/binghatti-crystals",
+    "binghatti jewels": "dubai/dubai-silicon-oasis/binghatti-jewels",
+    "binghatti horizons": "dubai/dubai-silicon-oasis/binghatti-horizons",
+    "greenz by danube": "dubai/academic-city/greenz-by-danube",
+
+    "haven by aldar": "dubai/dubailand/haven-by-aldar",
+    "athlon by aldar": "dubai/dubailand/athlon-by-aldar",
+    "verdes by haven": "dubai/dubailand/haven-by-aldar/verdes",
+    "peninsula": "dubai/business-bay/peninsula",
+    "peninsula five": "dubai/business-bay/peninsula/peninsula-five",
+    "six senses residences": "dubai/palm-jumeirah/six-senses-residences",
+    "artistry one residences": "dubai/dubai-design-district-d3/artistry-one-residences",
+    "eden house the canal": "dubai/al-safa/eden-house-the-canal",
+    "eden house the park": "dubai/al-safa/eden-house-the-park",
+
+    "samana south haven": "dubai/dubai-south/samana-south-haven",
+    "cresswell plaza": "dubai/dubai-south/cresswell-plaza",
+    "views vii by golden woods": "dubai/dubai-south/views-vii",
+    "orchid residence 1": "dubai/dubai-south/orchid-residence-1",
+    "jebel ali village": "dubai/jebel-ali-village",
+    "raw district 1": "dubai/downtown-jebel-ali/raw-district-1",
+    "raw district 2": "dubai/downtown-jebel-ali/raw-district-2",
+    "azizi rose": "dubai/downtown-jebel-ali/azizi-rose",
+
+    "the heights country club": "dubai/dubailand/the-heights-country-club",
+    "the heights townhouses": "dubai/dubailand/the-heights-country-club/townhouses",
+    "grand polo club and resort": "dubai/dubailand/grand-polo-club-and-resort",
+    "polo estate villas": "dubai/dubailand/grand-polo-club-and-resort/polo-estate",
+    "skyhills residences": "dubai/dubai-science-park/skyhills-residences",
+    "skyhills astra": "dubai/dubai-science-park/skyhills-astra",
+    "celeste tower": "dubai/dubai-science-park/celeste-tower",
+    "amazonia by palladium": "dubai/al-jaddaf/amazonia",
+    "keturah resort residences": "dubai/al-jaddaf/keturah-resort-residences",
+    "al habtoor tower": "dubai/business-bay/al-habtoor-tower",
+
+    "al razi building": "dubai/dubai-healthcare-city/al-razi-building",
+    "ibn sina building": "dubai/dubai-healthcare-city/ibn-sina-building",
+    "creek heights residences": "dubai/dubai-healthcare-city/creek-heights-residences",
+    "azizi aliyah": "dubai/dubai-healthcare-city/azizi-aliyah",
+    "azizi farhad": "dubai/dubai-healthcare-city/azizi-farhad",
+    "dubai international academic city": "dubai/dubai-international-academic-city",
+    "dubai south logistics district": "dubai/dubai-south/logistics-district",
+    "national industries park": "dubai/national-industries-park",
+})
 
 BEDROOM_LABELS: Dict[str, str] = {
     "a": "All Bedrooms", "0": "Studio", "1": "1 Bedroom", "2": "2 Bedrooms",
