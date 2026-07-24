@@ -48,6 +48,7 @@ from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.formatting.rule import ColorScaleRule
 from openpyxl.chart import BarChart, PieChart, Reference
 from DrissionPage import ChromiumPage, ChromiumOptions
+from DrissionPage.common import Keys
 
 __version__ = "2.0.0"
 
@@ -1114,13 +1115,6 @@ BEDROOM_LABELS: Dict[str, str] = {
 }
 
 
-def format_slug(text: str) -> str:
-    text = text.lower().strip()
-    text = re.sub(r'[^a-z0-9\s-]', '', text)
-    text = re.sub(r'[\s_]+', '-', text)
-    return text
-
-
 # Bayut's homepage location search box, and its autocomplete dropdown, are
 # what actually knows about every project/building/cluster on the site —
 # a hardcoded dictionary never can. The first entries below are verified
@@ -1175,11 +1169,31 @@ SEARCH_SUBMIT_SELECTORS = [
 ]
 
 
+def _click_search_button_if_stuck(page: "ChromiumPage", url_before: str) -> None:
+    """If selecting a suggestion filled the field but didn't navigate
+    (the classic filter form's behaviour), click the Search button."""
+    if page.url != url_before:
+        return
+    for selector in SEARCH_SUBMIT_SELECTORS:
+        submit_btn = page.ele(selector, timeout=1)
+        if submit_btn:
+            submit_btn.click()
+            for _ in range(10):  # poll up to ~5s for navigation
+                time.sleep(0.5)
+                if page.url != url_before:
+                    return
+            return
+
+
 def resolve_location_via_site_search(page: "ChromiumPage", user_input: str) -> Optional[str]:
     """Type the free-text project/building/area name into Bayut's own
-    search box and follow its first autocomplete suggestion, so lookups
-    aren't limited to our local shortcut dictionary. Returns the resolved
-    'dubai/...' path, or None if the search UI couldn't be driven."""
+    search box and select the top suggestion the way a person actually
+    would -- highlight it with the down arrow and press Enter -- rather
+    than guessing at the dropdown's hashed/unstable CSS classes. Falls
+    back to clicking the first suggestion row directly only if the
+    keyboard route doesn't move anything. Returns the resolved 'dubai/...'
+    path, or None if the search UI couldn't be driven -- callers must not
+    invent/guess a URL when this returns None."""
     try:
         page.get("https://www.bayut.com/")
         time.sleep(1.5)
@@ -1197,40 +1211,37 @@ def resolve_location_via_site_search(page: "ChromiumPage", user_input: str) -> O
         search_input.click()
         search_input.input(user_input)
         time.sleep(1.8)  # let autocomplete suggestions load
+        url_before = page.url
 
-        suggestion = None
-        for selector in LOCATION_SUGGESTION_SELECTORS:
-            suggestion = page.ele(selector, timeout=1)
-            if suggestion:
-                break
-        if not suggestion:
-            logger.debug("No autocomplete suggestion found for '%s'.", user_input)
-            return None
-
-        # Suggestion rows aren't always <a href>: on the classic filter
-        # form they're plain <li> text that just fills the field, so an
-        # explicit "Search" click is needed afterwards to navigate. Compare
-        # against the URL captured right before clicking -- not a hardcoded
-        # "https://www.bayut.com" string, which can silently never match if
-        # Bayut appends a locale/region prefix or query string to the
-        # homepage URL, permanently skipping the Search-button fallback.
-        href = suggestion.attr("href") or ""
-        url_before_click = page.url
-        suggestion.click()
+        # Primary path: highlight the top suggestion and press Enter, same
+        # as a real user picking it -- no dependency on the dropdown's
+        # actual markup at all.
+        search_input.input(Keys.DOWN)
+        time.sleep(0.3)
+        search_input.input(Keys.ENTER)
         time.sleep(1.2)
+        _click_search_button_if_stuck(page, url_before)
 
-        if not href and page.url == url_before_click:
-            for selector in SEARCH_SUBMIT_SELECTORS:
-                submit_btn = page.ele(selector, timeout=1)
-                if submit_btn:
-                    submit_btn.click()
-                    for _ in range(10):  # poll up to ~5s for navigation
-                        time.sleep(0.5)
-                        if page.url != url_before_click:
-                            break
+        href = ""
+        if page.url == url_before:
+            # Keyboard selection didn't move anything -- fall back to
+            # clicking the first suggestion row directly.
+            suggestion = None
+            for selector in LOCATION_SUGGESTION_SELECTORS:
+                suggestion = page.ele(selector, timeout=1)
+                if suggestion:
                     break
-
-        href = href or page.url
+            if not suggestion:
+                logger.debug("No autocomplete suggestion found for '%s'.", user_input)
+                return None
+            link_href = suggestion.attr("href") or ""
+            suggestion.click()
+            time.sleep(1.2)
+            if not link_href:
+                _click_search_button_if_stuck(page, url_before)
+            href = link_href or page.url
+        else:
+            href = page.url
 
         match = re.search(r"bayut\.com/(?:(?:for-sale|to-rent)/(?:[\w-]+-property/)?)?(dubai/[\w/-]+?)/?(?:$|\?)", href)
         if match:
@@ -1274,11 +1285,12 @@ def resolve_location(user_input: str, page: Optional["ChromiumPage"] = None) -> 
         cprint(f"💡 Auto-corrected spelling '{user_input}' ---> Matched to: '{best_match.title()}'")
         return LOCATION_DATABASE[best_match], best_match.title()
 
-    cprint(f"⚠️  Could not confidently resolve '{user_input}' — using a guessed URL.")
-    cprint("    Results may be off-target; check the 'Location Match' column afterwards.")
-    formatted_slug = format_slug(user_input)
-    if formatted_slug and formatted_slug != "uae":
-        return f"dubai/{formatted_slug}", user_input.title()
+    # No fabricated slug guess: a made-up "dubai/<slugified-input>" URL
+    # isn't a real Bayut location and routinely 404s or silently redirects
+    # to an unrelated page. Search all of Dubai instead of pretending a
+    # guess is a match.
+    cprint(f"⚠️  Could not resolve '{user_input}' to a specific location — searching all of Dubai instead.")
+    cprint("    Try a slightly different spelling, or the nearest known community/project name.")
     return "dubai", "Dubai"
 
 
