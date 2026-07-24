@@ -325,9 +325,12 @@ def resolve_location(user_input):
 
 def build_bayut_url(purpose_choice, bed_choice, location_path):
     purpose_slug = "to-rent" if purpose_choice == "2" else "for-sale"
+    # NOTE: the choice value IS the bedroom count (0=Studio ... 5=5+ Beds).
+    # "All Bedrooms" is its own sentinel ("a"), not a numeric slot, so there
+    # is no off-by-one shift between what the user types and what they get.
     bed_slugs = {
-        "1": "studio-property", "2": "1-bedroom-property", "3": "2-bedroom-property",
-        "4": "3-bedroom-property", "5": "4-bedroom-property", "6": "5-bedroom-property",
+        "0": "studio-property", "1": "1-bedroom-property", "2": "2-bedroom-property",
+        "3": "3-bedroom-property", "4": "4-bedroom-property", "5": "5-bedroom-property",
     }
     bed_slug = bed_slugs.get(bed_choice, "property")
     return f"https://www.bayut.com/{purpose_slug}/{bed_slug}/{location_path}/"
@@ -337,7 +340,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Bayut Scraper Engine")
     parser.add_argument("--purpose", choices=["1", "2"], help="1=Buy, 2=Rent")
     parser.add_argument("--location", help="Project / community / area name")
-    parser.add_argument("--bedrooms", choices=[str(i) for i in range(7)], help="0-6 (0=All)")
+    parser.add_argument("--bedrooms", choices=["a"] + [str(i) for i in range(6)],
+                         help="a=All, 0=Studio, 1..4=that many beds, 5=5+ Beds")
     parser.add_argument("--max-listings", type=int, help="Cap on number of listings")
     parser.add_argument("--headless", action="store_true", help="Run browser headless")
     parser.add_argument("--out", help="Output .xlsx path (default: Desktop, auto-named)")
@@ -368,8 +372,8 @@ def get_user_inputs(args):
     bedrooms = args.bedrooms
     if not bedrooms:
         cprint("\n3. Bedrooms:")
-        cprint("   0. All Bedrooms | 1. Studio | 2. 1 Bed | 3. 2 Beds | 4. 3 Beds | 5. 4 Beds | 6. 5+ Beds")
-        bedrooms = input(f"{GREEN}Choice (0-6, default 0): {RESET}").strip() or "0"
+        cprint("   a. All Bedrooms | 0. Studio | 1. 1 Bed | 2. 2 Beds | 3. 3 Beds | 4. 4 Beds | 5. 5+ Beds")
+        bedrooms = input(f"{GREEN}Choice (a, 0-5, default a): {RESET}").strip().lower() or "a"
 
     max_listings = args.max_listings
     if max_listings is None:
@@ -780,16 +784,8 @@ def write_professional_excel(df, out_path, config):
         ws.add_table(table)
 
 
-def scrape_bayut():
-    args = parse_args()
+def run_search(page, args):
     config = get_user_inputs(args)
-
-    co = ChromiumOptions()
-    co.no_imgs(True)
-    if args.headless:
-        co.headless(True)
-
-    page = ChromiumPage(co)
     cprint(f"\n[1/3] Target URL:\n      {config['target_url']}\n")
 
     all_property_urls = collect_property_urls(page, config)
@@ -804,8 +800,6 @@ def scrape_bayut():
                   f"Price: {record['Price (AED)']} | Location: {record['Full Location']}")
         else:
             print(f"[{idx}/{len(all_property_urls)}] Failed after retries, skipped.")
-
-    page.quit()
 
     if not all_properties:
         cprint("\n⚠️  No listings extracted.")
@@ -824,6 +818,41 @@ def scrape_bayut():
 
     write_professional_excel(df, full_path, config)
     cprint(f"\n✨ DONE! Saved {len(df)} listings to: {full_path}")
+
+
+def blank_args(headless):
+    """Fresh, unset args for subsequent loop runs so the user is re-prompted
+    for every field instead of the first run's CLI flags sticking around."""
+    return argparse.Namespace(
+        purpose=None, location=None, bedrooms=None,
+        max_listings=None, headless=headless, out=None,
+    )
+
+
+def scrape_bayut():
+    args = parse_args()
+
+    co = ChromiumOptions()
+    co.no_imgs(True)
+    if args.headless:
+        co.headless(True)
+    page = ChromiumPage(co)
+
+    try:
+        run_args = args
+        while True:
+            run_search(page, run_args)
+
+            cprint("\n" + "=" * 70)
+            choice = input(
+                f"{GREEN}Press ENTER (or 1) to run another search, or 2 to close the script: {RESET}"
+            ).strip()
+            if choice == "2":
+                cprint("\n👋 Closing. Goodbye!")
+                break
+            run_args = blank_args(args.headless)
+    finally:
+        page.quit()
 
 
 if __name__ == "__main__":
