@@ -3,7 +3,12 @@
 {% block content %}
 
 <div class="card">
-  <h2>1. Scrape Bayut listings</h2>
+  <h2>
+    <span style="width:26px;height:26px;border-radius:8px;background:var(--accent-soft);border:1px solid var(--accent-border);color:var(--accent);display:grid;place-items:center;flex-shrink:0;">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6.5"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+    </span>
+    Scrape Bayut Listings
+  </h2>
   <p class="muted">Builds a fresh, formatted Excel report from live Bayut listings. Runs headless on the server — if Bayut throws a CAPTCHA, this job will fail and you'll need to run the scrape from your laptop instead, where you can solve it.</p>
   <form method="post" action="{{ url_for('start_scrape') }}">
     <label for="purpose">Purpose</label>
@@ -26,27 +31,32 @@
       <option value="5">5+ Beds</option>
     </select>
 
-    <label for="max_listings">Max listings (leave blank for all)</label>
+    <label for="max_listings">Max Listings <span style="text-transform:none;font-weight:400;">(leave blank for all)</span></label>
     <input type="number" id="max_listings" name="max_listings" min="1" placeholder="All">
 
-    <button type="submit">Start scrape</button>
+    <button type="submit">Start Scrape →</button>
   </form>
 </div>
 
 <div class="card">
-  <h2>2. Permit Lookup on Prospects</h2>
+  <h2>
+    <span style="width:26px;height:26px;border-radius:8px;background:rgba(139,92,246,.14);border:1px solid rgba(139,92,246,.4);color:#a78bfa;display:grid;place-items:center;flex-shrink:0;">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h4l2 5-2.5 1.5a12 12 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg>
+    </span>
+    Permit Lookup on Prospects
+  </h2>
   <p class="muted">Upload an Excel file with permit numbers. Each one is looked up on prospectsx.com and the result is written into the column right after it, same row. Requires the server to have network access to prospectsx.com (e.g. whitelisted office IP).</p>
   <form method="post" action="{{ url_for('start_lookup') }}" enctype="multipart/form-data">
-    <label for="excel_file">Excel file</label>
+    <label for="excel_file">Excel File</label>
     <input type="file" id="excel_file" name="excel_file" accept=".xlsx" required>
 
-    <label for="sheet">Sheet name</label>
+    <label for="sheet">Sheet Name</label>
     <input type="text" id="sheet" name="sheet" value="Listings">
 
-    <label for="permit_column">Column letter with permit numbers</label>
+    <label for="permit_column">Column Letter With Permit Numbers</label>
     <input type="text" id="permit_column" name="permit_column" value="L" maxlength="3">
 
-    <button type="submit">Start lookup</button>
+    <button type="submit">Start Lookup →</button>
   </form>
 </div>
 

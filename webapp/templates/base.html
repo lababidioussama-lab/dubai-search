@@ -3,131 +3,158 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a0708">
 <title>{% block title %}Dubai Real Estate Toolkit{% endblock %}</title>
 <style>
-  :root {
-    --navy: #1F4E78;
-    --blue: #2E75B6;
-    --gold: #C9A227;
-    --light: #F2F6FC;
-    --border: #D9E2EC;
-    --text: #1B2733;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: var(--light);
-    color: var(--text);
-  }
-  header {
-    background: linear-gradient(90deg, var(--navy), var(--blue));
-    color: #fff;
-    padding: 20px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  header h1 {
-    margin: 0;
-    font-size: 20px;
-    letter-spacing: 0.3px;
-  }
-  header a {
-    color: #fff;
-    opacity: 0.85;
-    text-decoration: none;
-    font-size: 14px;
-  }
-  header a:hover { opacity: 1; }
-  main {
-    max-width: 760px;
-    margin: 40px auto;
-    padding: 0 20px;
-  }
-  .card {
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 28px 32px;
-    margin-bottom: 24px;
-    box-shadow: 0 1px 3px rgba(31, 78, 120, 0.08);
-  }
-  .card h2 {
-    margin-top: 0;
-    color: var(--navy);
-    font-size: 17px;
-  }
-  label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--navy);
-    margin: 14px 0 4px;
-  }
-  input[type=text], input[type=number], input[type=password], input[type=file], select {
-    width: 100%;
-    padding: 9px 11px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 14px;
-  }
-  button, .btn {
-    background: var(--gold);
-    color: #1B2733;
-    border: none;
-    padding: 11px 22px;
-    border-radius: 6px;
-    font-weight: 700;
-    font-size: 14px;
-    cursor: pointer;
-    margin-top: 18px;
-    display: inline-block;
-    text-decoration: none;
-  }
-  button:hover, .btn:hover { opacity: 0.9; }
-  .btn-secondary {
-    background: var(--blue);
-    color: #fff;
-  }
-  .muted { color: #64748B; font-size: 13px; }
-  .flash {
-    background: #FDECEC;
-    border: 1px solid #F5B5B5;
-    color: #8A1F1F;
-    padding: 10px 14px;
-    border-radius: 6px;
-    margin-bottom: 16px;
-    font-size: 14px;
-  }
-  pre.log {
-    background: #0D1B2A;
-    color: #9FE870;
-    padding: 16px;
-    border-radius: 8px;
-    height: 320px;
-    overflow-y: auto;
-    font-size: 12.5px;
-    line-height: 1.5;
-    white-space: pre-wrap;
-  }
-  .status-badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 700;
-  }
-  .status-running { background: #FFF3CD; color: #8A6D00; }
-  .status-done { background: #DFF5E1; color: #1F7A3D; }
-  .status-error { background: #FDECEC; color: #8A1F1F; }
+:root{
+  --bg:#0a0708;
+  --surface:rgba(22,22,22,0.75);
+  --surface-2:rgba(31,31,31,0.85);
+  --text:#fff;
+  --text-muted:#a0a0a0;
+  --accent:#ef2b2b;
+  --accent-soft:rgba(239,43,43,0.12);
+  --accent-border:rgba(239,43,43,0.45);
+  --accent-glow:rgba(239,43,43,0.8);
+  --success:#4ade80;
+  --danger:#ff4d4d;
+  --border:rgba(255,255,255,0.07);
+  --input-bg:rgba(0,0,0,0.6);
+  --r:16px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;min-height:100vh;background:var(--bg);}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  position:relative;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(620px 440px at 88% -8%, rgba(239,43,43,.15), transparent 60%),
+    radial-gradient(480px 380px at -8% 45%, rgba(139,92,246,.08), transparent 62%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.4;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:46px 46px;
+  -webkit-mask-image:radial-gradient(65% 45% at 78% 0%,#000 15%,transparent 100%);
+          mask-image:radial-gradient(65% 45% at 78% 0%,#000 15%,transparent 100%);
+}
+.appbar{
+  position:relative;z-index:2;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  padding:16px 24px;border-bottom:1px solid var(--border);
+  backdrop-filter:blur(10px);
+}
+.brand{display:flex;align-items:center;gap:12px;}
+.brandmark{
+  width:42px;height:42px;border-radius:12px;position:relative;
+  background:radial-gradient(120% 120% at 30% 25%,#1c1213,#0a0a0c);
+  display:grid;place-items:center;box-shadow:0 0 0 1px var(--border),0 6px 18px rgba(0,0,0,.5);
+  flex-shrink:0;
+}
+.brandmark::before{
+  content:"";position:absolute;inset:-1px;border-radius:13px;padding:1px;
+  background:linear-gradient(140deg,rgba(239,43,43,.55),rgba(239,43,43,0) 40%,rgba(139,92,246,.3) 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;
+}
+.brandmark svg{filter:drop-shadow(0 0 6px rgba(239,43,43,.55));}
+.brandtxt h1{margin:0;font-size:1.25rem;font-weight:900;letter-spacing:-.02em;}
+.brandtxt h1 span{color:var(--accent);text-shadow:0 0 10px var(--accent-glow);}
+.brandsub{font-size:.66rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-top:3px;}
+.logout-link{color:var(--text-muted);text-decoration:none;font-size:.8rem;font-weight:700;padding:8px 14px;border:1px solid var(--border);border-radius:10px;transition:.15s;}
+.logout-link:hover{color:var(--text);border-color:var(--accent-border);}
+
+main{position:relative;z-index:2;max-width:760px;margin:0 auto;padding:36px 20px 60px;}
+
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:22px 24px;
+  margin-bottom:20px;
+  backdrop-filter:blur(16px);
+  box-shadow:0 12px 34px rgba(0,0,0,.34),0 0 0 1px rgba(255,255,255,.025) inset;
+}
+.card h2{
+  margin:0 0 6px;color:var(--text);font-size:1rem;font-weight:800;
+  display:flex;align-items:center;gap:9px;
+}
+.card .muted{color:var(--text-muted);font-size:.8rem;line-height:1.55;margin:0 0 16px;}
+
+label{display:block;font-size:.68rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);margin:14px 0 6px;}
+input[type=text],input[type=number],input[type=password],input[type=file],select{
+  width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text);
+  padding:12px 13px;border-radius:10px;font-size:.9rem;font-family:inherit;transition:all .2s;
+}
+input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+input[type=file]{padding:9px;}
+
+button,.btn{
+  background:linear-gradient(180deg,#ff5a4d,var(--accent));
+  color:#fff;border:none;
+  padding:13px 24px;border-radius:12px;font-weight:800;font-size:.88rem;
+  cursor:pointer;margin-top:18px;display:inline-block;text-decoration:none;
+  box-shadow:0 6px 18px var(--accent-soft),0 0 0 1px rgba(255,255,255,.08) inset;
+  transition:filter .15s, transform .1s;
+}
+button:hover,.btn:hover{filter:brightness(1.08);}
+button:active,.btn:active{transform:scale(.98);}
+.btn-secondary{
+  background:var(--surface-2); color:var(--text); border:1px solid var(--border);
+  box-shadow:none;
+}
+
+.muted{color:var(--text-muted);font-size:.8rem;}
+
+.flash{
+  background:rgba(239,43,43,.1); border:1px solid var(--accent-border); color:#ff9d9d;
+  padding:11px 14px; border-radius:10px; margin-bottom:18px; font-size:.85rem; font-weight:600;
+}
+
+pre.log{
+  background:#000; color:#9FE870;
+  padding:16px; border-radius:12px; height:320px; overflow-y:auto;
+  font-size:12.5px; line-height:1.6; white-space:pre-wrap;
+  border:1px solid var(--border);
+}
+
+.status-badge{
+  display:inline-block; padding:4px 11px; border-radius:20px;
+  font-size:.62rem; font-weight:800; text-transform:uppercase; letter-spacing:.05em;
+  border:1px solid transparent;
+}
+.status-running{background:rgba(239,43,43,.12);color:var(--accent);border-color:var(--accent-border);}
+.status-done{background:rgba(74,222,128,.12);color:var(--success);border-color:rgba(74,222,128,.4);}
+.status-error{background:rgba(255,77,77,.12);color:var(--danger);border-color:rgba(255,77,77,.4);}
+
+code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:5px;font-size:.85em;}
+
+@media(max-width:600px){
+  .appbar{padding:12px 16px;}
+  main{padding:24px 14px 50px;}
+  .card{padding:18px 16px;}
+}
 </style>
 </head>
 <body>
-<header>
-  <h1>Dubai Real Estate Toolkit</h1>
-  {% if session.get('authed') %}<a href="{{ url_for('logout') }}">Log out</a>{% endif %}
-</header>
+<div class="appbar">
+  <div class="brand">
+    <div class="brandmark" role="img" aria-label="Toolkit">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#ef2b2b" stroke-width="2.6" stroke-linecap="round"><circle cx="10" cy="10" r="6.2"></circle><line x1="14.8" y1="14.8" x2="20.6" y2="20.6"></line></svg>
+    </div>
+    <div>
+      <h1><span>Dubai</span> Real Estate Toolkit</h1>
+      <div class="brandsub">Bayut Scraper &amp; Prospects Permit Lookup</div>
+    </div>
+  </div>
+  {% if session.get('authed') %}<a class="logout-link" href="{{ url_for('logout') }}">Log out</a>{% endif %}
+</div>
 <main>
   {% with messages = get_flashed_messages() %}
     {% if messages %}

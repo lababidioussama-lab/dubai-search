@@ -1,13 +1,19 @@
 {% extends "base.html" %}
 {% block title %}Sign in — Dubai Real Estate Toolkit{% endblock %}
 {% block content %}
-<div class="card" style="max-width: 380px; margin: 60px auto 0;">
-  <h2>Sign in</h2>
+<div class="card" style="max-width:380px;margin:60px auto 0;text-align:center;">
+  <div class="brandmark" role="img" aria-label="Toolkit" style="width:60px;height:60px;border-radius:16px;margin:0 auto 16px;">
+    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#ef2b2b" stroke-width="2.6" stroke-linecap="round"><circle cx="10" cy="10" r="6.2"></circle><line x1="14.8" y1="14.8" x2="20.6" y2="20.6"></line></svg>
+  </div>
+  <h2 style="margin:0 0 4px;font-size:1.3rem;font-weight:900;"><span style="color:var(--accent);text-shadow:0 0 10px var(--accent-glow);">Dubai</span> Real Estate Toolkit</h2>
+  <div class="brandsub" style="margin-bottom:22px;">Sign in to continue</div>
+
   {% if error %}<div class="flash">{{ error }}</div>{% endif %}
-  <form method="post">
+
+  <form method="post" style="text-align:left;">
     <label for="password">Password</label>
-    <input type="password" id="password" name="password" autofocus required>
-    <button type="submit">Sign in</button>
+    <input type="password" id="password" name="password" autofocus required placeholder="Enter your password">
+    <button type="submit" style="width:100%;">Sign in</button>
   </form>
 </div>
 {% endblock %}
