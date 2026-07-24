@@ -2,3 +2,5 @@ __pycache__/
 *.pyc
 scripts/debug/
 scripts/credentials_local.py
+webapp/outputs/
+webapp/uploads/

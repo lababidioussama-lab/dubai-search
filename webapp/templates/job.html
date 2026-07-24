@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Job {{ job_id }} — Dubai Real Estate Toolkit{% endblock %}
+{% block content %}
+
+<div class="card">
+  <h2>Job <code>{{ job_id }}</code> <span id="badge" class="status-badge status-running">running</span></h2>
+  <pre class="log" id="log"></pre>
+  <div id="actions"></div>
+  <p><a href="{{ url_for('dashboard') }}" class="btn btn-secondary">&larr; Back to dashboard</a></p>
+</div>
+
+<script>
+const jobId = {{ job_id | tojson }};
+const logEl = document.getElementById('log');
+const badgeEl = document.getElementById('badge');
+const actionsEl = document.getElementById('actions');
+
+async function poll() {
+  const res = await fetch(`/jobs/${jobId}/status`);
+  const data = await res.json();
+
+  logEl.textContent = data.logs.join('\n');
+  logEl.scrollTop = logEl.scrollHeight;
+
+  badgeEl.textContent = data.status;
+  badgeEl.className = 'status-badge status-' + data.status;
+
+  if (data.status === 'done') {
+    actionsEl.innerHTML = `<a class="btn" href="/jobs/${jobId}/download">Download result</a>`;
+    return;
+  }
+  if (data.status === 'error') {
+    actionsEl.innerHTML = `<p class="flash">${data.error || 'Job failed.'}</p>`;
+    return;
+  }
+  setTimeout(poll, 1500);
+}
+poll();
+</script>
+{% endblock %}

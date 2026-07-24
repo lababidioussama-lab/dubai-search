@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Sign in — Dubai Real Estate Toolkit{% endblock %}
+{% block content %}
+<div class="card" style="max-width: 380px; margin: 60px auto 0;">
+  <h2>Sign in</h2>
+  {% if error %}<div class="flash">{{ error }}</div>{% endif %}
+  <form method="post">
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" autofocus required>
+    <button type="submit">Sign in</button>
+  </form>
+</div>
+{% endblock %}

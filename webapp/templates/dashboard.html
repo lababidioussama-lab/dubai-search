@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Dubai Real Estate Toolkit{% endblock %}
+{% block content %}
+
+<div class="card">
+  <h2>1. Scrape Bayut listings</h2>
+  <p class="muted">Builds a fresh, formatted Excel report from live Bayut listings. Runs headless on the server — if Bayut throws a CAPTCHA, this job will fail and you'll need to run the scrape from your laptop instead, where you can solve it.</p>
+  <form method="post" action="{{ url_for('start_scrape') }}">
+    <label for="purpose">Purpose</label>
+    <select id="purpose" name="purpose">
+      <option value="2">For Rent</option>
+      <option value="1">For Sale</option>
+    </select>
+
+    <label for="location">Project / Community / Area</label>
+    <input type="text" id="location" name="location" placeholder="e.g. Portofino, Dubai Marina" required>
+
+    <label for="bedrooms">Bedrooms</label>
+    <select id="bedrooms" name="bedrooms">
+      <option value="a">All Bedrooms</option>
+      <option value="0">Studio</option>
+      <option value="1">1 Bed</option>
+      <option value="2">2 Beds</option>
+      <option value="3">3 Beds</option>
+      <option value="4">4 Beds</option>
+      <option value="5">5+ Beds</option>
+    </select>
+
+    <label for="max_listings">Max listings (leave blank for all)</label>
+    <input type="number" id="max_listings" name="max_listings" min="1" placeholder="All">
+
+    <button type="submit">Start scrape</button>
+  </form>
+</div>
+
+<div class="card">
+  <h2>2. Permit Lookup on Prospects</h2>
+  <p class="muted">Upload an Excel file with permit numbers. Each one is looked up on prospectsx.com and the result is written into the column right after it, same row. Requires the server to have network access to prospectsx.com (e.g. whitelisted office IP).</p>
+  <form method="post" action="{{ url_for('start_lookup') }}" enctype="multipart/form-data">
+    <label for="excel_file">Excel file</label>
+    <input type="file" id="excel_file" name="excel_file" accept=".xlsx" required>
+
+    <label for="sheet">Sheet name</label>
+    <input type="text" id="sheet" name="sheet" value="Listings">
+
+    <label for="permit_column">Column letter with permit numbers</label>
+    <input type="text" id="permit_column" name="permit_column" value="L" maxlength="3">
+
+    <button type="submit">Start lookup</button>
+  </form>
+</div>
+
+{% endblock %}

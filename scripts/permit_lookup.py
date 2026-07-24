@@ -34,6 +34,7 @@ If something goes wrong, the script:
 import argparse
 import datetime
 import getpass
+import os
 import sys
 import time
 import traceback
@@ -85,10 +86,20 @@ RETRIES_PER_PERMIT = 2
 DEBUG_DIR = Path(__file__).resolve().parent / "debug"
 
 
-def get_credentials() -> Tuple[str, str]:
-    """Load prospectsx.com credentials from credentials_local.py next to this
-    script if it exists, otherwise prompt for them. credentials_local.py is
-    git-ignored and never committed/pushed — see credentials_local.example.py."""
+def get_credentials(interactive: bool = True) -> Tuple[str, str]:
+    """Resolve prospectsx.com credentials, in order:
+      1. PROSPECTS_USERNAME / PROSPECTS_PASSWORD environment variables
+         (used by the hosted web app, set as server secrets).
+      2. credentials_local.py next to this script (used on a laptop;
+         git-ignored, never committed/pushed).
+      3. An interactive prompt (laptop CLI only). If `interactive` is False
+         (e.g. a background job on a server with no terminal attached) and
+         no credentials were found above, raises instead of hanging."""
+    env_username = os.environ.get("PROSPECTS_USERNAME", "").strip()
+    env_password = os.environ.get("PROSPECTS_PASSWORD", "").strip()
+    if env_username and env_password:
+        return env_username, env_password
+
     try:
         sys.path.insert(0, str(Path(__file__).resolve().parent))
         import credentials_local  # type: ignore
@@ -100,6 +111,12 @@ def get_credentials() -> Tuple[str, str]:
             return username, password
     except ImportError:
         pass
+
+    if not interactive:
+        raise RuntimeError(
+            "No prospectsx.com credentials found. Set PROSPECTS_USERNAME and "
+            "PROSPECTS_PASSWORD as environment variables/secrets."
+        )
 
     username = input("prospectsx.com username: ").strip()
     password = getpass.getpass("prospectsx.com password: ")
@@ -200,15 +217,18 @@ def run_lookup(
     permit_column: str = "L",
     start_row: int = 3,
     headless: bool = False,
-) -> None:
+    interactive: bool = True,
+    log=print,
+) -> str:
     """Look up every permit number in `sheet`/`permit_column` on prospectsx.com
-    and write the result into the column right after it, on the same row."""
-    username, password = get_credentials()
+    and write the result into the column right after it, on the same row.
+    Returns the excel_path once done. `log` lets callers (e.g. a web job)
+    capture progress lines instead of them going to stdout."""
+    username, password = get_credentials(interactive=interactive)
 
     wb = openpyxl.load_workbook(excel_path)
     if sheet not in wb.sheetnames:
-        print(f"Sheet '{sheet}' not found. Available sheets: {wb.sheetnames}")
-        sys.exit(1)
+        raise ValueError(f"Sheet '{sheet}' not found. Available sheets: {wb.sheetnames}")
     ws = wb[sheet]
 
     permit_col = col_letter_to_index(permit_column)
@@ -221,9 +241,9 @@ def run_lookup(
         page.set_default_timeout(NAV_TIMEOUT_MS)
 
         try:
-            print("Opening prospectsx.com and logging in...")
+            log("Opening prospectsx.com and logging in...")
             login(page, username, password)
-            print("Logged in.")
+            log("Logged in.")
 
             row = start_row
             processed = 0
@@ -232,23 +252,25 @@ def run_lookup(
                 if permit_number is None:
                     break
 
-                print(f"Row {row}: looking up permit {permit_number} ...")
+                log(f"Row {row}: looking up permit {permit_number} ...")
                 result = search_permit_with_retries(page, permit_number, label=str(row))
                 ws.cell(row=row, column=result_col, value=result)
                 processed += 1
 
                 if processed % 10 == 0:
                     wb.save(excel_path)
-                    print(f"  Saved progress ({processed} permits done).")
+                    log(f"  Saved progress ({processed} permits done).")
 
                 row += 1
                 time.sleep(1)  # be polite to the site between searches
 
-            print(f"Finished. Processed {processed} permits.")
+            log(f"Finished. Processed {processed} permits.")
         finally:
             wb.save(excel_path)
-            print(f"Saved results to {excel_path}")
+            log(f"Saved results to {excel_path}")
             browser.close()
+
+    return excel_path
 
 
 def main():

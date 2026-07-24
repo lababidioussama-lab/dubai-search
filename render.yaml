@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: dubai-real-estate-toolkit
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: starter
+    envVars:
+      - key: SITE_PASSWORD
+        sync: false
+      - key: PROSPECTS_USERNAME
+        sync: false
+      - key: PROSPECTS_PASSWORD
+        sync: false
+      - key: FLASK_SECRET_KEY
+        generateValue: true

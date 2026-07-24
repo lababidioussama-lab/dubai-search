@@ -1403,13 +1403,31 @@ def get_user_inputs(args: argparse.Namespace, page: Optional[ChromiumPage] = Non
     )
 
 
+# When running headless on a server (no human available to click a CAPTCHA
+# checkbox), set this to a number of seconds before importing/running a
+# scrape. None (the default) means "wait forever for a human", which is
+# correct for interactive laptop use.
+CAPTCHA_TIMEOUT_SECONDS: Optional[int] = None
+
+
 def handle_captcha(page: ChromiumPage) -> None:
-    if any(term in page.title or term in page.html for term in ["Just a moment...", "cf-challenge", "Verify you are human"]):
+    def _is_captcha() -> bool:
+        return any(term in page.title or term in page.html for term in ["Just a moment...", "cf-challenge", "Verify you are human"])
+
+    if _is_captcha():
         cprint("\n" + "!" * 60)
         cprint("⚠️  [CAPTCHA DETECTED] Complete the verification in the browser...")
         cprint("!" * 60 + "\n")
-        while any(term in page.title or term in page.html for term in ["Just a moment...", "cf-challenge", "Verify you are human"]):
+        waited = 0
+        while _is_captcha():
+            if CAPTCHA_TIMEOUT_SECONDS is not None and waited >= CAPTCHA_TIMEOUT_SECONDS:
+                raise RuntimeError(
+                    "Bayut showed a CAPTCHA and no human is available to solve it "
+                    "on this server. Run the scrape from your laptop instead, where "
+                    "you can complete it in the visible browser window."
+                )
             time.sleep(2)
+            waited += 2
         cprint("✅ Verification cleared!\n")
 
 
@@ -2278,8 +2296,9 @@ def write_professional_excel(df: pd.DataFrame, out_path: str, config: ScrapeConf
     wb.save(out_path)
 
 
-def run_search(page: ChromiumPage, args: argparse.Namespace) -> None:
-    config = get_user_inputs(args, page=page)
+def scrape_with_config(page: ChromiumPage, config: ScrapeConfig, verify_trakheesi: bool, out_path: Optional[str]) -> Optional[str]:
+    """Core scrape loop, independent of how `config` was built (interactive
+    prompts on a laptop, or parameters passed in from a web request)."""
     logger.info("[1/3] Target URL: %s", config.target_url)
 
     all_property_urls = collect_property_urls(page, config)
@@ -2287,7 +2306,7 @@ def run_search(page: ChromiumPage, args: argparse.Namespace) -> None:
 
     all_properties: List[Dict[str, Any]] = []
     for idx, prop_url in enumerate(all_property_urls, 1):
-        record = extract_property(page, prop_url, config, verify_trakheesi=args.verify_trakheesi)
+        record = extract_property(page, prop_url, config, verify_trakheesi=verify_trakheesi)
         if record:
             all_properties.append(record)
             logger.info(
@@ -2301,7 +2320,7 @@ def run_search(page: ChromiumPage, args: argparse.Namespace) -> None:
 
     if not all_properties:
         logger.warning("No listings extracted.")
-        return
+        return None
 
     df = pd.DataFrame(all_properties)
     df.drop_duplicates(subset=["Property URL"], inplace=True)
@@ -2318,8 +2337,8 @@ def run_search(page: ChromiumPage, args: argparse.Namespace) -> None:
         logger.warning("    area name (e.g. the parent community) instead of this specific project.")
         logger.warning("=" * 70)
 
-    if args.out:
-        full_path = args.out
+    if out_path:
+        full_path = out_path
     else:
         desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
         os.makedirs(desktop_path, exist_ok=True)
@@ -2328,6 +2347,52 @@ def run_search(page: ChromiumPage, args: argparse.Namespace) -> None:
 
     write_professional_excel(df, full_path, config)
     logger.info("[3/3] DONE! Saved %d listings to: %s", len(df), full_path)
+    return full_path
+
+
+def run_search(page: ChromiumPage, args: argparse.Namespace) -> None:
+    config = get_user_inputs(args, page=page)
+    scrape_with_config(page, config, verify_trakheesi=args.verify_trakheesi, out_path=args.out)
+
+
+def run_scrape_params(
+    purpose: str,
+    location: str,
+    bedrooms: str,
+    max_listings: Optional[int],
+    verify_trakheesi: bool = True,
+    out_path: Optional[str] = None,
+    captcha_timeout_seconds: Optional[int] = 30,
+) -> Optional[str]:
+    """Non-interactive entry point for driving a scrape from code (e.g. a
+    web request) instead of terminal prompts. Always runs headless and bails
+    out with a clear error instead of hanging if Bayut throws a CAPTCHA,
+    since there's no human at a server to solve it."""
+    global CAPTCHA_TIMEOUT_SECONDS
+    CAPTCHA_TIMEOUT_SECONDS = captcha_timeout_seconds
+
+    co = ChromiumOptions()
+    co.no_imgs(True)
+    co.headless(True)
+    chrome_path = os.environ.get("CHROME_PATH")
+    if chrome_path:
+        co.set_browser_path(chrome_path)
+    page = ChromiumPage(co)
+
+    try:
+        loc_path, resolved_name = resolve_location(location, page=page)
+        target_url = build_bayut_url(purpose, bedrooms, loc_path)
+        config = ScrapeConfig(
+            purpose_str="For Rent" if purpose == "2" else "For Sale",
+            location=resolved_name,
+            bedrooms_label=BEDROOM_LABELS.get(bedrooms, "All Bedrooms"),
+            max_listings=max_listings,
+            target_url=target_url,
+        )
+        return scrape_with_config(page, config, verify_trakheesi=verify_trakheesi, out_path=out_path)
+    finally:
+        page.quit()
+        CAPTCHA_TIMEOUT_SECONDS = None
 
 
 def blank_args(headless: bool, verify_trakheesi: bool) -> argparse.Namespace:
