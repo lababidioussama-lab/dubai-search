@@ -31,7 +31,7 @@ against the original build spec's "Definition of done."
   **not-found** state, and a distinct **location-not-yet-available** state for
   plots that are in the database but not yet position-verified.
 
-**498 real Portofino plots in the database, 497 of them position-verified** —
+**563 real Portofino plots in the database, 562 of them position-verified** —
 not fabricated, not raw OCR. Every plot number in
 `src/data/clusters/portofino.json` was read directly
 off the source master plan raster at high zoom by a human-equivalent visual
@@ -49,16 +49,20 @@ segment endpoint) confirmed pins landing exactly on the correct building; see
 `.devtools/verify_*.png` from the build session.
 
 Coverage is Portofino's lagoon-front hero ring (BL101–159), the western
-townhouse grid (3 back-to-back column groups, BL178–424), and the southern
-boundary row (BL425–616). One plot, **BL141**, has its number/position
-inferred from neighbours because its label was occluded on the source
-raster — it's flagged `"verified": false` and the app's search correctly
-reports it as "location not yet available" rather than guessing.
+townhouse grid (3 back-to-back column groups, BL178–424), the southern
+boundary row (BL425–616), and the northern entrance boundary row (BL162–177,
+continuing numerically as BL929–977 — confirmed by direct visual adjacency,
+a real numbering-scheme jump rather than two separate rows). One plot,
+**BL141**, has its number/position inferred from neighbours because its label
+was occluded on the source raster — it's flagged `"verified": false` and the
+app's search correctly reports it as "location not yet available" rather than
+guessing.
 
 Not yet digitized within Portofino: the eastern interior block (several more
-back-to-back column groups, roughly BL600s–900s) and the northern entrance
-rows (BL160–177 area plus a separate outer perimeter row). Based on tile
-coverage during this session, that's likely another 250-350+ units.
+back-to-back column groups, roughly BL600s–900s interior rows), and a few
+small sub-clusters visible near the entrance (BL933–942, BL844–853, and an
+inner back-row behind the north entrance row, BL950s–960s). Based on tile
+coverage during this session, that's likely another 200-300+ units.
 
 **A plot-tagging tool** (`tools/plot-tagger/`) — a standalone, zero-build
 HTML/JS page matching the spec's §1 recommendation exactly: load a master-plan
@@ -113,10 +117,10 @@ coverage that doesn't exist.
 
 ## Definition of done — against the original spec
 
-- [ ] Plot database covers all 11 clusters — **498 of ~2,000+ units, Portofino
-      only (497 position-verified, 1 flagged unverified). Portofino itself is
-      an estimated 60% digitized** (eastern block + north entrance rows still
-      missing). Nothing beyond that is claimed.
+- [ ] Plot database covers all 11 clusters — **563 of ~2,000+ units, Portofino
+      only (562 position-verified, 1 flagged unverified). Portofino itself is
+      an estimated 65-70% digitized** (eastern interior block + a few small
+      sub-clusters still missing). Nothing beyond that is claimed.
 - [~] Renders at 60fps with instancing — **architecture validated, actual fps
       not confirmed.** The instancing design gives 2 draw calls total
       regardless of plot count (verified: 58 units currently render in 2
