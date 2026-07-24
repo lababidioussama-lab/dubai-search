@@ -1121,10 +1121,22 @@ def format_slug(text: str) -> str:
 
 # Bayut's homepage location search box, and its autocomplete dropdown, are
 # what actually knows about every project/building/cluster on the site —
-# a hardcoded dictionary never can. These selector lists are best-effort
-# (this environment has no live access to bayut.com to verify them
-# against the real markup) and tried in order until one works.
+# a hardcoded dictionary never can. The first entries below are verified
+# against Bayut's real markup (inspected directly): the classic "filters"
+# search form has
+#   <div aria-label="Location filter" name="location">
+#     ...
+#       <div aria-label="Location filter">
+#         <ul></ul>   <-- populated with <li> suggestions after typing
+#         <input placeholder="Enter location" .../>
+#       </div>
+# CSS module class names on that markup are hashed per-deploy (e.g.
+# "_2fb11f82") so they're deliberately not used here — placeholder/
+# aria-label/structural position are the stable anchors. Remaining
+# entries are best-effort fallbacks tried in order until one works.
 LOCATION_SEARCH_INPUT_SELECTORS = [
+    "css:input[placeholder='Enter location']",
+    "css:[aria-label='Location filter'] input",
     "css:input[placeholder*='location' i]",
     "css:input[placeholder*='area' i]",
     "css:input[placeholder*='project' i]",
@@ -1136,13 +1148,28 @@ LOCATION_SEARCH_INPUT_SELECTORS = [
     "css:[class*='location-search'] input",
 ]
 
+# The dropdown renders as <li> items inside the same "Location filter"
+# container the input lives in (confirmed live: typing populates the
+# sibling <ul>), so anchoring on that container beats guessing at hashed
+# suggestion/dropdown class names.
 LOCATION_SUGGESTION_SELECTORS = [
+    "css:[aria-label='Location filter'] ul li",
+    "css:[aria-label='Location filter'] li",
     "css:[role='listbox'] [role='option']",
     "css:[class*='suggestion'] a",
     "css:[class*='Suggestion'] a",
     "css:[class*='autocomplete'] li a",
     "css:[class*='dropdown'] a[href*='/dubai/']",
     "css:ul li a[href*='/dubai/']",
+]
+
+# After picking a suggestion, the classic filter form doesn't navigate on
+# its own (confirmed live: there's a distinct "Search" button next to the
+# location box) — it just fills the field. This has to be clicked to
+# actually land on the results page.
+SEARCH_SUBMIT_SELECTORS = [
+    "xpath://button[contains(., 'Search')]",
+    "text:Search",
 ]
 
 
@@ -1178,11 +1205,22 @@ def resolve_location_via_site_search(page: "ChromiumPage", user_input: str) -> O
             logger.debug("No autocomplete suggestion found for '%s'.", user_input)
             return None
 
+        # Suggestion rows aren't always <a href>: on the classic filter
+        # form they're plain <li> text that just fills the field, so an
+        # explicit "Search" click is needed afterwards to navigate.
         href = suggestion.attr("href") or ""
-        if not href:
-            suggestion.click()
-            time.sleep(1.5)
-            href = page.url
+        suggestion.click()
+        time.sleep(1.2)
+
+        if not href and page.url.rstrip("/") == "https://www.bayut.com":
+            for selector in SEARCH_SUBMIT_SELECTORS:
+                submit_btn = page.ele(selector, timeout=1)
+                if submit_btn:
+                    submit_btn.click()
+                    time.sleep(1.8)
+                    break
+
+        href = href or page.url
 
         match = re.search(r"bayut\.com/(?:(?:for-sale|to-rent)/(?:[\w-]+-property/)?)?(dubai/[\w/-]+?)/?(?:$|\?)", href)
         if match:
