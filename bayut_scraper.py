@@ -1259,11 +1259,10 @@ def resolve_location(user_input: str, page: Optional["ChromiumPage"] = None) -> 
          hand-entered). Tried first whenever a browser page is available.
       2. Local shortcut database — exact match, then fuzzy-typo match.
          Used when there's no page (e.g. unit tests) or live search fails.
-      3. A raw slugified guess as the last resort.
-    Hardcoded per-building slug guesses proved unreliable in practice
-    (DAMAC Tower 108, Westwood Grande, Costa Brava all pointed at dead
-    URLs Bayut silently redirected off of) — live search avoids that
-    entirely since it's driven by Bayut's own resolved data, not a guess.
+    No slug-guessing last resort: a fabricated URL isn't a real Bayut
+    location and routinely opened the wrong page. Every branch below
+    prints exactly what location it resolved to before returning, so
+    it's never ambiguous which one was actually used.
     """
     clean_input = user_input.lower().strip()
 
@@ -1275,7 +1274,9 @@ def resolve_location(user_input: str, page: Optional["ChromiumPage"] = None) -> 
         cprint(f"⚠️  Bayut's own search couldn't resolve '{user_input}' — trying the local shortcut list.")
 
     if clean_input in LOCATION_DATABASE:
-        return LOCATION_DATABASE[clean_input], clean_input.title()
+        matched_path = LOCATION_DATABASE[clean_input]
+        cprint(f"📍 Found '{user_input}' in the local shortcut list ---> {matched_path}")
+        return matched_path, clean_input.title()
     keys = list(LOCATION_DATABASE.keys())
     # cutoff=0.60 only auto-corrects genuine typos (e.g. "dama hils" ->
     # "damac hills"); anything looser starts matching unrelated projects.
