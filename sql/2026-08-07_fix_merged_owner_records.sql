@@ -477,6 +477,17 @@ $fn$;
 -- then retire the job. The advisory lock stops a slow tick from overlapping
 -- the next one (pg_cron does not serialise runs by itself).
 --
+-- Paced deliberately: this instance is small (shared_buffers 256MB) and
+-- Postgres restarted once during the first run.
+--
+-- Keep the placeholder span small. It fires owners_sync_search once per
+-- updated row, which rebuilds that row's search blob from raw_data, so a
+-- 200k-id span exceeded the 2-minute statement timeout. Both passes run in
+-- one transaction, so that rollback also reverted the merge pass's progress,
+-- and the job re-scanned the same final chunk every tick until the span
+-- shrank. 10k-id spans commit comfortably; the loop still does many spans
+-- per tick, so throughput is unaffected.
+--
 CREATE OR REPLACE FUNCTION public.merge_fix_cron_tick()
 RETURNS void
 LANGUAGE plpgsql
@@ -492,7 +503,7 @@ BEGIN
   SELECT * INTO r1 FROM public.fix_merged_owner_batch(20, 25000);
 
   IF r1.done THEN
-    SELECT * INTO r2 FROM public.fix_placeholder_owner_cols(10, 200000);
+    SELECT * INTO r2 FROM public.fix_placeholder_owner_cols(15, 10000);
     IF r2.done THEN
       BEGIN
         PERFORM cron.unschedule('merge_fix_job');
