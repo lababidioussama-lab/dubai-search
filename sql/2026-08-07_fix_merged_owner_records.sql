@@ -489,10 +489,10 @@ BEGIN
     RETURN;
   END IF;
 
-  SELECT * INTO r1 FROM public.fix_merged_owner_batch(35, 25000);
+  SELECT * INTO r1 FROM public.fix_merged_owner_batch(20, 25000);
 
   IF r1.done THEN
-    SELECT * INTO r2 FROM public.fix_placeholder_owner_cols(15, 200000);
+    SELECT * INTO r2 FROM public.fix_placeholder_owner_cols(10, 200000);
     IF r2.done THEN
       BEGIN
         PERFORM cron.unschedule('merge_fix_job');
@@ -507,7 +507,7 @@ END;
 $fn$;
 
 -- Start it (the job unschedules itself when both passes report done):
---   SELECT cron.schedule('merge_fix_job', '* * * * *',
+--   SELECT cron.schedule('merge_fix_job', '*/2 * * * *',
 --                        $$select public.merge_fix_cron_tick()$$);
 --
 -- Watch progress:
