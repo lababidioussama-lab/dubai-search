@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dubai Search</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header><h1>Dubai Property Search</h1><p>Powered by UAE Real Estate API3 (RapidAPI)</p></header>
+  <main>
+    <section class="card">
+      <label>RapidAPI key
+        <input id="apiKey" type="password" placeholder="Paste your X-RapidAPI-Key" autocomplete="off">
+      </label>
+      <small>Your key is stored only in this browser (localStorage).</small>
+    </section>
+
+    <form id="searchForm" class="card grid">
+      <label>Purpose
+        <select name="purpose"><option value="for-sale">Buy</option><option value="for-rent">Rent</option></select>
+      </label>
+      <label>Location
+        <input name="locationText" list="locationList" placeholder="e.g. Dubai Marina">
+        <datalist id="locationList"></datalist>
+      </label>
+      <label>Category
+        <select name="category">
+          <option value="">Any</option><option value="apartments">Apartment</option>
+          <option value="villas">Villa</option><option value="townhouses">Townhouse</option>
+          <option value="penthouse">Penthouse</option>
+        </select>
+      </label>
+      <label>Min price (AED)<input name="minPrice" type="number" min="0"></label>
+      <label>Max price (AED)<input name="maxPrice" type="number" min="0"></label>
+      <label>Bedrooms
+        <select name="beds"><option value="">Any</option><option value="0">Studio</option>
+          <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+      </label>
+      <button type="submit">Search</button>
+    </form>
+
+    <p id="status" role="status"></p>
+    <div id="results" class="results"></div>
+    <nav class="pager"><button id="prev" hidden>‹ Prev</button><button id="next" hidden>Next ›</button></nav>
+    <details class="card"><summary>Raw API response</summary><pre id="raw"></pre></details>
+  </main>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
