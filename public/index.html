@@ -1,3 +1,334 @@
-<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width">
-<title>Save Video server</title>
-<p>Save Video server is running. Point the Shortcut at <code>/api</code> on this site.</p>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SaveVideo — Download videos without watermark</title>
+<meta name="description" content="Paste a link from TikTok, Instagram, X, Facebook, Reddit and more. Get the original video, without watermark.">
+<meta name="theme-color" content="#0b0d12">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%235b5bf7'/%3E%3Cpath d='M16 8v12m0 0-5-5m5 5 5-5M9 24h14' stroke='white' stroke-width='2.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #f7f7fb; --surface: #ffffff; --surface-2: #f0f0f6; --text: #12131a; --muted: #5d6072;
+    --border: #e3e3ec; --accent: #5b5bf7; --accent-2: #8b5cf6; --accent-text: #ffffff;
+    --ok: #12805c; --err: #c4321f; --shadow: 0 1px 2px rgba(18,19,26,.04), 0 12px 32px rgba(18,19,26,.08);
+    --radius: 16px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0b0d12; --surface: #13161e; --surface-2: #1a1e28; --text: #eceef4; --muted: #9a9fb2;
+      --border: #262b37; --accent: #7c7cff; --accent-2: #a78bfa; --ok: #3ccf97; --err: #ff7a66;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 16px 40px rgba(0,0,0,.35);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+
+  header { position: sticky; top: 0; z-index: 10; backdrop-filter: saturate(1.6) blur(14px);
+    background: color-mix(in srgb, var(--bg) 78%, transparent); border-bottom: 1px solid var(--border); }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -.01em; color: var(--text); }
+  .brand:hover { text-decoration: none; }
+  .logo { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
+  nav { display: flex; gap: 22px; font-size: 14px; }
+  nav a { color: var(--muted); }
+  nav a:hover { color: var(--text); text-decoration: none; }
+
+  .hero { padding-top: 72px; padding-bottom: 32px; text-align: center; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--surface); color: var(--muted); font-size: 13px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+  h1 { font-size: clamp(34px, 6vw, 56px); line-height: 1.06; letter-spacing: -.035em; margin: 20px 0 14px; }
+  h1 span { background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lead { color: var(--muted); font-size: 18px; max-width: 560px; margin: 0 auto; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
+  .tool { max-width: 720px; margin: 36px auto 0; padding: 10px; }
+  form { display: flex; gap: 8px; }
+  .field { flex: 1; display: flex; align-items: center; gap: 10px; padding: 0 14px; border-radius: 12px; background: var(--surface-2); }
+  .field svg { flex: none; color: var(--muted); }
+  input { width: 100%; border: 0; outline: 0; background: transparent; color: var(--text); font: inherit; padding: 14px 0; min-width: 0; }
+  input::placeholder { color: var(--muted); }
+  .btn { border: 0; border-radius: 12px; padding: 0 22px; font-family: inherit; font-size: 15px; font-weight: 600; line-height: 1; cursor: pointer; white-space: nowrap;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: var(--accent-text); min-height: 50px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn:hover { filter: brightness(1.06); text-decoration: none; }
+  .btn:disabled { opacity: .6; cursor: progress; }
+  .btn.ghost { background: var(--surface-2); color: var(--text); }
+  .tool-foot { display: flex; justify-content: space-between; gap: 12px; padding: 10px 6px 2px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+  .linkish { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; cursor: pointer; }
+
+  .key-row { display: none; gap: 8px; margin-top: 8px; }
+  .key-row.open { display: flex; }
+
+  #status { max-width: 720px; margin: 14px auto 0; min-height: 0; }
+  .msg { padding: 12px 16px; border-radius: 12px; font-size: 14px; border: 1px solid var(--border); background: var(--surface); }
+  .msg.err { color: var(--err); border-color: color-mix(in srgb, var(--err) 35%, var(--border)); }
+  .spinner { width: 16px; height: 16px; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .results { display: grid; gap: 12px; }
+  .result { display: flex; gap: 14px; padding: 12px; align-items: center; text-align: left; }
+  .thumb { width: 96px; height: 96px; flex: none; border-radius: 10px; object-fit: cover; background: var(--surface-2); }
+  .result .meta { flex: 1; min-width: 0; }
+  .result .title { font-weight: 600; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .result .sub { color: var(--muted); font-size: 13px; margin: 2px 0 10px; }
+  .result .btn { min-height: 40px; padding: 0 16px; font-size: 14px; }
+
+  .platforms { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 28px auto 0; max-width: 720px; }
+  .platforms span { padding: 6px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); font-size: 13px; color: var(--muted); }
+
+  section { padding: 72px 0 0; }
+  .eyebrow { color: var(--accent); font-weight: 600; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+  h2 { font-size: clamp(26px, 4vw, 36px); letter-spacing: -.025em; line-height: 1.15; margin: 8px 0 12px; }
+  .section-lead { color: var(--muted); max-width: 620px; margin: 0 0 28px; }
+
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .feature { padding: 22px; }
+  .feature .ic { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); margin-bottom: 14px; }
+  .feature h3 { margin: 0 0 6px; font-size: 17px; }
+  .feature p { margin: 0; color: var(--muted); font-size: 15px; }
+
+  .steps { counter-reset: s; display: grid; gap: 10px; padding: 0; margin: 0; list-style: none; }
+  .steps li { counter-increment: s; display: grid; grid-template-columns: 36px 1fr; gap: 14px; padding: 16px 18px; align-items: start; }
+  .steps li::before { content: counter(s); width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--surface-2); color: var(--text); font-weight: 600; font-size: 14px; }
+  .steps b { font-weight: 600; }
+  .steps .sub { color: var(--muted); font-size: 14px; margin-top: 4px; }
+  code { font: 13px/1.4 ui-monospace, "SF Mono", Menlo, monospace; background: var(--surface-2); padding: 2px 6px; border-radius: 6px; word-break: break-all; }
+  .copy { margin-left: 6px; font-size: 13px; }
+
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+  details { padding: 16px 20px; }
+  details + details { margin-top: 10px; }
+  summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; color: var(--muted); font-weight: 400; font-size: 20px; line-height: 1; }
+  details[open] summary::after { content: "–"; }
+  details p { color: var(--muted); margin: 10px 0 0; font-size: 15px; }
+
+  footer { margin-top: 88px; border-top: 1px solid var(--border); padding: 28px 0 40px; color: var(--muted); font-size: 13px; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 760px) {
+    nav { display: none; }
+    .hero { padding-top: 48px; }
+    form { flex-direction: column; }
+    .grid3, .split { grid-template-columns: 1fr; }
+    .thumb { width: 72px; height: 72px; }
+    section { padding-top: 56px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="SaveVideo home">
+      <span class="logo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg></span>
+      SaveVideo
+    </a>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#shortcut">iPhone Shortcut</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap hero">
+    <span class="pill"><span class="dot"></span> Private &amp; ad-free</span>
+    <h1>Save any video.<br><span>No watermark.</span></h1>
+    <p class="lead">Paste a link from TikTok, Instagram, X, Facebook, Reddit and more — get the original file in seconds.</p>
+
+    <div class="card tool">
+      <form id="form" autocomplete="off">
+        <label class="field">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+          <input id="url" type="url" inputmode="url" placeholder="Paste a video link…" aria-label="Video link" required>
+        </label>
+        <button class="btn" id="go" type="submit">Download</button>
+      </form>
+      <div class="key-row" id="keyRow">
+        <label class="field">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="m10.8 12.2 9.2-9.2m-3 3 2 2m-5 1 2 2"/></svg>
+          <input id="key" type="password" placeholder="Access key" aria-label="Access key">
+        </label>
+        <button class="btn ghost" id="saveKey" type="button">Save key</button>
+      </div>
+      <div class="tool-foot">
+        <button class="linkish" id="paste" type="button">Paste from clipboard</button>
+        <button class="linkish" id="toggleKey" type="button">Access key</button>
+      </div>
+    </div>
+
+    <div id="status" aria-live="polite"></div>
+
+    <div class="platforms" aria-label="Supported platforms">
+      <span>TikTok</span><span>Instagram</span><span>X / Twitter</span><span>Facebook</span><span>Reddit</span>
+      <span>Pinterest</span><span>Vimeo</span><span>Snapchat</span><span>Twitch clips</span><span>+ 1,000 more</span>
+    </div>
+  </div>
+
+  <section id="features">
+    <div class="wrap">
+      <div class="eyebrow">Why SaveVideo</div>
+      <h2>Clean files, nothing in the way</h2>
+      <p class="section-lead">Built on open-source tools, running on your own server — no ads, no trackers, no third-party middleman holding your links.</p>
+      <div class="grid3">
+        <div class="card feature">
+          <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.4 8.4 8 9 4.6-.6 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></div>
+          <h3>No watermark</h3>
+          <p>Gets the original upload, not a re-encoded screen copy with a logo stamped on it.</p>
+        </div>
+        <div class="card feature">
+          <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+          <h3>Carousels &amp; slideshows</h3>
+          <p>Posts with several videos or photos come back as a set — save one or all of them.</p>
+        </div>
+        <div class="card feature">
+          <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg></div>
+          <h3>One tap on iPhone</h3>
+          <p>Add the Shortcut once, then use <b>Share → SaveVideo</b> from any app.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="shortcut">
+    <div class="wrap split">
+      <div>
+        <div class="eyebrow">iPhone &amp; iPad</div>
+        <h2>Save straight from the share sheet</h2>
+        <p class="section-lead">Build the Shortcut once in the Shortcuts app — about five minutes. After that, share any link to <b>SaveVideo</b> and the file lands in Photos.</p>
+        <div class="card" style="padding:18px 20px">
+          <div style="font-size:14px;color:var(--muted);margin-bottom:6px">Server address</div>
+          <code id="api"></code><button class="linkish copy" data-copy="api" type="button">Copy</button>
+        </div>
+      </div>
+      <ol class="steps">
+        <li class="card"><div><b>Match Text</b> <code>https?://\S+</code> in Shortcut Input, then <b>Get Item from List</b> → First Item.</div></li>
+        <li class="card"><div><b>Get Contents of URL</b> → the server address above, Method <b>POST</b>.
+          <div class="sub">Headers <code>Content-Type: application/json</code>, <code>Authorization: Api-Key …</code> · JSON body <code>url</code> = Item from List</div></div></li>
+        <li class="card"><div><b>Get Dictionary Value</b> <code>status</code>. If it is <code>picker</code>, repeat over <code>picker</code> and take each <code>url</code>; otherwise take <code>url</code>. Add each to variable <b>Links</b>.</div></li>
+        <li class="card"><div><b>Repeat with Each</b> in Links → <b>Get Contents of URL</b> → <b>Save to Photo Album</b>.</div></li>
+        <li class="card"><div>In <b>ⓘ Details</b>, turn on <b>Show in Share Sheet</b> and set <b>If there's no input</b> → Get Clipboard.</div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <div class="eyebrow">FAQ</div>
+      <h2>Questions</h2>
+      <details class="card"><summary>What is the access key?</summary>
+        <p>The server is private. The key keeps strangers from using it. Tap “Access key” under the box, paste it once, and this browser remembers it.</p></details>
+      <details class="card"><summary>The download opened in a new tab instead of saving</summary>
+        <p>Some sites only allow viewing in the browser. On iPhone tap the share icon → Save Video; on a computer right-click the video → Save video as.</p></details>
+      <details class="card"><summary>A link doesn't work</summary>
+        <p>Private posts, stories that expired, and age-restricted content can't be fetched. Instagram and YouTube sometimes limit downloads from servers — try again a little later.</p></details>
+      <details class="card"><summary>Is this legal?</summary>
+        <p>Saving videos for personal use is generally fine. Only re-upload or share content you own or have permission to use.</p></details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year"></span> SaveVideo · Personal use only</span>
+    <span>Powered by open-source <a href="https://github.com/yt-dlp/yt-dlp" rel="noopener">yt-dlp</a></span>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const API = location.origin + "/api";
+  const store = {
+    get: (k) => { try { return localStorage.getItem(k) || ""; } catch { return ""; } },
+    set: (k, v) => { try { localStorage.setItem(k, v); } catch {} },
+  };
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return ""; } };
+
+  $("api").textContent = API;
+  $("year").textContent = new Date().getFullYear();
+
+  // Key: from ?key= once (then removed from the address bar), else from storage.
+  const params = new URLSearchParams(location.search);
+  if (params.get("key")) { store.set("sv_key", params.get("key")); history.replaceState(null, "", location.pathname + location.hash); }
+  $("key").value = store.get("sv_key");
+  if (!$("key").value) $("keyRow").classList.add("open");
+
+  $("toggleKey").onclick = () => $("keyRow").classList.toggle("open");
+  $("saveKey").onclick = () => { store.set("sv_key", $("key").value.trim()); $("keyRow").classList.remove("open"); show("msg", "Key saved on this device."); };
+  $("paste").onclick = async () => {
+    try { $("url").value = (await navigator.clipboard.readText()).trim(); $("url").focus(); }
+    catch { $("url").focus(); show("msg", "Long-press the box and choose Paste."); }
+  };
+  document.querySelectorAll("[data-copy]").forEach((b) => b.onclick = async () => {
+    try { await navigator.clipboard.writeText($(b.dataset.copy).textContent); b.textContent = "Copied"; setTimeout(() => b.textContent = "Copy", 1500); } catch {}
+  });
+
+  function show(kind, html) {
+    $("status").innerHTML = kind === "results" ? html : `<div class="msg ${kind === "err" ? "err" : ""}">${html}</div>`;
+  }
+
+  const ERRORS = {
+    "auth.key.invalid": "Access key missing or wrong — tap “Access key” and paste yours.",
+    "link.missing": "That doesn't look like a link.",
+    "content.not_found": "No video found at that link.",
+  };
+
+  function card(item, i, title, n) {
+    const isPhoto = item.type === "photo";
+    const label = n > 1 ? `${isPhoto ? "Photo" : "Video"} ${i + 1} of ${n}` : (title || "Your video");
+    const thumb = item.thumb ? `<img class="thumb" src="${esc(item.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">` : `<div class="thumb"></div>`;
+    return `<div class="card result">${thumb}<div class="meta">
+      <div class="title">${esc(label)}</div>
+      <div class="sub">${esc(n > 1 && title ? title : host(item.url))}</div>
+      <a class="btn" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" download>${isPhoto ? "Save photo" : "Download video"}</a>
+    </div></div>`;
+  }
+
+  $("form").onsubmit = async (e) => {
+    e.preventDefault();
+    const url = $("url").value.trim().match(/https?:\/\/\S+/)?.[0];
+    if (!url) return show("err", ERRORS["link.missing"]);
+    const go = $("go");
+    go.disabled = true; go.innerHTML = `<span class="spinner"></span> Working`;
+    show("msg", "Fetching the original file…");
+    try {
+      const res = await fetch(API, {
+        method: "POST",
+        headers: { "content-type": "application/json", accept: "application/json", authorization: "Api-Key " + store.get("sv_key") },
+        body: JSON.stringify({ url }),
+      });
+      const data = await res.json().catch(() => ({ status: "error", error: { code: "server" } }));
+      if (data.status === "redirect") {
+        show("results", `<div class="results">${card({ url: data.url, thumb: data.thumbnail }, 0, data.title, 1)}</div>`);
+      } else if (data.status === "picker") {
+        show("results", `<div class="results">${data.picker.map((p, i) => card(p, i, data.title, data.picker.length)).join("")}</div>`);
+      } else {
+        const code = data.error?.code;
+        if (code === "auth.key.invalid") $("keyRow").classList.add("open");
+        show("err", esc(ERRORS[code] || "Couldn't get this video. It may be private or the site is limiting downloads — try again shortly."));
+      }
+    } catch {
+      show("err", "Can't reach the server. Check your connection and try again.");
+    } finally {
+      go.disabled = false; go.textContent = "Download";
+    }
+  };
+})();
+</script>
+</body>
+</html>

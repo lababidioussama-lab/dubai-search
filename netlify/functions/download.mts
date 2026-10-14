@@ -1,6 +1,6 @@
 // POST /api {"url": "<post link>"} -> cobalt-style JSON:
-//   {status: "redirect", url}            one video
-//   {status: "picker", picker: [{url}]}  carousel / slideshow
+//   {status: "redirect", url, title, thumbnail}       one video
+//   {status: "picker", picker: [{type, url, thumb}]}  carousel / slideshow
 //   {status: "error", error: {code}}
 // If the API_KEY env var is set, requests need the header "Authorization: Api-Key <key>".
 import type { Config } from "@netlify/functions"
@@ -37,6 +37,24 @@ function runYtDlp(url: string): Promise<any> {
   })
 }
 
+const TIKWM = "https://www.tikwm.com"
+
+// TikTok via tikwm: no-watermark links that download without cookies.
+async function tiktok(url: string): Promise<object> {
+  const res = await fetch(`${TIKWM}/api/`, {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ url, hd: "1" }),
+  })
+  const { code, msg, data } = await res.json()
+  if (code !== 0 || !data) throw new Error(msg || "TikTok lookup failed")
+  const abs = (u: string) => (u?.startsWith("/") ? TIKWM + u : u)
+  if (data.images?.length) {
+    return { status: "picker", title: data.title, picker: data.images.map((u: string) => ({ type: "photo", url: u, thumb: u })) }
+  }
+  return { status: "redirect", url: abs(data.hdplay || data.play), filename: `${data.id}.mp4`, title: data.title, thumbnail: abs(data.cover) }
+}
+
 const reply = (body: object, status = 200) => Response.json(body, { status })
 const fail = (code: string, status = 400) => reply({ status: "error", error: { code } }, status)
 
@@ -49,11 +67,15 @@ export default async (req: Request) => {
   if (!url || !/^https?:\/\//.test(url)) return fail("link.missing")
 
   try {
+    if (/(^|\.)tiktok\.com$/.test(new URL(url).hostname)) return reply(await tiktok(url))
     const info = await runYtDlp(url)
-    const links = (info.entries ?? [info]).map((e: any) => e?.url).filter(Boolean)
-    if (!links.length) return fail("content.not_found", 404)
-    if (links.length === 1) return reply({ status: "redirect", url: links[0], filename: `${info.id ?? "video"}.${info.ext ?? "mp4"}` })
-    return reply({ status: "picker", picker: links.map((u: string) => ({ type: "video", url: u })) })
+    const items = (info.entries ?? [info]).filter((e: any) => e?.url)
+    if (!items.length) return fail("content.not_found", 404)
+    if (items.length === 1) {
+      const [e] = items
+      return reply({ status: "redirect", url: e.url, filename: `${e.id ?? "video"}.${e.ext ?? "mp4"}`, title: e.title ?? info.title, thumbnail: e.thumbnail ?? info.thumbnail })
+    }
+    return reply({ status: "picker", title: info.title, picker: items.map((e: any) => ({ type: "video", url: e.url, thumb: e.thumbnail })) })
   } catch (e) {
     return reply({ status: "error", error: { code: "fetch.fail", message: String((e as Error).message) } }, 502)
   }
