@@ -66,6 +66,16 @@
   .tool-foot { display: flex; justify-content: space-between; gap: 12px; padding: 10px 6px 2px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
   .linkish { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; cursor: pointer; }
 
+  .options { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+  .seg { display: inline-flex; padding: 4px; gap: 4px; border-radius: 12px; background: var(--surface-2); }
+  .seg-btn { border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 14px; font-weight: 600; padding: 8px 14px; border-radius: 9px; cursor: pointer; }
+  .seg-btn[aria-checked="true"] { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+  .select { display: inline-flex; align-items: center; gap: 8px; padding: 0 6px 0 14px; border-radius: 12px; background: var(--surface-2); font-size: 14px; color: var(--muted); min-height: 44px; }
+  .select[hidden] { display: none; }
+  .select select { border: 0; outline: 0; background: transparent; color: var(--text); font: inherit; font-weight: 600; padding: 10px 4px; cursor: pointer; }
+  .results-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 4px 4px 0; text-align: left; }
+  .results-head .title { font-weight: 600; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; }
   .key-row { display: none; gap: 8px; margin-top: 8px; }
   .key-row.open { display: flex; }
 
@@ -150,7 +160,7 @@
   <div class="wrap hero">
     <span class="pill"><span class="dot"></span> Private &amp; ad-free</span>
     <h1>Save any video.<br><span>No watermark.</span></h1>
-    <p class="lead">Paste a link from TikTok, Instagram, X, Facebook, Reddit and more — get the original file in seconds.</p>
+    <p class="lead">Paste a link from TikTok, Instagram, X, Facebook, Reddit and more — get the original video, MP3 or photos in seconds.</p>
 
     <div class="card tool">
       <form id="form" autocomplete="off">
@@ -160,6 +170,22 @@
         </label>
         <button class="btn" id="go" type="submit">Download</button>
       </form>
+      <div class="options">
+        <div class="seg" role="radiogroup" aria-label="What to download">
+          <button type="button" class="seg-btn" data-mode="video" role="radio">Video</button>
+          <button type="button" class="seg-btn" data-mode="audio" role="radio">MP3 audio</button>
+        </div>
+        <label class="select" id="qualityWrap">
+          <span>Quality</span>
+          <select id="quality" aria-label="Video quality">
+            <option value="max">Best (HD)</option>
+            <option value="1080">1080p</option>
+            <option value="720">720p</option>
+            <option value="480">480p</option>
+            <option value="360">360p</option>
+          </select>
+        </label>
+      </div>
       <div class="key-row" id="keyRow">
         <label class="field">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="m10.8 12.2 9.2-9.2m-3 3 2 2m-5 1 2 2"/></svg>
@@ -238,6 +264,12 @@
         <p>The server is private. The key keeps strangers from using it. Tap “Access key” under the box, paste it once, and this browser remembers it.</p></details>
       <details class="card"><summary>The download opened in a new tab instead of saving</summary>
         <p>Some sites only allow viewing in the browser. On iPhone tap the share icon → Save Video; on a computer right-click the video → Save video as.</p></details>
+      <details class="card"><summary>How do I get the MP3?</summary>
+        <p>Choose “MP3 audio” before tapping Download. The audio is converted to MP3 right on your device, then saved to Downloads (Files app on iPhone). Very long audio (over ~20&nbsp;MB) can't be converted.</p></details>
+      <details class="card"><summary>Can I save photos?</summary>
+        <p>Yes — TikTok photo slideshows and photo posts on most sites. Use “Save photo” or “Save all”. On iPhone the photos go to Downloads; open one and tap Share → Save Image to add it to Photos.</p></details>
+      <details class="card"><summary>Why isn't my video in the quality I picked?</summary>
+        <p>You get the best version the site offers up to that quality. Some sites (like YouTube) only offer low quality as a single file with sound.</p></details>
       <details class="card"><summary>A link doesn't work</summary>
         <p>Private posts, stories that expired, and age-restricted content can't be fetched. Instagram and YouTube sometimes limit downloads from servers — try again a little later.</p></details>
       <details class="card"><summary>Is this legal?</summary>
@@ -286,6 +318,21 @@
     try { await navigator.clipboard.writeText($(b.dataset.copy).textContent); b.textContent = "Copied"; setTimeout(() => b.textContent = "Copy", 1500); } catch {}
   });
 
+  // Mode (video / MP3) and quality, remembered on this device.
+  let mode = store.get("sv_mode") === "audio" ? "audio" : "video";
+  $("quality").value = store.get("sv_quality") || "max";
+  function setMode(m) {
+    mode = m; store.set("sv_mode", m);
+    document.querySelectorAll(".seg-btn").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.mode === m)));
+    $("qualityWrap").hidden = m === "audio";
+  }
+  document.querySelectorAll(".seg-btn").forEach((b) => b.onclick = () => setMode(b.dataset.mode));
+  $("quality").onchange = () => store.set("sv_quality", $("quality").value);
+  setMode(mode);
+
+  const fileUrl = (u, name) => `${API}/file?` + new URLSearchParams({ u, name, k: store.get("sv_key") });
+  const safeName = (t, fallback) => (String(t || fallback).replace(/[\\/:*?"<>|#\n\r]+/g, " ").trim().slice(0, 80) || fallback);
+
   function show(kind, html) {
     $("status").innerHTML = kind === "results" ? html : `<div class="msg ${kind === "err" ? "err" : ""}">${html}</div>`;
   }
@@ -296,16 +343,101 @@
     "content.not_found": "No video found at that link.",
   };
 
+  const LABEL = { video: "Video", audio: "Audio", photo: "Photo" };
   function card(item, i, title, n) {
-    const isPhoto = item.type === "photo";
-    const label = n > 1 ? `${isPhoto ? "Photo" : "Video"} ${i + 1} of ${n}` : (title || "Your video");
+    const type = item.type || "video";
+    const base = safeName(title, "savevideo") + (n > 1 ? ` ${i + 1}` : "");
+    const label = n > 1 ? `${LABEL[type]} ${i + 1} of ${n}` : (title || `Your ${LABEL[type].toLowerCase()}`);
     const thumb = item.thumb ? `<img class="thumb" src="${esc(item.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">` : `<div class="thumb"></div>`;
+    let action;
+    if (type === "photo") action = `<a class="btn" href="${esc(fileUrl(item.url, base + ".jpg"))}" data-save-photo>Save photo</a>`;
+    else if (type === "audio") action = `<button class="btn" type="button" data-mp3="${esc(item.url)}" data-name="${esc(base)}">Download MP3</button>`;
+    else action = `<a class="btn" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" download>Download video</a>`;
     return `<div class="card result">${thumb}<div class="meta">
       <div class="title">${esc(label)}</div>
       <div class="sub">${esc(n > 1 && title ? title : host(item.url))}</div>
-      <a class="btn" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" download>${isPhoto ? "Save photo" : "Download video"}</a>
+      <div class="actions">${action}</div>
     </div></div>`;
   }
+
+  function results(items, title) {
+    const photos = items.filter((p) => p.type === "photo").length;
+    const head = items.length > 1
+      ? `<div class="results-head"><span class="title">${items.length} items</span>${photos > 1 ? `<button class="btn" type="button" id="saveAll">Save all ${photos} photos</button>` : ""}</div>`
+      : "";
+    show("results", `<div class="results">${head}${items.map((p, i) => card(p, i, title, items.length)).join("")}</div>`);
+    $("saveAll")?.addEventListener("click", async () => {
+      for (const a of document.querySelectorAll("[data-save-photo]")) { a.click(); await new Promise((r) => setTimeout(r, 700)); }
+    });
+  }
+
+  // ---- MP3: fetch the audio through /api/file, convert on this device with lamejs ----
+  let lameLoading;
+  const loadLame = () => lameLoading ??= new Promise((ok, bad) => {
+    const s = document.createElement("script");
+    s.src = "/vendor/lame.min.js"; s.onload = ok; s.onerror = () => bad(new Error("encoder"));
+    document.head.appendChild(s);
+  });
+  const tick = () => new Promise((r) => setTimeout(r));
+
+  async function encodeMp3(audio, onProgress) {
+    const channels = Math.min(2, audio.numberOfChannels);
+    const enc = new lamejs.Mp3Encoder(channels, audio.sampleRate, 192);
+    const data = [...Array(channels)].map((_, c) => audio.getChannelData(c));
+    const toInt16 = (f) => { const o = new Int16Array(f.length); for (let i = 0; i < f.length; i++) { const v = Math.max(-1, Math.min(1, f[i])); o[i] = v < 0 ? v * 0x8000 : v * 0x7fff; } return o; };
+    const out = [], block = 1152 * 64;
+    for (let i = 0; i < audio.length; i += block) {
+      const parts = data.map((d) => toInt16(d.subarray(i, i + block)));
+      const mp3 = channels === 2 ? enc.encodeBuffer(parts[0], parts[1]) : enc.encodeBuffer(parts[0]);
+      if (mp3.length) out.push(new Uint8Array(mp3));
+      onProgress(Math.round((i / audio.length) * 100));
+      await tick();
+    }
+    const end = enc.flush();
+    if (end.length) out.push(new Uint8Array(end));
+    return new Blob(out, { type: "audio/mpeg" });
+  }
+
+  function saveBlob(blob, name) {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 60_000);
+  }
+
+  async function downloadMp3(btn) {
+    const src = btn.dataset.mp3, name = btn.dataset.name + ".mp3";
+    btn.disabled = true; btn.innerHTML = `<span class="spinner"></span> Getting audio`;
+    try {
+      const res = await fetch(fileUrl(src, name));
+      if (res.status === 413) throw new Error("This audio is too long to convert here.");
+      if (!res.ok) throw new Error("Couldn't fetch the audio. Try again shortly.");
+      const type = res.headers.get("content-type") || "";
+      const buf = await res.arrayBuffer();
+      let blob;
+      if (/mpeg|mp3/i.test(type) || /\.mp3(\?|$)/i.test(src)) {
+        blob = new Blob([buf], { type: "audio/mpeg" });
+      } else {
+        await loadLame();
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new Ctx();
+        const audio = await new Promise((ok, bad) => ctx.decodeAudioData(buf, ok, bad));
+        ctx.close?.();
+        blob = await encodeMp3(audio, (p) => { btn.innerHTML = `<span class="spinner"></span> Converting ${p}%`; });
+      }
+      saveBlob(blob, name);
+      btn.textContent = "Saved ✓";
+    } catch (e) {
+      show("err", esc(e?.message && !/decode|encoder|null/i.test(e.message) ? e.message : "Couldn't convert this audio to MP3."));
+      btn.textContent = "Download MP3";
+    } finally {
+      btn.disabled = false;
+    }
+  }
+  $("status").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-mp3]");
+    if (btn) downloadMp3(btn);
+  });
 
   // Opened by the one-step Shortcut as /#<link> (or /?url=<link>): fill the box and start.
   setTimeout(() => {
@@ -322,18 +454,18 @@
     if (!url) return show("err", ERRORS["link.missing"]);
     const go = $("go");
     go.disabled = true; go.innerHTML = `<span class="spinner"></span> Working`;
-    show("msg", "Fetching the original file…");
+    show("msg", mode === "audio" ? "Finding the audio…" : "Fetching the original file…");
     try {
       const res = await fetch(API, {
         method: "POST",
         headers: { "content-type": "application/json", accept: "application/json", authorization: "Api-Key " + store.get("sv_key") },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url, mode, quality: $("quality").value }),
       });
       const data = await res.json().catch(() => ({ status: "error", error: { code: "server" } }));
       if (data.status === "redirect") {
-        show("results", `<div class="results">${card({ url: data.url, thumb: data.thumbnail }, 0, data.title, 1)}</div>`);
+        results([{ type: data.type, url: data.url, thumb: data.thumbnail }], data.title);
       } else if (data.status === "picker") {
-        show("results", `<div class="results">${data.picker.map((p, i) => card(p, i, data.title, data.picker.length)).join("")}</div>`);
+        results(data.picker, data.title);
       } else {
         const code = data.error?.code;
         if (code === "auth.key.invalid") $("keyRow").classList.add("open");
