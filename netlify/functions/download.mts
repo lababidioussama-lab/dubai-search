@@ -81,6 +81,44 @@ async function tiktok(url: string, { mode, quality }: Options): Promise<object> 
   return { status: "redirect", type: "video", url: abs((hd && data.hdplay) || data.play), filename: `${data.id}.mp4`, ...base }
 }
 
+// Instagram blocks most server downloads, but its public embed page still lists the
+// full-size photos (display_url) and video files (video_url) of a post or carousel.
+const BROWSER_UA = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+
+export async function instagram(url: string, { mode }: Options): Promise<object | null> {
+  const code = url.match(/instagram\.com\/(?:[\w.]+\/)?(?:p|reel|reels|tv)\/([\w-]+)/)?.[1]
+  if (!code) return null
+  const res = await fetch(`https://www.instagram.com/p/${code}/embed/captioned/`, { headers: { "user-agent": BROWSER_UA } })
+  if (!res.ok) return null
+  const html = await res.text()
+  // The post data sits in JSON inside a JS string, so quotes and slashes may be escaped
+  // once or twice (\" \/ \\u0026). Match up to the next quote, then strip the escaping.
+  const clean = (v: string) => v.replace(/\\+\//g, "/").replace(/\\+u0026/g, "&").replace(/\\+/g, "")
+  const grab = (key: string) => [...new Set(
+    [...html.matchAll(new RegExp(`${key}\\\\*"\\s*:\\s*\\\\*"(https:[^"]*?)\\\\*"`, "g"))].map((m) => clean(m[1])),
+  )]
+  const videos = grab("video_url")
+  let photos = grab("display_url")
+  if (!photos.length) {
+    // Single photo without JSON: take the largest size from the image's srcset.
+    const srcset = html.match(/class="EmbeddedMediaImage"[^>]*srcset="([^"]+)"/)?.[1]
+    const best = srcset?.split(",").map((c) => c.trim().split(/\s+/))
+      .sort((a, b) => parseInt(b[1]) - parseInt(a[1]))[0]?.[0]
+    if (best) photos = [best.replace(/&amp;/g, "&")]
+  }
+  const title = html.match(/class="CaptionUsername"[^>]*>([^<]+)/)?.[1]?.trim() ?? "instagram"
+  const items = videos.length && mode === "video"
+    ? videos.map((u) => ({ type: "video", url: u, thumb: photos[0] }))
+    : videos.length ? videos.map((u) => ({ type: "audio", url: u, thumb: photos[0] }))
+    : photos.map((u) => ({ type: "photo", url: u, thumb: u }))
+  if (!items.length) return null
+  if (items.length === 1) {
+    const [it] = items
+    return { status: "redirect", type: it.type, url: it.url, filename: `${code}.${it.type === "photo" ? "jpg" : "mp4"}`, title, thumbnail: it.thumb }
+  }
+  return { status: "picker", title, picker: items }
+}
+
 // Photo-only posts: yt-dlp only handles video, so fall back to the page's preview image.
 async function pageImage(url: string): Promise<object | null> {
   const res = await fetch(url, { headers: { "user-agent": "Mozilla/5.0 (compatible; facebookexternalhit/1.1)" } })
@@ -123,7 +161,12 @@ export default async (req: Request) => {
 }
 
 async function resolve(url: string, opts: Options): Promise<object> {
-  if (/(^|\.)tiktok\.com$/.test(new URL(url).hostname)) return tiktok(url, opts)
+  const host = new URL(url).hostname
+  if (/(^|\.)tiktok\.com$/.test(host)) return tiktok(url, opts)
+  if (/(^|\.)instagram\.com$/.test(host)) {
+    const post = await instagram(url, opts).catch(() => null)
+    if (post) return post
+  }
   let info: any
   try {
     info = await runYtDlp(url, opts)
