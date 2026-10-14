@@ -1,40 +1,79 @@
-# Save TikTok — my own video-saver Shortcut
+# Save Video — my own "download from any link" Shortcut
 
-Share a TikTok link → the video (no watermark) is saved to Photos.
-It replaces the "SnapVideo" shortcut, which routed every link through `api.phimtat.vn`.
-This one talks directly to the public TikTok resolver `tikwm.com` and nothing else.
+Copy or share a link from **TikTok, Instagram, YouTube, X/Twitter, Facebook, Reddit,
+Pinterest, Snapchat, Vimeo, Twitch clips** and more → the video is saved to Photos,
+without watermark. Carousels / slideshows save every item.
 
-## Option A — build it by hand on iPhone (recommended, ~3 min)
+It replaces "SnapVideo", which sent every link through `api.phimtat.vn`.
 
-Open **Shortcuts → +**, name it **Save TikTok**, then add these actions in order:
+| Link | Handled by |
+| --- | --- |
+| TikTok | `tikwm.com` — works right away, no setup |
+| Everything else | **your own cobalt server** ([cobalt](https://github.com/imputnet/cobalt), open source) |
 
-1. **Match Text** — pattern `https?://\S+`, in **Shortcut Input**
-2. **Get Item from List** — **First Item** of **Matches**
-3. **Get Contents of URL** — URL `https://www.tikwm.com/api/`
-   - Method: **POST**, Request Body: **Form**
-   - Field `url` = **Item from List**
-   - Field `hd` = `1`
-4. **Get Dictionary Value** — **Value** for key `data.play` in **Contents of URL**
-5. **Get Contents of URL** — URL = **Dictionary Value**
-6. **Save to Photo Album** — **Contents of URL** → Recents
-7. **Show Notification** — "Video saved to Photos"
+> The official `api.cobalt.tools` blocks apps like Shortcuts, so you run your own copy (step 1).
 
-Then tap the **ⓘ** (details) button:
-- Turn on **Show in Share Sheet**, accept **URLs** and **Text**
-- Set **If there's no input** → **Get Clipboard**
+## 1. Run your cobalt server
 
-**Use it:** in TikTok tap **Share → More → Save TikTok**, or copy the link and run the shortcut.
-
-## Option B — generate the file (needs a Mac to sign)
+Any machine with Docker and a public https address (a small VPS, or a home server behind
+Cloudflare Tunnel) works:
 
 ```sh
-python3 build_shortcut.py
-shortcuts sign -m anyone -i SaveTikTok.shortcut -o SaveTikTok-signed.shortcut
+cd server
+# edit API_URL in docker-compose.yml to your https address
+docker compose up -d
 ```
 
-AirDrop `SaveTikTok-signed.shortcut` to your iPhone. iOS will not import the unsigned file.
+Optional — make it private: copy `keys.example.json` to `keys.json`, replace the key with
+your own UUID (`uuidgen`), and uncomment the auth lines in `docker-compose.yml`.
+
+## 2. Build the Shortcut on iPhone (~5 min)
+
+Shortcuts → **+** → name it **Save Video**, then add:
+
+1. **Text** — `https://cobalt.your-domain.com/` (your server)
+2. **Match Text** — pattern `https?://\S+` in **Shortcut Input**
+3. **Get Item from List** — **First Item** of **Matches**
+4. **If** **Item from List** **contains** `tiktok.com`
+   1. **Get Contents of URL** — `https://www.tikwm.com/api/`, Method **POST**, Body **Form**:
+      `url` = **Item from List**, `hd` = `1`
+   2. **Get Dictionary Value** — key `data.play`
+   3. **Add to Variable** — `Links`
+5. **Otherwise**
+   1. **Get Contents of URL** — URL = **Text** (step 1), Method **POST**
+      - Headers: `Accept` = `application/json`, `Content-Type` = `application/json`
+        (+ `Authorization` = `Api-Key YOUR-KEY` if you made it private)
+      - Body **JSON**: `url` = **Item from List**, `videoQuality` = `1080`
+   2. **Get Dictionary Value** — key `status` → call it *Status*
+   3. **If** *Status* **is** `picker`
+      1. **Get Dictionary Value** — key `picker` in **Contents of URL**
+      2. **Repeat with Each** item → **Get Dictionary Value** `url` in **Repeat Item**
+         → **Add to Variable** `Links`
+   4. **Otherwise**
+      1. **Get Dictionary Value** — key `url` in **Contents of URL** → **Add to Variable** `Links`
+   5. **End If**
+6. **End If**
+7. **Repeat with Each** item in **Links**
+   1. **Get Contents of URL** — **Repeat Item**
+   2. **Save to Photo Album** — **Contents of URL**
+8. **End Repeat** → **Show Notification** "Saved to Photos"
+
+Tap **ⓘ** → turn on **Show in Share Sheet** (URLs, Text) and set
+**If there's no input → Get Clipboard**.
+
+**Use it:** any app → **Share → Save Video**, or copy a link and run the shortcut
+(or add it to your Home Screen / Back Tap).
+
+## Or generate the file (needs a Mac to sign)
+
+```sh
+python3 build_shortcut.py https://cobalt.your-domain.com/ [API_KEY]
+shortcuts sign -m anyone -i SaveVideo.shortcut -o SaveVideo-signed.shortcut
+```
+
+AirDrop the signed file to your iPhone — iOS will not import an unsigned one.
 
 ## Notes
-- Photo slideshows (image posts) are not handled — only videos.
-- For the watermarked version use key `data.wmplay`; for audio only use `data.music`.
-- tikwm.com is a free third-party service; if it rate-limits you, wait a moment and retry.
+- YouTube often blocks servers in data centers; a home server usually works better for it.
+- If something fails, add **Quick Look** after the cobalt request to see its error message.
+- Only download content you have the right to save.

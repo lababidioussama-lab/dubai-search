@@ -1,0 +1,18 @@
+# Your own cobalt download server (https://github.com/imputnet/cobalt).
+# 1. Set API_URL to the public https address this server will be reachable at.
+# 2. docker compose up -d
+services:
+  cobalt:
+    image: ghcr.io/imputnet/cobalt:11
+    init: true
+    read_only: true
+    restart: unless-stopped
+    ports:
+      - 9000:9000/tcp
+    environment:
+      API_URL: "https://cobalt.your-domain.com/"
+      # Uncomment to require the key from keys.json (so only you can use it):
+      # API_AUTH_REQUIRED: 1
+      # API_KEY_URL: "file:///keys.json"
+    # volumes:
+    #   - ./keys.json:/keys.json:ro
