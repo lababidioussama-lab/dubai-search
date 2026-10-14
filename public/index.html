@@ -208,19 +208,17 @@
       <div>
         <div class="eyebrow">iPhone &amp; iPad</div>
         <h2>Save straight from the share sheet</h2>
-        <p class="section-lead">Build the Shortcut once in the Shortcuts app — about five minutes. After that, share any link to <b>SaveVideo</b> and the file lands in Photos.</p>
+        <p class="section-lead">A one-step Shortcut — set up in under a minute. Share any link to <b>SaveVideo</b> and this page opens with your video ready.</p>
         <div class="card" style="padding:18px 20px">
-          <div style="font-size:14px;color:var(--muted);margin-bottom:6px">Server address</div>
-          <code id="api"></code><button class="linkish copy" data-copy="api" type="button">Copy</button>
+          <div style="font-size:14px;color:var(--muted);margin-bottom:6px">Shortcut address</div>
+          <code id="share"></code><button class="linkish copy" data-copy="share" type="button">Copy</button>
         </div>
       </div>
       <ol class="steps">
-        <li class="card"><div><b>Match Text</b> <code>https?://\S+</code> in Shortcut Input, then <b>Get Item from List</b> → First Item.</div></li>
-        <li class="card"><div><b>Get Contents of URL</b> → the server address above, Method <b>POST</b>.
-          <div class="sub">Headers <code>Content-Type: application/json</code>, <code>Authorization: Api-Key …</code> · JSON body <code>url</code> = Item from List</div></div></li>
-        <li class="card"><div><b>Get Dictionary Value</b> <code>status</code>. If it is <code>picker</code>, repeat over <code>picker</code> and take each <code>url</code>; otherwise take <code>url</code>. Add each to variable <b>Links</b>.</div></li>
-        <li class="card"><div><b>Repeat with Each</b> in Links → <b>Get Contents of URL</b> → <b>Save to Photo Album</b>.</div></li>
-        <li class="card"><div>In <b>ⓘ Details</b>, turn on <b>Show in Share Sheet</b> and set <b>If there's no input</b> → Get Clipboard.</div></li>
+        <li class="card"><div>Open <b>Shortcuts</b>, tap <b>+</b>, and name it <b>SaveVideo</b>.</div></li>
+        <li class="card"><div>Add the action <b>Open URLs</b>. Paste the address above, then right after it insert the variable <b>Shortcut Input</b>.</div></li>
+        <li class="card"><div>Tap <b>ⓘ</b>: turn on <b>Show in Share Sheet</b> and set <b>If there's no input</b> → <b>Get Clipboard</b>.</div></li>
+        <li class="card"><div>In any app: <b>Share → SaveVideo</b>. Tap <b>Download video</b>, then <b>Share → Save Video</b> to put it in Photos.</div></li>
       </ol>
     </div>
   </section>
@@ -259,7 +257,7 @@
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return ""; } };
 
-  $("api").textContent = API;
+  $("share").textContent = location.origin + "/#";
   $("year").textContent = new Date().getFullYear();
 
   // Key: from ?key= once (then removed from the address bar), else from storage.
@@ -298,6 +296,15 @@
       <a class="btn" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" download>${isPhoto ? "Save photo" : "Download video"}</a>
     </div></div>`;
   }
+
+  // Opened by the one-step Shortcut as /#<link> (or /?url=<link>): fill the box and start.
+  setTimeout(() => {
+    const shared = decodeURIComponent(location.hash.slice(1)).match(/https?:\/\/\S+/)?.[0] || params.get("url");
+    if (!shared) return;
+    history.replaceState(null, "", location.pathname);
+    $("url").value = shared;
+    $("form").requestSubmit();
+  });
 
   $("form").onsubmit = async (e) => {
     e.preventDefault();
