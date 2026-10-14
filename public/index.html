@@ -6,6 +6,11 @@
 <title>SaveVideo — Download videos without watermark</title>
 <meta name="description" content="Paste a link from TikTok, Instagram, X, Facebook, Reddit and more. Get the original video, without watermark.">
 <meta name="theme-color" content="#0b0d12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SaveVideo">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="/icon-180.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%235b5bf7'/%3E%3Cpath d='M16 8v12m0 0-5-5m5 5 5-5M9 24h14' stroke='white' stroke-width='2.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <style>
   :root {
@@ -94,7 +99,9 @@
   .result .btn { min-height: 40px; padding: 0 16px; font-size: 14px; }
 
   .cta-row { margin-top: 18px; }
-  .add-shortcut { padding: 0 22px; }
+  .add-app { padding: 0 22px; }
+  .inline-ic { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 7px; background: var(--surface-2); color: var(--accent); vertical-align: middle; }
+  html.standalone .install-only { display: none; }
   .hint { color: var(--muted); font-size: 14px; margin: 10px 0 24px; }
   .platforms { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 28px auto 0; max-width: 720px; }
   .platforms span { padding: 6px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); font-size: 13px; color: var(--muted); }
@@ -150,7 +157,7 @@
     </a>
     <nav>
       <a href="#features">Features</a>
-      <a href="#shortcut">iPhone Shortcut</a>
+      <a href="#app">iPhone app</a>
       <a href="#faq">FAQ</a>
     </nav>
   </div>
@@ -166,9 +173,9 @@
       <form id="form" autocomplete="off">
         <label class="field">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
-          <input id="url" type="url" inputmode="url" placeholder="Paste a video link…" aria-label="Video link" required>
+          <input id="url" type="url" inputmode="url" placeholder="Paste a video link…" aria-label="Video link">
         </label>
-        <button class="btn" id="go" type="submit">Download</button>
+        <button class="btn" id="go" type="submit">Paste &amp; Download</button>
       </form>
       <div class="options">
         <div class="seg" role="radiogroup" aria-label="What to download">
@@ -201,7 +208,7 @@
 
     <div id="status" aria-live="polite"></div>
 
-    <div class="cta-row"><a class="btn add-shortcut" href="#shortcut"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/></svg> Add Shortcut to iPhone</a></div>
+    <div class="cta-row install-only"><a class="btn add-app" href="#app"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/></svg> Add to Home Screen</a></div>
 
     <div class="platforms" aria-label="Supported platforms">
       <span>TikTok</span><span>Instagram</span><span>X / Twitter</span><span>Facebook</span><span>Reddit</span>
@@ -234,24 +241,17 @@
     </div>
   </section>
 
-  <section id="shortcut">
+  <section id="app">
     <div class="wrap split">
       <div>
         <div class="eyebrow">iPhone &amp; iPad</div>
-        <h2>Save straight from the share sheet</h2>
-        <p class="section-lead">Add the Shortcut in one tap. Then share any link to <b>SaveVideo</b> and this page opens with your video ready.</p>
-        <p><a class="btn add-shortcut" href="#shortcut-steps"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/></svg> Add Shortcut</a></p>
-        <p class="hint" id="manualHint">Or build it yourself in under a minute — steps on the right.</p>
-        <div class="card" style="padding:18px 20px">
-          <div style="font-size:14px;color:var(--muted);margin-bottom:6px">Shortcut address</div>
-          <code id="share"></code><button class="linkish copy" data-copy="share" type="button">Copy</button>
-        </div>
+        <h2>Put SaveVideo on your Home Screen</h2>
+        <p class="section-lead">It opens full-screen like an app. Copy a link anywhere, open SaveVideo, tap <b>Paste &amp; Download</b> — done.</p>
       </div>
-      <ol class="steps" id="shortcut-steps">
-        <li class="card"><div>Open <b>Shortcuts</b>, tap <b>+</b>, and name it <b>SaveVideo</b>.</div></li>
-        <li class="card"><div>Add the action <b>Open URLs</b>. Paste the address above, then right after it insert the variable <b>Shortcut Input</b>.</div></li>
-        <li class="card"><div>Tap <b>ⓘ</b>: turn on <b>Show in Share Sheet</b> and set <b>If there's no input</b> → <b>Get Clipboard</b>.</div></li>
-        <li class="card"><div>In any app: <b>Share → SaveVideo</b>. Tap <b>Download video</b>, then <b>Share → Save Video</b> to put it in Photos.</div></li>
+      <ol class="steps">
+        <li class="card"><div>In Safari, tap the <b>Share</b> button <span class="inline-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-label="Share"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg></span> at the bottom.</div></li>
+        <li class="card"><div>Scroll down and tap <b>Add to Home Screen</b>, then <b>Add</b>.</div></li>
+        <li class="card"><div>Copy a link in TikTok, Instagram or any app → open <b>SaveVideo</b> → <b>Paste &amp; Download</b>.</div></li>
       </ol>
     </div>
   </section>
@@ -289,9 +289,8 @@
 (() => {
   const $ = (id) => document.getElementById(id);
   const API = location.origin + "/api";
-  // iCloud link of the SaveVideo Shortcut (Shortcuts → long-press → Share → Copy iCloud Link).
-  const SHORTCUT_ICLOUD = "";
-  if (SHORTCUT_ICLOUD) document.querySelectorAll(".add-shortcut").forEach((a) => { a.href = SHORTCUT_ICLOUD; a.target = "_blank"; a.rel = "noopener"; });
+  const standalone = navigator.standalone || matchMedia("(display-mode: standalone)").matches;
+  if (standalone) document.documentElement.classList.add("standalone");
   const store = {
     get: (k) => { try { return localStorage.getItem(k) || ""; } catch { return ""; } },
     set: (k, v) => { try { localStorage.setItem(k, v); } catch {} },
@@ -299,17 +298,24 @@
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return ""; } };
 
-  $("share").textContent = location.origin + "/#";
   $("year").textContent = new Date().getFullYear();
 
-  // Key: from ?key= once (then removed from the address bar), else from storage.
+  // Key: from ?key= or #key= (the Home Screen app starts with it), else from storage.
   const params = new URLSearchParams(location.search);
-  if (params.get("key")) { store.set("sv_key", params.get("key")); history.replaceState(null, "", location.pathname + location.hash); }
+  const linkKey = params.get("key") || location.hash.match(/^#key=([\w-]+)/)?.[1];
+  if (linkKey) store.set("sv_key", linkKey);
+  // The Home Screen app keeps its own storage, so in Safari keep the key in the address
+  // (#key=…) — "Add to Home Screen" saves the current address, and the app picks it up.
+  const keepKeyInAddress = () => {
+    const k = store.get("sv_key");
+    history.replaceState(null, "", location.pathname + (k && !standalone ? "#key=" + k : ""));
+  };
+  if (linkKey) keepKeyInAddress();
   $("key").value = store.get("sv_key");
   if (!$("key").value) $("keyRow").classList.add("open");
 
   $("toggleKey").onclick = () => $("keyRow").classList.toggle("open");
-  $("saveKey").onclick = () => { store.set("sv_key", $("key").value.trim()); $("keyRow").classList.remove("open"); show("msg", "Key saved on this device."); };
+  $("saveKey").onclick = () => { store.set("sv_key", $("key").value.trim()); keepKeyInAddress(); $("keyRow").classList.remove("open"); show("msg", "Key saved on this device."); };
   $("paste").onclick = async () => {
     try { $("url").value = (await navigator.clipboard.readText()).trim(); $("url").focus(); }
     catch { $("url").focus(); show("msg", "Long-press the box and choose Paste."); }
@@ -443,15 +449,22 @@
   setTimeout(() => {
     const shared = decodeURIComponent(location.hash.slice(1)).match(/https?:\/\/\S+/)?.[0] || params.get("url");
     if (!shared) return;
-    history.replaceState(null, "", location.pathname);
+    keepKeyInAddress();
     $("url").value = shared;
     $("form").requestSubmit();
   });
 
+  const label = () => { $("go").textContent = $("url").value.trim() ? "Download" : "Paste & Download"; };
+  $("url").addEventListener("input", label);
+
   $("form").onsubmit = async (e) => {
     e.preventDefault();
+    if (!$("url").value.trim()) {
+      try { $("url").value = (await navigator.clipboard.readText()).trim(); }
+      catch { $("url").focus(); return show("msg", "Long-press the box and tap Paste, then Download."); }
+    }
     const url = $("url").value.trim().match(/https?:\/\/\S+/)?.[0];
-    if (!url) return show("err", ERRORS["link.missing"]);
+    if (!url) { label(); return show("err", "No link found — copy a video link first."); }
     const go = $("go");
     go.disabled = true; go.innerHTML = `<span class="spinner"></span> Working`;
     show("msg", mode === "audio" ? "Finding the audio…" : "Fetching the original file…");
@@ -474,7 +487,7 @@
     } catch {
       show("err", "Can't reach the server. Check your connection and try again.");
     } finally {
-      go.disabled = false; go.textContent = "Download";
+      go.disabled = false; label();
     }
   };
 })();
