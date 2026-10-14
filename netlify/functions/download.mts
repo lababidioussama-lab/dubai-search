@@ -4,6 +4,9 @@
 //   {status: "picker", title, picker: [{type, url, thumb}]}       carousel / slideshow
 //   {status: "error", error: {code}}
 // type is "video", "audio" or "photo".
+// GET /api?redirect=1&mode=video&url=<post link> answers with a redirect to the file itself,
+// so an iOS Shortcut can do: Get Contents of URL -> Save to Photo Album. The link goes last
+// and may stay unencoded (its own ?/& are kept).
 // If the API_KEY env var is set, requests need the header "Authorization: Api-Key <key>".
 import type { Config } from "@netlify/functions"
 import { execFile } from "node:child_process"
@@ -98,7 +101,9 @@ export default async (req: Request) => {
 
   const q = new URL(req.url).searchParams
   const body = req.method === "POST" ? await req.json().catch(() => ({})) : {}
-  const url: string | null = body.url ?? q.get("url")
+  const rawLink = req.url.split(/[?&]url=/)[1]
+  const url: string | null = body.url ?? (rawLink ? decodeURIComponent(rawLink).trim() : null)
+  const redirect = q.has("redirect")
   const opts: Options = {
     mode: (body.mode ?? q.get("mode")) === "audio" ? "audio" : "video",
     quality: String(body.quality ?? body.videoQuality ?? q.get("quality") ?? "max"),
@@ -106,28 +111,37 @@ export default async (req: Request) => {
   if (!url || !/^https?:\/\//.test(url)) return fail("link.missing")
 
   try {
-    if (/(^|\.)tiktok\.com$/.test(new URL(url).hostname)) return reply(await tiktok(url, opts))
-    let info: any
-    try {
-      info = await runYtDlp(url, opts)
-    } catch (e) {
-      const image = opts.mode === "video" ? await pageImage(url).catch(() => null) : null
-      if (image) return reply(image)
-      throw e
+    const result: any = await resolve(url, opts)
+    if (redirect && result.status !== "error") {
+      const target = result.status === "picker" ? result.picker[0]?.url : result.url
+      if (target) return Response.redirect(target, 302)
     }
-    const items = (info.entries ?? [info]).filter((e: any) => e?.url)
-    if (!items.length) return fail("content.not_found", 404)
-    if (items.length === 1) {
-      const [e] = items
-      return reply({
-        status: "redirect", type: typeOf(e, opts.mode), url: e.url,
-        filename: `${e.id ?? "file"}.${e.ext ?? "mp4"}`, title: e.title ?? info.title, thumbnail: e.thumbnail ?? info.thumbnail,
-      })
-    }
-    return reply({ status: "picker", title: info.title, picker: items.map((e: any) => ({ type: typeOf(e, opts.mode), url: e.url, thumb: e.thumbnail })) })
+    return reply(result, result.status === "error" ? 404 : 200)
   } catch (e) {
     return reply({ status: "error", error: { code: "fetch.fail", message: String((e as Error).message) } }, 502)
   }
+}
+
+async function resolve(url: string, opts: Options): Promise<object> {
+  if (/(^|\.)tiktok\.com$/.test(new URL(url).hostname)) return tiktok(url, opts)
+  let info: any
+  try {
+    info = await runYtDlp(url, opts)
+  } catch (e) {
+    const image = opts.mode === "video" ? await pageImage(url).catch(() => null) : null
+    if (image) return image
+    throw e
+  }
+  const items = (info.entries ?? [info]).filter((e: any) => e?.url)
+  if (!items.length) return { status: "error", error: { code: "content.not_found" } }
+  if (items.length === 1) {
+    const [e] = items
+    return {
+      status: "redirect", type: typeOf(e, opts.mode), url: e.url,
+      filename: `${e.id ?? "file"}.${e.ext ?? "mp4"}`, title: e.title ?? info.title, thumbnail: e.thumbnail ?? info.thumbnail,
+    }
+  }
+  return { status: "picker", title: info.title, picker: items.map((e: any) => ({ type: typeOf(e, opts.mode), url: e.url, thumb: e.thumbnail })) }
 }
 
 export const config: Config = { path: "/api", method: ["GET", "POST"] }
