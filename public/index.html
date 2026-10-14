@@ -331,7 +331,8 @@
     const label = n > 1 ? `${LABEL[type]} ${i + 1} of ${n}` : (title || `Your ${LABEL[type].toLowerCase()}`);
     const thumb = item.thumb ? `<img class="thumb" src="${esc(item.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">` : `<div class="thumb"></div>`;
     let action;
-    const save = (name, mime, kind) => `<button class="btn" type="button" data-save="${esc(item.url)}" data-name="${esc(name)}" data-mime="${mime}" data-kind="${kind}">Save to Photos</button>`;
+    const alt = (item.alt || []).join(" ");
+    const save = (name, mime, kind) => `<button class="btn" type="button" data-save="${esc(item.url)}" data-alt="${esc(alt)}" data-name="${esc(name)}" data-mime="${mime}" data-kind="${kind}">Save to Photos</button>`;
     const open = `<a class="btn ghost" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Open</a>`;
     if (type === "photo") action = save(base + ".jpg", "image/jpeg", "photo") + open;
     else if (type === "audio") action = `<button class="btn" type="button" data-mp3="${esc(item.url)}" data-name="${esc(base)}">Download MP3</button>`;
@@ -419,14 +420,26 @@
   // ---- Save to Photos: fetch through /api/file, then open the iPhone share sheet
   // (Save Video / Save Image). Elsewhere, or without file sharing, download instead. ----
   const prepared = new WeakMap(); // button -> File[] ready to share on the next tap
+  // Try each version of the file: straight from its site (works when the site allows it,
+  // with no size limit), then through our relay. The first one that works wins.
   async function fetchFile(btn) {
     const name = btn.dataset.name;
-    const res = await fetch(fileUrl(btn.dataset.save, name));
-    if (res.status === 413) throw new Error("big");
-    if (!res.ok) throw new Error("fetch");
-    const blob = await res.blob();
-    const type = blob.type && blob.type !== "application/octet-stream" ? blob.type : btn.dataset.mime;
-    return new File([blob], name, { type });
+    const sources = [btn.dataset.save, ...(btn.dataset.alt || "").split(" ").filter(Boolean)];
+    let big = false, reason = "";
+    for (const src of sources) {
+      for (const url of [src, fileUrl(src, name)]) {
+        try {
+          const res = await fetch(url, { referrerPolicy: "no-referrer" });
+          if (res.status === 413) { big = true; continue; }
+          if (!res.ok) { reason = (await res.text().catch(() => "")).replace(/^Could not fetch the file\s*/i, "").replace(/[()]/g, "").slice(0, 60) || `error ${res.status}`; continue; }
+          const blob = await res.blob();
+          if (!blob.size) continue;
+          const type = blob.type && blob.type !== "application/octet-stream" ? blob.type : btn.dataset.mime;
+          return new File([blob], name, { type });
+        } catch { /* blocked by the site (CORS) or network: try the next way */ }
+      }
+    }
+    throw new Error(big ? "big" : reason || "fetch");
   }
   async function deliver(btn, files, idle) {
     if (navigator.canShare?.({ files })) {
@@ -455,7 +468,7 @@
       btn.disabled = false; btn.textContent = idle;
       show("err", e.message === "big"
         ? "This video is too big to save directly. Tap Open, then the Share button → Save Video."
-        : "Couldn't get the file. Try again, or tap Open.");
+        : `Couldn't get the file${e.message !== "fetch" ? ` (site answered ${e.message})` : ""}. Tap Open, then Share → Save Video.`);
     }
   }
 
@@ -497,7 +510,7 @@
       });
       const data = await res.json().catch(() => ({ status: "error", error: { code: "server" } }));
       if (data.status === "redirect") {
-        results([{ type: data.type, url: data.url, thumb: data.thumbnail }], data.title);
+        results([{ type: data.type, url: data.url, alt: data.alt, thumb: data.thumbnail }], data.title);
       } else if (data.status === "picker") {
         results(data.picker, data.title);
       } else {

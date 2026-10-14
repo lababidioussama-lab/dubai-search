@@ -78,7 +78,8 @@ async function tiktok(url: string, { mode, quality }: Options): Promise<object> 
     return { status: "picker", title: data.title, picker: data.images.map((u: string) => ({ type: "photo", url: u, thumb: u })) }
   }
   const hd = quality === "max" || Number(quality) >= 1080
-  return { status: "redirect", type: "video", url: abs((hd && data.hdplay) || data.play), filename: `${data.id}.mp4`, ...base }
+  const versions = [...new Set((hd ? [data.hdplay, data.play] : [data.play, data.hdplay]).filter(Boolean).map(abs))]
+  return { status: "redirect", type: "video", url: versions[0], alt: versions.slice(1), filename: `${data.id}.mp4`, ...base }
 }
 
 // Instagram blocks most server downloads, but its public embed page still lists the

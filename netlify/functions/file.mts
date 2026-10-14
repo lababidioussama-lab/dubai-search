@@ -14,9 +14,12 @@ export default async (req: Request) => {
   if (!/^https?:\/\//.test(target)) return new Response("Missing file link", { status: 400 })
 
   const upstream = await fetch(target, {
-    headers: { "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1" },
+    redirect: "follow",
+    headers: { referer: new URL(target).origin + "/", "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1" },
   }).catch(() => null)
-  if (!upstream?.ok || !upstream.body) return new Response("Could not fetch the file", { status: 502 })
+  if (!upstream?.ok || !upstream.body) {
+    return new Response(`Could not fetch the file (${upstream?.status ?? "no response"})`, { status: 502 })
+  }
 
   const size = Number(upstream.headers.get("content-length") ?? 0)
   if (size > MAX_BYTES) return new Response("File too large to relay", { status: 413 })
