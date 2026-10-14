@@ -1,0 +1,8 @@
+# Save Video server: a Netlify function that turns a post link into a direct video link.
+[build]
+  # Fetch the yt-dlp standalone binary at build time (always the latest release).
+  command = "mkdir -p bin && curl -fsSL -o bin/yt-dlp https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_linux && chmod +x bin/yt-dlp"
+  publish = "public"
+
+[functions]
+  included_files = ["bin/yt-dlp"]

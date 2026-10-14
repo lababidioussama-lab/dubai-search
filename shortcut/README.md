@@ -9,14 +9,19 @@ It replaces "SnapVideo", which sent every link through `api.phimtat.vn`.
 | Link | Handled by |
 | --- | --- |
 | TikTok | `tikwm.com` — works right away, no setup |
-| Everything else | **your own cobalt server** ([cobalt](https://github.com/imputnet/cobalt), open source) |
+| Everything else | **your own server** — `https://save-video-ol.netlify.app/api` |
 
-> The official `api.cobalt.tools` blocks apps like Shortcuts, so you run your own copy (step 1).
+## 1. Your server
 
-## 1. Run your cobalt server
+The server is the Netlify function in [`netlify/functions/download.mts`](../netlify/functions/download.mts)
+(project **save-video-ol**, see the main [README](../README.md) to put it online).
+It requires the header `Authorization: Api-Key <your key>`.
+
+### Alternative: a cobalt server with Docker
 
 Any machine with Docker and a public https address (a small VPS, or a home server behind
-Cloudflare Tunnel) works:
+Cloudflare Tunnel) can run [cobalt](https://github.com/imputnet/cobalt) instead — it is
+stronger on YouTube. The Shortcut works with either:
 
 ```sh
 cd server
@@ -31,7 +36,7 @@ your own UUID (`uuidgen`), and uncomment the auth lines in `docker-compose.yml`.
 
 Shortcuts → **+** → name it **Save Video**, then add:
 
-1. **Text** — `https://cobalt.your-domain.com/` (your server)
+1. **Text** — `https://save-video-ol.netlify.app/api` (your server)
 2. **Match Text** — pattern `https?://\S+` in **Shortcut Input**
 3. **Get Item from List** — **First Item** of **Matches**
 4. **If** **Item from List** **contains** `tiktok.com`
@@ -42,7 +47,7 @@ Shortcuts → **+** → name it **Save Video**, then add:
 5. **Otherwise**
    1. **Get Contents of URL** — URL = **Text** (step 1), Method **POST**
       - Headers: `Accept` = `application/json`, `Content-Type` = `application/json`
-        (+ `Authorization` = `Api-Key YOUR-KEY` if you made it private)
+        and `Authorization` = `Api-Key YOUR-KEY`
       - Body **JSON**: `url` = **Item from List**, `videoQuality` = `1080`
    2. **Get Dictionary Value** — key `status` → call it *Status*
    3. **If** *Status* **is** `picker`
@@ -67,13 +72,14 @@ Tap **ⓘ** → turn on **Show in Share Sheet** (URLs, Text) and set
 ## Or generate the file (needs a Mac to sign)
 
 ```sh
-python3 build_shortcut.py https://cobalt.your-domain.com/ [API_KEY]
+python3 build_shortcut.py https://save-video-ol.netlify.app/api YOUR-KEY
 shortcuts sign -m anyone -i SaveVideo.shortcut -o SaveVideo-signed.shortcut
 ```
 
 AirDrop the signed file to your iPhone — iOS will not import an unsigned one.
 
 ## Notes
-- YouTube often blocks servers in data centers; a home server usually works better for it.
+- YouTube often blocks servers in data centers, and the Netlify server only gets YouTube's
+  360p single-file version; use the cobalt option if YouTube matters to you.
 - If something fails, add **Quick Look** after the cobalt request to see its error message.
 - Only download content you have the right to save.

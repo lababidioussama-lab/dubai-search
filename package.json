@@ -1,0 +1,8 @@
+{
+  "name": "save-video-server",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@netlify/functions": "^6.0.2"
+  }
+}
