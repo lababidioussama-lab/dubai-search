@@ -119,6 +119,11 @@ export async function instagram(url: string, { mode }: Options): Promise<object 
   return { status: "picker", title, picker: items }
 }
 
+async function expand(url: string): Promise<string> {
+  const res = await fetch(url, { headers: { "user-agent": BROWSER_UA } }).catch(() => null)
+  return res?.url && /tiktok\.com/.test(res.url) ? res.url : url
+}
+
 // Photo-only posts: yt-dlp only handles video, so fall back to the page's preview image.
 async function pageImage(url: string): Promise<object | null> {
   const res = await fetch(url, { headers: { "user-agent": "Mozilla/5.0 (compatible; facebookexternalhit/1.1)" } })
@@ -163,6 +168,8 @@ export default async (req: Request) => {
 async function resolve(url: string, opts: Options): Promise<object> {
   const host = new URL(url).hostname
   if (/(^|\.)tiktok\.com$/.test(host)) return tiktok(url, opts)
+  // TikTok's newer share links (tt.site/t/…) redirect to tiktok.com: expand them first.
+  if (/(^|\.)tt\.site$/.test(host)) return tiktok(await expand(url), opts)
   if (/(^|\.)instagram\.com$/.test(host)) {
     const post = await instagram(url, opts).catch(() => null)
     if (post) return post
