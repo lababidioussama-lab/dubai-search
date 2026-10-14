@@ -250,12 +250,12 @@
     <div class="wrap">
       <div class="eyebrow">FAQ</div>
       <h2>Questions</h2>
-      <details class="card"><summary>The download opened in a new tab instead of saving</summary>
-        <p>Some sites only allow viewing in the browser. On iPhone tap the share icon → Save Video; on a computer right-click the video → Save video as.</p></details>
+      <details class="card"><summary>How do I save to Photos?</summary>
+        <p>Tap <b>Save to Photos</b>, then choose <b>Save Video</b> (or <b>Save Image</b>) in the menu that opens. If the button says “Tap again to save”, tap it once more. Very large videos open instead — tap Share → Save Video there.</p></details>
       <details class="card"><summary>How do I get the MP3?</summary>
         <p>Choose “MP3 audio” before tapping Download. The audio is converted to MP3 right on your device, then saved to Downloads (Files app on iPhone). Very long audio (over ~20&nbsp;MB) can't be converted.</p></details>
       <details class="card"><summary>Can I save photos?</summary>
-        <p>Yes — TikTok photo slideshows and photo posts on most sites. Use “Save photo” or “Save all”. On iPhone the photos go to Downloads; open one and tap Share → Save Image to add it to Photos.</p></details>
+        <p>Yes — TikTok photo slideshows and photo posts on most sites. Use “Save to Photos” or “Save all”, then choose Save Images.</p></details>
       <details class="card"><summary>Why isn't my video in the quality I picked?</summary>
         <p>You get the best version the site offers up to that quality. Some sites (like YouTube) only offer low quality as a single file with sound.</p></details>
       <details class="card"><summary>A link doesn't work</summary>
@@ -331,9 +331,11 @@
     const label = n > 1 ? `${LABEL[type]} ${i + 1} of ${n}` : (title || `Your ${LABEL[type].toLowerCase()}`);
     const thumb = item.thumb ? `<img class="thumb" src="${esc(item.thumb)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">` : `<div class="thumb"></div>`;
     let action;
-    if (type === "photo") action = `<a class="btn" href="${esc(fileUrl(item.url, base + ".jpg"))}" data-save-photo>Save photo</a>`;
+    const save = (name, mime, kind) => `<button class="btn" type="button" data-save="${esc(item.url)}" data-name="${esc(name)}" data-mime="${mime}" data-kind="${kind}">Save to Photos</button>`;
+    const open = `<a class="btn ghost" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Open</a>`;
+    if (type === "photo") action = save(base + ".jpg", "image/jpeg", "photo") + open;
     else if (type === "audio") action = `<button class="btn" type="button" data-mp3="${esc(item.url)}" data-name="${esc(base)}">Download MP3</button>`;
-    else action = `<a class="btn" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" download>Download video</a>`;
+    else action = save(base + ".mp4", "video/mp4", "video") + open;
     return `<div class="card result">${thumb}<div class="meta">
       <div class="title">${esc(label)}</div>
       <div class="sub">${esc(n > 1 && title ? title : host(item.url))}</div>
@@ -347,9 +349,8 @@
       ? `<div class="results-head"><span class="title">${items.length} items</span>${photos > 1 ? `<button class="btn" type="button" id="saveAll">Save all ${photos} photos</button>` : ""}</div>`
       : "";
     show("results", `<div class="results">${head}${items.map((p, i) => card(p, i, title, items.length)).join("")}</div>`);
-    $("saveAll")?.addEventListener("click", async () => {
-      for (const a of document.querySelectorAll("[data-save-photo]")) { a.click(); await new Promise((r) => setTimeout(r, 700)); }
-    });
+    $("saveAll")?.addEventListener("click", (e) =>
+      saveToPhotos(e.currentTarget, [...document.querySelectorAll('[data-save][data-kind="photo"]')]));
   }
 
   // ---- MP3: fetch the audio through /api/file, convert on this device with lamejs ----
@@ -415,9 +416,54 @@
       btn.disabled = false;
     }
   }
+  // ---- Save to Photos: fetch through /api/file, then open the iPhone share sheet
+  // (Save Video / Save Image). Elsewhere, or without file sharing, download instead. ----
+  const prepared = new WeakMap(); // button -> File[] ready to share on the next tap
+  async function fetchFile(btn) {
+    const name = btn.dataset.name;
+    const res = await fetch(fileUrl(btn.dataset.save, name));
+    if (res.status === 413) throw new Error("big");
+    if (!res.ok) throw new Error("fetch");
+    const blob = await res.blob();
+    const type = blob.type && blob.type !== "application/octet-stream" ? blob.type : btn.dataset.mime;
+    return new File([blob], name, { type });
+  }
+  async function deliver(btn, files, idle) {
+    if (navigator.canShare?.({ files })) {
+      try {
+        await navigator.share({ files });
+        prepared.delete(btn); btn.textContent = "Saved ✓";
+      } catch (e) {
+        // iOS only opens the share sheet straight after a tap; a long download uses that up.
+        if (e.name === "NotAllowedError") { prepared.set(btn, files); btn.textContent = "Tap again to save"; }
+        else { prepared.set(btn, files); btn.textContent = idle; }
+      }
+      return;
+    }
+    files.forEach((f) => saveBlob(f, f.name));
+    btn.textContent = "Downloaded ✓";
+  }
+  async function saveToPhotos(btn, sources) {
+    const idle = btn.dataset.idle ??= btn.textContent;
+    if (prepared.has(btn)) return deliver(btn, prepared.get(btn), idle);
+    btn.disabled = true; btn.innerHTML = `<span class="spinner"></span> Preparing`;
+    try {
+      const files = await Promise.all(sources.map(fetchFile));
+      btn.disabled = false;
+      await deliver(btn, files, idle);
+    } catch (e) {
+      btn.disabled = false; btn.textContent = idle;
+      show("err", e.message === "big"
+        ? "This video is too big to save directly. Tap Open, then the Share button → Save Video."
+        : "Couldn't get the file. Try again, or tap Open.");
+    }
+  }
+
   $("status").addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-mp3]");
-    if (btn) downloadMp3(btn);
+    const mp3 = e.target.closest("[data-mp3]");
+    if (mp3) return downloadMp3(mp3);
+    const save = e.target.closest("[data-save]");
+    if (save) saveToPhotos(save, [save]);
   });
 
   // Opened by the one-step Shortcut as /#<link> (or /?url=<link>): fill the box and start.
